@@ -23,3 +23,15 @@ ALL LOWER CASE AND MAKE SURE TO KEEP THE FOLLOWING TWO CONSISTENT:
 1. File name of model
 2. First parameter when creating model when using mongoose.model
    \*\*
+
+To start frontend server (in corresponding folder)
+
+```shell
+npm run dev
+```
+
+To start backend server (in corresponding folder)
+
+```shell
+npm start
+```
