@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Navbar } from "./components";
 import "./App.css";
 import axios from "axios";
 
@@ -34,8 +35,10 @@ function App() {
 
   return (
     <div>
+      <Navbar />
       {nfts.map((nft) => {
         return (
+          // eslint-disable-next-line react/jsx-key
           <div>
             <h3>Name: {nft.name}</h3>
             <h3>Owner: {nft.owner}</h3>
