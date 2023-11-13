@@ -42,23 +42,22 @@ export const features = [
   {
     id: "feature-1",
     icon: star,
-    title: "Rewards",
+    title: "Innovation",
     content:
-      "The best credit cards offer some tantalizing combinations of promotions and prizes",
+      "The brand new ERC contract, allowing real asset tokenization and fractionalization.",
   },
   {
     id: "feature-2",
     icon: shield,
     title: "100% Secured",
-    content:
-      "We take proactive steps make sure your information and transactions are secure.",
+    content: "Blockchain technology, no central authority, ultra secure",
   },
   {
     id: "feature-3",
     icon: send,
-    title: "Balance Transfer",
+    title: "Ultra low transfer fees",
     content:
-      "A balance transfer credit card can save you a lot of money in interest charges.",
+      "With the XRP sidechain, international transfer has never been this valuable.",
   },
 ];
 
@@ -112,19 +111,19 @@ export const footerLinks = [
     title: "Useful Links",
     links: [
       {
-        name: "Content",
+        name: "About",
         link: "https://www.hoobank.com/content/",
       },
       {
-        name: "How it Works",
+        name: "Concepts",
         link: "https://www.hoobank.com/how-it-works/",
       },
       {
-        name: "Create",
+        name: "Wallet",
         link: "https://www.hoobank.com/create/",
       },
       {
-        name: "Explore",
+        name: "Marketplace",
         link: "https://www.hoobank.com/explore/",
       },
       {
@@ -141,33 +140,16 @@ export const footerLinks = [
         link: "https://www.hoobank.com/help-center/",
       },
       {
-        name: "Partners",
+        name: "Developers",
         link: "https://www.hoobank.com/partners/",
-      },
-      {
-        name: "Suggestions",
-        link: "https://www.hoobank.com/suggestions/",
-      },
-      {
-        name: "Blog",
-        link: "https://www.hoobank.com/blog/",
       },
       {
         name: "Newsletters",
         link: "https://www.hoobank.com/newsletters/",
       },
-    ],
-  },
-  {
-    title: "Partner",
-    links: [
       {
-        name: "Our Partner",
-        link: "https://www.hoobank.com/our-partner/",
-      },
-      {
-        name: "Become a Partner",
-        link: "https://www.hoobank.com/become-a-partner/",
+        name: "Careers",
+        link: "https://www.hoobank.com/blog/",
       },
     ],
   },
