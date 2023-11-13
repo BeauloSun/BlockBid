@@ -11,8 +11,9 @@ contract nft721 is ERC721URIStorage{
         _tokenId = 0;
     }
 
-    function mintNft(address owner , string memory /*tokenUri*/) external returns (uint256){
-        _safeMint(owner , _tokenId);
+    function mintNft(address owner , string memory tokenURI) external returns (uint256){
+        _safeMint(owner , _tokenId);\
+        _setTokenURI(_tokenId , tokenURI);
         _tokenId = _tokenId + 1;
         return _tokenId;
     }
