@@ -4,5 +4,8 @@ module.exports = {
   theme: {
     extend: {},
   },
+  fontFamily: {
+    shadows: ["Shadows Into Light", "serif"],
+  },
   plugins: [],
 };
