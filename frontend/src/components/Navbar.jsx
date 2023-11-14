@@ -10,7 +10,9 @@ const Navbar = () => {
   };
   return (
     <div className="flex justify-between items-center h-24 max-w-[1300px] mx-auto px-4 text-white">
-      <img src={logo} alt="blockbid" className="w-[200px] h-[80px]" />
+      <Link to="/">
+        <img src={logo} alt="blockbid" className="w-[200px] h-[80px]" />
+      </Link>
       <ul className="hidden md:flex">
         <Link className="p-4" to="/about">
           About

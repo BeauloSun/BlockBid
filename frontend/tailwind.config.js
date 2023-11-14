@@ -7,5 +7,5 @@ module.exports = {
   fontFamily: {
     shadows: ["Shadows Into Light", "serif"],
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 };

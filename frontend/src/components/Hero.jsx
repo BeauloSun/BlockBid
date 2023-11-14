@@ -1,6 +1,7 @@
 import React from "react";
 import Typed from "react-typed";
 import bg from "../assets/landing_bg.png";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -36,6 +37,11 @@ const Hero = () => {
         <button className="bg-[#fff537] w-[200px] rounded-md font-medium my-6 mx-auto py-3 text-black">
           Explore Marketplace
         </button>
+        <Link to="/mint">
+          <button className="bg-[#bc37ff] w-[200px] rounded-md font-medium my-6 mx-auto py-3 text-black">
+            Mint Your Own NFT
+          </button>
+        </Link>
       </div>
     </div>
   );
