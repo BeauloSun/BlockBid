@@ -27,7 +27,6 @@ ALL LOWER CASE AND MAKE SURE TO KEEP THE FOLLOWING TWO CONSISTENT:
 To start frontend server (in corresponding folder)
 
 ```shell
-npm run dev
 yarn start
 ```
 

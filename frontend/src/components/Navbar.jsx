@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import logo from "../assets/logo.svg";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
@@ -11,7 +12,9 @@ const Navbar = () => {
     <div className="flex justify-between items-center h-24 max-w-[1300px] mx-auto px-4 text-white">
       <img src={logo} alt="blockbid" className="w-[200px] h-[80px]" />
       <ul className="hidden md:flex">
-        <li className="p-4">About</li>
+        <Link className="p-4" to="/about">
+          About
+        </Link>
         <li className="p-4">Marketplace</li>
         <li className="p-4">Financials</li>
         <li className="p-4">Wallet</li>
