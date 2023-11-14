@@ -1,59 +1,40 @@
-import { useState } from "react";
-
-import { close, logo, menu } from "../assets";
-import { navLinks } from "../constants";
+import React, { useState } from "react";
+import logo from "../assets/logo.svg";
+import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 
 const Navbar = () => {
-  const [active, setActive] = useState("Home");
-  const [toggle, setToggle] = useState(false);
-
+  const [nav, setNav] = useState(false);
+  const handleNav = () => {
+    setNav(!nav);
+  };
   return (
-    <nav className="w-full flex py-6 justify-between items-center navbar">
-      <img src={logo} alt="hoobank" className="w-[200px] h-[80px]" />
-
-      <ul className="list-none sm:flex hidden justify-end items-center flex-1">
-        {navLinks.map((nav, index) => (
-          <li
-            key={nav.id}
-            className={`font-poppins font-normal cursor-pointer text-[16px] ${
-              active === nav.title ? "text-white" : "text-dimWhite"
-            } ${index === navLinks.length - 1 ? "mr-0" : "mr-10"}`}
-            onClick={() => setActive(nav.title)}
-          >
-            <a href={`#${nav.id}`}>{nav.title}</a>
-          </li>
-        ))}
+    <div className="flex justify-between items-center h-24 max-w-[1300px] mx-auto px-4 text-white">
+      <img src={logo} alt="blockbid" className="w-[200px] h-[80px]" />
+      <ul className="hidden md:flex">
+        <li className="p-4">About</li>
+        <li className="p-4">Marketplace</li>
+        <li className="p-4">Financials</li>
+        <li className="p-4">Wallet</li>
+        <li className="p-4">Profile</li>
       </ul>
-
-      <div className="sm:hidden flex flex-1 justify-end items-center">
-        <img
-          src={toggle ? close : menu}
-          alt="menu"
-          className="w-[28px] h-[28px] object-contain"
-          onClick={() => setToggle(!toggle)}
-        />
-
-        <div
-          className={`${
-            !toggle ? "hidden" : "flex"
-          } p-6 bg-black-gradient absolute top-20 right-0 mx-4 my-2 min-w-[140px] rounded-xl sidebar`}
-        >
-          <ul className="list-none flex justify-end items-start flex-1 flex-col">
-            {navLinks.map((nav, index) => (
-              <li
-                key={nav.id}
-                className={`font-poppins font-medium cursor-pointer text-[16px] ${
-                  active === nav.title ? "text-white" : "text-dimWhite"
-                } ${index === navLinks.length - 1 ? "mb-0" : "mb-4"}`}
-                onClick={() => setActive(nav.title)}
-              >
-                <a href={`#${nav.id}`}>{nav.title}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div onClick={handleNav} className="block md:hidden">
+        {nav ? <AiOutlineClose size={20} /> : <AiOutlineMenu size={20} />}
       </div>
-    </nav>
+      <ul
+        className={
+          nav
+            ? "fixed left-0 top-0 w-[60%] h-full border-r border-r-gray-900 bg-[#000300] ease-in-out duration-500"
+            : "ease-in-out duration-500 fixed left-[-100%]"
+        }
+      >
+        <img src={logo} alt="blockbid" className="w-[200px] h-[80px]" />
+        <li className="p-4 border-b border-gray-600">About</li>
+        <li className="p-4 border-b border-gray-600">Marketplace</li>
+        <li className="p-4 border-b border-gray-600">Financials</li>
+        <li className="p-4 border-b border-gray-600">Wallet</li>
+        <li className="p-4 border-b border-gray-600">Profile</li>
+      </ul>
+    </div>
   );
 };
 

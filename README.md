@@ -28,6 +28,7 @@ To start frontend server (in corresponding folder)
 
 ```shell
 npm run dev
+yarn start
 ```
 
 To start backend server (in corresponding folder)
