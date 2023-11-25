@@ -21,6 +21,7 @@ const Navbar = () => {
     console.log("Hi");
     console.log(web3);
   }, [web3]);
+
   // if you don't give an array it will rerender everytime there is something on the site changing
   // if you give emptylist it will only run once at the start of the application
   // if you give an array with some variables it will run when that variable changes
@@ -33,6 +34,7 @@ const Navbar = () => {
       const accounts = await ethereum.request({
         method: "eth_requestAccounts",
       });
+      console.log(accounts);
       if (accounts.length > 0) {
         setCurrentAccount(accounts[0]);
         setWeb3(true);
