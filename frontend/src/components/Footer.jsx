@@ -9,7 +9,7 @@ import logo from "../assets/logo.svg";
 
 const Footer = () => {
   return (
-    <div className="max-w-[1240px] mx-auto py-5 px-4 grid lg:grid-cols-3 gap-8 text-gray-300">
+    <div className="max-w-[1700px] mx-auto py-5 px-4 grid lg:grid-cols-3 gap-8 text-gray-300">
       <div>
         <img src={logo} alt="blockbid" className="w-[200px] h-[80px]" />
         <p className="py-4">Copyright Ⓒ 2023 BlockBid. All Rights Reserved.</p>

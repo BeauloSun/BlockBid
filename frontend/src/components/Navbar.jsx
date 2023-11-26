@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Web3, { eth } from "web3";
 import logo from "../assets/logo.svg";
+import SearchBar from "./SearchBar.jsx";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { ethers } from "ethers";
@@ -57,28 +58,24 @@ const Navbar = () => {
     setNav(!nav);
   };
   return (
-    <div className="flex justify-between items-center h-24 max-w-[1300px] mx-auto px-4 text-white">
-      <Link to="/">
+    <div className="grid grid-cols-3 items-center h-24 max-w-[1800px] mx-auto px-4 text-white">
+      <Link to="/" className="justify-self-start">
         <img src={logo} alt="blockbid" className="w-[200px] h-[80px]" />
       </Link>
-      <ul className="hidden md:flex">
+
+      <div className="justify-self-center w-full md:max-w-[600px] lg:max-w-[800px] mx-4">
+        <SearchBar />
+      </div>
+
+      <ul className="hidden md:flex justify-self-end">
         <Link className="p-4" to="/about">
           About
         </Link>
         <li className="p-4">Marketplace</li>
         <li className="p-4">Financials</li>
-        <li className="p-4">
-          {currentAccount ? (
-            <div>
-              <p>{currentAccount}</p>
-              <button onClick={disconnectWallet}>Disconnect Wallet</button>
-            </div>
-          ) : (
-            <button onClick={connectWallet}>Connect Wallet</button>
-          )}
-        </li>
         <li className="p-4">Profile</li>
       </ul>
+
       <div onClick={handleNav} className="block md:hidden">
         {nav ? <AiOutlineClose size={20} /> : <AiOutlineMenu size={20} />}
       </div>
