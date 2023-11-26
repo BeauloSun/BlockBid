@@ -10,10 +10,12 @@ const SearchBar = () => {
     top: "100%",
     left: 0,
     transform: isOpen ? "translateY(0)" : "translate(-10px)",
-    transition: "transform 0.3s ease",
     opacity: isOpen ? 1 : 0,
     marginTop: "0.5rem",
-    width: "auto",
+    width: "28%",
+    borderColor: "#86EFAC",
+    borderWidth: "2px",
+    borderStyle: "solid",
   };
 
   return (
@@ -23,7 +25,7 @@ const SearchBar = () => {
           onClick={toggleDropdown}
           id="dropdown-button"
           data-dropdown-toggle="dropdown"
-          className="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
+          className="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-100 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-yellow-400 dark:bg-gray-800 dark:hover:bg-gray-800 dark:focus:ring-green-300 dark:text-white dark:border-gray-500"
           type="button"
         >
           All categories{" "}
@@ -76,13 +78,13 @@ const SearchBar = () => {
           <input
             type="search"
             id="search-dropdown"
-            className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
+            className="block p-2.5 w-full z-20 text-m text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-200 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-green-300"
             placeholder="Search the marketplace..."
             required
           />
           <button
             type="submit"
-            className="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="absolute top-0 end-0 p-2.5 text-sm font-bold h-full text-black bg-yellow-300 rounded-e-lg border border-yellow-300 hover:bg-yellow-200 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-300 dark:hover:bg-yellow-200 dark:focus:ring-green-300"
           >
             <svg
               className="w-4 h-4"

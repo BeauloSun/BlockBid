@@ -63,17 +63,35 @@ const Navbar = () => {
         <img src={logo} alt="blockbid" className="w-[200px] h-[80px]" />
       </Link>
 
-      <div className="justify-self-center w-full md:max-w-[600px] lg:max-w-[800px] mx-4">
+      <div className="justify-self-center w-full md:max-w-[500px] lg:max-w-[500px] mx-4">
         <SearchBar />
       </div>
 
-      <ul className="hidden md:flex justify-self-end">
-        <Link className="p-4" to="/about">
+      <ul className="hidden md:flex justify-self-end text-xl">
+        <Link
+          className="p-4 transition-all duration-500 ease-in-out font-bold hover:text-[#46ff65]"
+          to="/about"
+        >
           About
         </Link>
-        <li className="p-4">Marketplace</li>
-        <li className="p-4">Financials</li>
-        <li className="p-4">Profile</li>
+        <Link
+          className="p-4 transition-all duration-500 ease-in-out font-bold hover:text-[#46ff65]"
+          to="/about"
+        >
+          Marketplace
+        </Link>
+        <Link
+          className="p-4 transition-all duration-500 ease-in-out font-bold hover:text-[#46ff65]"
+          to="/about"
+        >
+          Financials
+        </Link>
+        <Link
+          className="p-4 transition-all duration-500 ease-in-out font-bold hover:text-[#46ff65]"
+          to="/about"
+        >
+          Profile
+        </Link>
       </ul>
 
       <div onClick={handleNav} className="block md:hidden">
