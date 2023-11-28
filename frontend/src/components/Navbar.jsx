@@ -9,6 +9,7 @@ import { disconnect } from "mongoose";
 const Navbar = () => {
   const [nav, setNav] = useState(false);
   const [web3, setWeb3] = useState(null);
+  const [allAccounts, setAllAcounts] = useState([]);
   const [currentAccount, setCurrentAccount] = useState("");
 
   useEffect(() => {
@@ -34,8 +35,8 @@ const Navbar = () => {
       const accounts = await ethereum.request({
         method: "eth_requestAccounts",
       });
-      console.log(accounts);
       if (accounts.length > 0) {
+        setAllAcounts(accounts);
         setCurrentAccount(accounts[0]);
         setWeb3(true);
         window.localStorage.setItem("wallet", JSON.stringify(accounts[0]));
@@ -51,6 +52,12 @@ const Navbar = () => {
       setCurrentAccount("");
       setWeb3(false);
     }
+  };
+
+  const switchWallet = () => {
+    window.localStorage.removeItem("wallet");
+    setCurrentAccount(allAccounts[1]);
+    window.localStorage.setItem("wallet", JSON.stringify(allAccounts[1]));
   };
 
   const handleNav = () => {
@@ -72,6 +79,11 @@ const Navbar = () => {
             <div>
               <p>{currentAccount}</p>
               <button onClick={disconnectWallet}>Disconnect Wallet</button>
+              {allAccounts.length > 1 ? (
+                <button onClick={switchWallet}>Switch Wallet</button>
+              ) : (
+                <p>dont have additional accounts</p>
+              )}
             </div>
           ) : (
             <button onClick={connectWallet}>Connect Wallet</button>
