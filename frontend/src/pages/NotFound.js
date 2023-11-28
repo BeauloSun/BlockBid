@@ -1,11 +1,3 @@
-// export const NotFound = () => {
-//   return (
-//     <h1 className="text-white">
-//       Don't fuck around with my website, use the buttons!
-//     </h1>
-//   );
-// };
-
 import React from "react";
 import { Link } from "react-router-dom";
 import bg from "../assets/notfound_bg.jpg";

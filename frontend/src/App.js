@@ -2,10 +2,11 @@ import React from "react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { Home } from "./pages/Home";
-import { About } from "./pages/About";
 import { Login } from "./pages/Login";
 import { Mint } from "./pages/Mint";
+import { Profile } from "./pages/Profile";
 import { NotFound } from "./pages/NotFound";
+import { Marketplace } from "./pages/Marketplace";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -15,8 +16,9 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/mint" element={<Mint />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
