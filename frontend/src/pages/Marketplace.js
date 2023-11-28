@@ -14,15 +14,27 @@ import nft9 from "../assets/nft9.jpg";
 import nft10 from "../assets/nft10.jpg";
 
 export const Marketplace = () => {
-  const images = [nft1, nft2, nft3, nft4, nft5, nft6, nft7, nft8, nft9, nft10];
+  const ERC_721 = [nft1, nft2, nft3, nft4, nft5];
+  const ERC_1155 = [nft6, nft7, nft8, nft9, nft10];
+  const [activeTab, setActiveTab] = useState("ERC_721");
+  const [images, setImages] = useState(ERC_721);
   const [offsetY, setOffsetY] = useState(0);
-  const handleScroll = () => setOffsetY(window.pageYOffset);
+  const handleScroll = () => setOffsetY(window.scrollY);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+    if (tab === "ERC_721") {
+      setImages(ERC_721);
+    } else if (tab === "ERC_1155") {
+      setImages(ERC_1155);
+    }
+  };
 
   return (
     <div>
@@ -43,18 +55,44 @@ export const Marketplace = () => {
           </h1>
         </div>
       </div>
-      <div
-        className="grid grid-flow-row-dense gap-1 mt-20 mx-[17%]"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))" }}
-      >
-        {images.map((img_src, index) => (
-          <div
-            key={index}
-            className="flex flex-col items-center py-4 hover:scale-105 duration-300"
+      <div className="relative pt-20 w-full h-full bg-black">
+        <div className="flex justify-left pl-[20px] space-x-6 mb-10 bg-slate-400 py-4 mx-[15%] rounded-3xl bg-opacity-50">
+          <button
+            onClick={() => handleTabClick("ERC_721")}
+            className={`px-4 py-2 rounded-xl transition-colors duration-500 ${
+              activeTab === "ERC_721"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-300 text-white bg-opacity-50"
+            }`}
           >
-            <CardC img_src={img_src} />
-          </div>
-        ))}
+            Complete ownership (ERC-721)
+          </button>
+          <button
+            onClick={() => handleTabClick("ERC_1155")}
+            className={`px-4 py-2 rounded-xl transition-colors duration-500 ${
+              activeTab === "ERC_1155"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-300 text-white bg-opacity-50"
+            }`}
+          >
+            Partial ownership (ERC-1155)
+          </button>
+        </div>
+        <div
+          className="grid grid-flow-row-dense gap-1 mx-[17%]"
+          style={{
+            gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
+          }}
+        >
+          {images.map((img_src, index) => (
+            <div
+              key={index}
+              className="flex flex-col items-center py-4 hover:scale-105 duration-300"
+            >
+              <CardC img_src={img_src} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
