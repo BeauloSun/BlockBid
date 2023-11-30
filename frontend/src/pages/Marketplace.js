@@ -56,10 +56,10 @@ export const Marketplace = () => {
         </div>
       </div>
       <div className="relative pt-20 w-full h-full bg-black">
-        <div className="flex justify-left pl-[20px] space-x-6 mb-10 bg-slate-400 py-4 mx-[15%] rounded-3xl bg-opacity-50">
+        <div className="flex justify-center space-x-6 mb-10 bg-slate-400 py-4 mx-[15%] rounded-3xl bg-opacity-50">
           <button
             onClick={() => handleTabClick("ERC_721")}
-            className={`px-4 py-2 rounded-xl transition-colors duration-500 ${
+            className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
               activeTab === "ERC_721"
                 ? "bg-blue-500 text-white"
                 : "bg-gray-300 text-white bg-opacity-50"
@@ -69,7 +69,7 @@ export const Marketplace = () => {
           </button>
           <button
             onClick={() => handleTabClick("ERC_1155")}
-            className={`px-4 py-2 rounded-xl transition-colors duration-500 ${
+            className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
               activeTab === "ERC_1155"
                 ? "bg-blue-500 text-white"
                 : "bg-gray-300 text-white bg-opacity-50"

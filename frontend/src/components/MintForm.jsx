@@ -1,7 +1,7 @@
 import nft_mint from "../assets/minting_nft.png";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 
-export default function Example() {
+export default function MintForm() {
   return (
     <section class="bg-[#0f103e] min-h-screen flex items-center justify-center">
       <div class="bg-[#724fff] flex rounded-2xl shadow-lg max-w-[1100px] p-5 items-center">
