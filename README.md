@@ -35,3 +35,10 @@ To start backend server (in corresponding folder)
 ```shell
 npm start
 ```
+
+To deploy contract (in main folder)
+
+```shell
+hh deploy --network ganache
+yarn hardhat deploy --network ganache
+```
