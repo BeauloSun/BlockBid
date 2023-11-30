@@ -1,21 +1,36 @@
 const mongoose = require("mongoose");
 
 const NftSchema = new mongoose.Schema({
-  token: {
+  nft_address: {
     type: String,
-    required: true,
   },
-  owner: {
-    type: String,
-    required: true,
-  },
-  price: {
-    type: String,
-    required: true,
+  token_id: {
+    type: Number,
   },
   name: {
     type: String,
-    required: true,
+  },
+  description: {
+    type: String,
+  },
+  image_uri: {
+    type: String,
+  },
+  price: {
+    type: Number,
+  },
+  owner: {
+    type: String,
+  },
+  on_auction: {
+    type: Boolean,
+  },
+  on_sale: {
+    type: Boolean,
+  },
+  bids: {
+    type: Map,
+    of: Number,
   },
 });
 
