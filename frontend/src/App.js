@@ -7,6 +7,7 @@ import { Mint } from "./pages/Mint";
 import { Profile } from "./pages/Profile";
 import { NotFound } from "./pages/NotFound";
 import { Marketplace } from "./pages/Marketplace";
+import { Bidding } from "./pages/Bidding";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/marketplace" element={<Marketplace />} />
+          <Route path="/bid" element={<Bidding />} />
           <Route path="/mint" element={<Mint />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
