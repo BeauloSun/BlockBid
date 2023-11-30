@@ -1,58 +1,12 @@
-import React, { useState, useEffect } from "react";
-import Web3, { eth } from "web3";
+import React, { useState } from "react";
+
 import logo from "../assets/logo.svg";
 import SearchBar from "./SearchBar.jsx";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { ethers } from "ethers";
-import { disconnect } from "mongoose";
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
-  const [web3, setWeb3] = useState(null);
-  const [currentAccount, setCurrentAccount] = useState("");
-
-  useEffect(() => {
-    if (web3) return;
-    if (typeof window !== "undefined") {
-      if (window.localStorage.getItem("wallet")) {
-        connectWallet();
-      }
-    }
-    console.log("Hi");
-    console.log(web3);
-  }, [web3]);
-
-  // if you don't give an array it will rerender everytime there is something on the site changing
-  // if you give emptylist it will only run once at the start of the application
-  // if you give an array with some variables it will run when that variable changes
-
-  const connectWallet = async () => {
-    if (typeof window.ethereum !== "undefined") {
-      const ethereum = window.ethereum;
-      console.log("inside connetwallet");
-      // Check if there is an existing connection stored in local storage
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      console.log(accounts);
-      if (accounts.length > 0) {
-        setCurrentAccount(accounts[0]);
-        setWeb3(true);
-        window.localStorage.setItem("wallet", JSON.stringify(accounts[0]));
-      }
-    } else {
-      console.warn("MetaMask is not installed");
-    }
-  };
-
-  const disconnectWallet = () => {
-    if (window != "undefined") {
-      window.localStorage.removeItem("wallet");
-      setCurrentAccount("");
-      setWeb3(false);
-    }
-  };
 
   const handleNav = () => {
     setNav(!nav);
