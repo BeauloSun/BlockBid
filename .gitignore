@@ -399,3 +399,4 @@ FodyWeavers.xsd
 ./coverage
 ./cache
 .env
+./deployments
