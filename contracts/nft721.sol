@@ -9,7 +9,7 @@ contract nft721 is ERC721URIStorage{
 
     event nft721Minted (string tokenURI , uint256 _tokenId);
     constructor () ERC721("BlockBid" , "BBT"){
-        _tokenId = 0;
+        _tokenId = 1;
     }
 
     function mintNft(address owner , string memory tokenURI) external returns (uint256){

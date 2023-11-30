@@ -17,27 +17,27 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const args = [];
 
   // deploying the contract
-  const nft721 = await deploy("nft721", {
+  const BlockBid = await deploy("BlockBid", {
     from: deployer,
     args: args,
     log: true,
     waitConfirmations: network.config.waitConfirmations || 1,
   });
 
-  await nft721.deployed;
+  await BlockBid.deployed;
 
   // writing the address and the abi of the contract to the frontend
+  const address = BlockBid.address;
+  const BlockBidartifact = artifacts.readArtifactSync("BlockBid");
+  const BlockBidabi = BlockBidartifact.abi;
 
-  const address = nft721.address;
-  const nftartifact = artifacts.readArtifactSync("nft721");
-  const nftabi = nftartifact.abi;
   const data = {
     address: address,
-    abi: nftabi,
+    abi: BlockBidabi,
   };
   try {
     const sdata = JSON.stringify(data);
-    fs.writeFileSync("frontend/src/backend-constants/nft721.json", sdata);
+    fs.writeFileSync("frontend/src/backend-constants/BlockBid.json", sdata);
   } catch (error) {
     console.error(error);
   }
@@ -48,8 +48,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     process.env.ETHERSCAN_API_KEY
   ) {
     log("verifying the contract");
-    await verify(nft721.address, args);
+    await verify(BlockBid.address, args);
   }
 };
 
-module.exports.tags = ["nft721", "all", "nft721market"];
+module.exports.tags = ["all", "BlockBid"];
