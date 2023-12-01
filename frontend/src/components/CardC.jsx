@@ -7,7 +7,7 @@ import {
   Button,
 } from "@material-tailwind/react";
 
-const CardC = ({ img_src }) => {
+const CardC = ({ img_src, name, description, price, market }) => {
   return (
     <div className="w-[350px]">
       <Card className="bg-purple-300">
@@ -21,10 +21,10 @@ const CardC = ({ img_src }) => {
         <CardBody>
           <div className="mb-2 px-5 mt-2 flex items-center justify-between">
             <Typography color="blue-gray" className="font-medium">
-              NFT_Example
+              {name}
             </Typography>
             <Typography color="blue-gray" className="font-medium">
-              3.00 ETH
+              {price}
             </Typography>
           </div>
           <Typography
@@ -32,16 +32,16 @@ const CardC = ({ img_src }) => {
             color="gray"
             className="font-normal opacity-75 px-5"
           >
-            Some descriptions ............... Some descriptions
+            {description}
           </Typography>
         </CardBody>
         <CardFooter className="pt-0">
           <Button
             ripple={false}
             fullWidth={true}
-            className="bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
+            className="bg-blue-gray-900/10 text-blue-gray-900 text-xl bg-pink-400 rounded-xl shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
           >
-            Place a bid
+            {market ? "Place a bid" : "Sell"}
           </Button>
         </CardFooter>
       </Card>
