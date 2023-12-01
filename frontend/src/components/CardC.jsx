@@ -6,8 +6,23 @@ import {
   Typography,
   Button,
 } from "@material-tailwind/react";
+import { useNavigate } from "react-router-dom";
 
 const CardC = ({ img_src, name, description, price, market }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    var state;
+
+    if (market) {
+      state = { img_src, name, description, price };
+      navigate("/bid", { state });
+    } else {
+      state = { img_src, name, description };
+      navigate("/sell", { state });
+    }
+  };
+
   return (
     <div className="w-[350px]">
       <Card className="bg-purple-300">
@@ -23,8 +38,11 @@ const CardC = ({ img_src, name, description, price, market }) => {
             <Typography color="blue-gray" className="font-medium">
               {name}
             </Typography>
+          </div>
+          <div className="mb-2 px-5 mt-2 flex items-center justify-between">
             <Typography color="blue-gray" className="font-medium">
-              {price}
+              {market ? "" : "Price Bought: "}
+              {price} ETH
             </Typography>
           </div>
           <Typography
@@ -37,6 +55,7 @@ const CardC = ({ img_src, name, description, price, market }) => {
         </CardBody>
         <CardFooter className="pt-0">
           <Button
+            onClick={handleClick}
             ripple={false}
             fullWidth={true}
             className="bg-blue-gray-900/10 text-blue-gray-900 text-xl bg-pink-400 rounded-xl shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
