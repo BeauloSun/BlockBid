@@ -1,29 +1,87 @@
 import nft_mint from "../assets/minting_nft.png";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import nftcontract from "../backend-constants/nft721.json";
-import { ethers } from "ethers";
+import { useState } from "react";
 import Web3 from "web3";
+import { pinFileToIPFS, pinJsonToIPFS } from "../utils/pinata";
 
 export default function Example() {
-  const tryConnection = async () => {
-    try {
-      const contractAddress = nftcontract.address;
-      const contractAbi = nftcontract.abi;
+  const [contract, setContract] = useState(null);
+  const [formParams, updateFormParams] = useState({
+    name: "",
+    description: "",
+  });
+  const [imageFile, setImageFile] = useState(null);
+  const [imageURL, setImageUrl] = useState(null);
+  const [jsonUrl, setJsonUrl] = useState(null);
+
+  const getContract = async () => {
+    const contractAddress = nftcontract.address;
+    const contractAbi = nftcontract.abi;
+    if (window.ethereum !== "undefined") {
       const web3 = new Web3(window.ethereum);
-
-      const contract = new web3.eth.Contract(contractAbi, contractAddress);
-
-      const isConnected = await contract.methods.getTokenId().call();
-      console.log(isConnected);
-      if (isConnected != "undefined") {
+      const mintcontract = new web3.eth.Contract(contractAbi, contractAddress);
+      console.log("I am here");
+      const token_id = await mintcontract.methods.getTokenId().call();
+      if (token_id !== null || token_id !== "undefined") {
         console.log("Connected to smart contract");
-        // Proceed with contract interaction
+        setContract(mintcontract);
       } else {
         console.error("Not connected to smart contract");
       }
+    }
+  };
+
+  const storeFile = (event) => {
+    const file = event.target.files[0];
+    setImageFile(file);
+  };
+
+  const hashImage = async (file, name) => {
+    try {
+      const response = await pinFileToIPFS(file);
+      const pinataURL =
+        "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash;
+      console.log(pinataURL);
+      setImageUrl(pinataURL);
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const hasJson = async (name, description) => {
+    const jsonBody = {
+      imageHash: imageURL,
+      name: name,
+      description: description,
+    };
+    const response = await pinJsonToIPFS(jsonBody);
+    const pinataURL =
+      "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash;
+    setJsonUrl(pinataURL);
+    console.log(response);
+  };
+
+  const mintNFT = async (e) => {
+    e.preventDefault();
+    const { name, description } = formParams;
+    console.log("in mint function");
+    await hashImage(imageFile, name);
+    await hasJson(name, description);
+    await getContract();
+    console.log(contract);
+    if (contract !== null) {
+      console.log("trying to mint");
+      try {
+        const id = await contract.methods
+          .mintNft("0x4F8Bed052fADE364592d88c53c154AD3fE8Cb9Ef", jsonUrl)
+          .call();
+        console.log(id);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    // window.location.href = "/marketplace";
   };
 
   return (
@@ -43,6 +101,10 @@ export default function Example() {
               type="name"
               name="name"
               placeholder="Name"
+              onChange={(e) =>
+                updateFormParams({ ...formParams, name: e.target.value })
+              }
+              value={formParams.name}
             />
             <div className="relative">
               <input
@@ -50,6 +112,13 @@ export default function Example() {
                 type="description"
                 name="description"
                 placeholder="Description"
+                value={formParams.description}
+                onChange={(e) =>
+                  updateFormParams({
+                    ...formParams,
+                    description: e.target.value,
+                  })
+                }
               />
             </div>
 
@@ -77,6 +146,7 @@ export default function Example() {
                         name="file-upload"
                         type="file"
                         className="sr-only"
+                        onChange={storeFile}
                       />
                     </label>
                     <p className="pl-1">or drag and drop</p>
@@ -88,18 +158,12 @@ export default function Example() {
               </div>
             </div>
             <button
-              onClick={tryConnection}
               className="bg-[#440074] rounded-xl text-3xl font-bold text-white py-2 hover:scale-105 duration-300"
+              onClick={mintNFT}
             >
               Mint !
             </button>
           </form>
-          <button
-            onClick={tryConnection}
-            className="bg-[#440074] rounded-xl text-3xl font-bold text-white py-2 hover:scale-105 duration-300"
-          >
-            Mint !
-          </button>
         </div>
         <div className="md:block hidden w-1/2">
           <img alt="" className="rounded-2xl" src={nft_mint} />
