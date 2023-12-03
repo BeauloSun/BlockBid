@@ -16,7 +16,7 @@ export default function Example() {
 
       const isConnected = await contract.methods.getTokenId().call();
       console.log(isConnected);
-      if (isConnected != "undefined") {
+      if (isConnected !== "undefined") {
         console.log("Connected to smart contract");
         // Proceed with contract interaction
       } else {
