@@ -13,8 +13,11 @@ module.exports = {
       chainId: 31337,
     },
     sepolia: {
-      url: "",
-      accounts: [],
+      url: "https://eth-sepolia.g.alchemy.com/v2/bDaLZR74hgZwyYCUh5LKpNCVwo0cdLda",
+      accounts: [
+        "c778002756b0b00f10f102be09f14da85e1686a9d2e4f3dd6b467064cee43d81",
+      ],
+      chainId: 11155111,
     },
     ganache: {
       url: "HTTP://127.0.0.1:7545",

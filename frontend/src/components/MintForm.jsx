@@ -16,20 +16,30 @@ export default function Example() {
   const [jsonUrl, setJsonUrl] = useState(null);
 
   const getContract = async () => {
-    const contractAddress = nftcontract.address;
-    const contractAbi = nftcontract.abi;
-    if (window.ethereum !== "undefined") {
-      const web3 = new Web3(window.ethereum);
-      const mintcontract = new web3.eth.Contract(contractAbi, contractAddress);
-      console.log("I am here");
-      const token_id = await mintcontract.methods.getTokenId().call();
-      if (token_id !== null || token_id !== "undefined") {
-        console.log("Connected to smart contract");
-        setContract(mintcontract);
+    return new Promise(async (resolve, reject) => {
+      const contractAddress = nftcontract.address;
+      const contractAbi = nftcontract.abi;
+      if (window.ethereum !== "undefined") {
+        const web3 = new Web3(window.ethereum);
+        const mintcontract = new web3.eth.Contract(
+          contractAbi,
+          contractAddress
+        );
+        console.log("I am here");
+        const token_id = await mintcontract.methods.getTokenId().call();
+        console.log("minttokenid ", token_id);
+        if (token_id !== null || token_id !== "undefined") {
+          console.log("Connected to smart contract");
+          setContract(mintcontract);
+          resolve(mintcontract);
+        } else {
+          console.error("Not connected to smart contract");
+          reject("not connected to smart contract");
+        }
       } else {
-        console.error("Not connected to smart contract");
+        reject("Ethereum provider not found");
       }
-    }
+    });
   };
 
   const storeFile = (event) => {
@@ -42,16 +52,16 @@ export default function Example() {
       const response = await pinFileToIPFS(file);
       const pinataURL =
         "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash;
-      console.log(pinataURL);
       setImageUrl(pinataURL);
+      return pinataURL;
     } catch (error) {
       console.error(error);
     }
   };
 
-  const hasJson = async (name, description) => {
+  const hasJson = async (name, description, imagehash) => {
     const jsonBody = {
-      imageHash: imageURL,
+      imageHash: imagehash,
       name: name,
       description: description,
     };
@@ -59,27 +69,32 @@ export default function Example() {
     const pinataURL =
       "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash;
     setJsonUrl(pinataURL);
-    console.log(response);
+    return pinataURL;
   };
 
   const mintNFT = async (e) => {
     e.preventDefault();
     const { name, description } = formParams;
     console.log("in mint function");
-    await hashImage(imageFile, name);
-    await hasJson(name, description);
-    await getContract();
-    console.log(contract);
-    if (contract !== null) {
-      console.log("trying to mint");
-      try {
+    const imagehash = await hashImage(imageFile, name);
+    console.log("image url", imagehash);
+    const jsonhash = await hasJson(name, description, imagehash);
+    console.log("json url", jsonhash);
+    try {
+      const contract = await getContract();
+      console.log(contract);
+      if (contract !== null) {
+        console.log("trying to mint");
+        console.log("json url inside trying to mint", jsonhash);
         const id = await contract.methods
-          .mintNft("0x4F8Bed052fADE364592d88c53c154AD3fE8Cb9Ef", jsonUrl)
-          .call();
+          .mintNft("0x4F8Bed052fADE364592d88c53c154AD3fE8Cb9Ef", jsonhash)
+          .send({ from: "0x4F8Bed052fADE364592d88c53c154AD3fE8Cb9Ef" });
         console.log(id);
-      } catch (error) {
-        console.error(error);
+        const token_id = await contract.methods.getTokenId().call();
+        console.log("token id after minting ", token_id);
       }
+    } catch (error) {
+      console.error(error);
     }
     // window.location.href = "/marketplace";
   };
