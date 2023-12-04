@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import CardC from "../components/CardC";
 
-import nft2 from "../assets/nft2.jpg";
-import nft3 from "../assets/nft3.jpg";
-import nft6 from "../assets/nft6.jpg";
 import Wallet from "../components/Wallet";
 import Security from "../components/Security";
 import axios from "axios";
@@ -17,23 +14,30 @@ export const Profile = () => {
   const [name, setName] = useState([]);
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
+  const [userAddress, setUserAddress] = useState("");
 
   useEffect(() => {
     const getOwnerNfts = async () => {
       const contract = await getContract();
       const address = window.localStorage.getItem("currentAddr");
+
       const Token_Ids = await contract.methods.getOwnerNFTs(address).call();
       const tokens_integers = [];
       for (const bigint of Token_Ids) {
         tokens_integers.push(Number(bigint));
       }
       setTokenIDs(tokens_integers);
+      setUserAddress(address);
+
+      console.log("tokens ", tokens_integers);
+      console.log("address ", userAddress);
     };
     const fetchData = async () => {
       try {
+        console.log("inside db request ", TokenIDs);
         const response = await axios.get(
           "http://localhost:4988/ownerNftNotOnSale",
-          TokenIDs
+          { TokenIDs: TokenIDs }
         );
         console.log("response from db", response.data);
 
@@ -64,7 +68,7 @@ export const Profile = () => {
   const handleTabClick = (tab) => {
     setActiveTab(tab);
     if (tab === "holdings") {
-      setImages(holdings);
+      setImages(images);
     }
   };
 

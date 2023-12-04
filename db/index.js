@@ -23,7 +23,8 @@ app.get("/getNfts", (req, res) => {
     });
 });
 app.get("/ownerNftNotOnSale", (req, res) => {
-  const tokenIds = req.body.tokenIDs;
+  const tokenIds = req.body.TokenIDs;
+  console.log(tokenIds);
   NftModel.find({ token_id: { $in: tokenIds }, on_sale: false })
     .then(function (nfts) {
       res.json(nfts);
