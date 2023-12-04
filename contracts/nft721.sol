@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract nft721 is ERC721URIStorage{
     uint256 private _tokenId;
+    mapping(address => uint256[]) private ownerNFTs;
+
 
     event nft721Minted (string tokenURI , uint256 _tokenId);
     constructor () ERC721("BlockBid" , "BBT"){
@@ -16,6 +18,7 @@ contract nft721 is ERC721URIStorage{
         _safeMint(owner , _tokenId);
         _setTokenURI(_tokenId , tokenURI);
         _tokenId = _tokenId + 1;
+        ownerNFTs[owner].push(_tokenId);
         emit nft721Minted(tokenURI , _tokenId);
         return _tokenId;
     }
@@ -23,6 +26,9 @@ contract nft721 is ERC721URIStorage{
     function getTokenId() public view returns(uint256){
         return _tokenId;
     }
+    function getOwnerNFTs(address owner) public view returns (uint256[] memory) {
+    return ownerNFTs[owner];
+}
 }
 
 
