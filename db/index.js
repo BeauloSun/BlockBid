@@ -30,6 +30,6 @@ app.post("/addNfts", async (req, res) => {
   res.json(nft);
 });
 
-app.listen(5000, () => {
+app.listen(4988, () => {
   console.log("server is running");
 });

@@ -4,12 +4,12 @@ import nftcontract from "../backend-constants/nft721.json";
 import { useState } from "react";
 import Web3 from "web3";
 import { pinFileToIPFS, pinJsonToIPFS } from "../utils/pinata";
-
+import axios from "axios";
 export default function Example() {
   const [contract, setContract] = useState(null);
   const [imageFile, setImageFile] = useState(null);
-  const [imageURL, setImageUrl] = useState(null);
-  const [jsonUrl, setJsonUrl] = useState(null);
+  // const [imageURL, setImageUrl] = useState(null);
+  // const [jsonUrl, setJsonUrl] = useState(null);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -20,9 +20,7 @@ export default function Example() {
   const [nameError, setNameError] = useState(false);
   const [descriptionError, setDescriptionError] = useState(false);
 
-  const addNft = async (event) => {
-    event.preventDefault();
-
+  const addNft = async () => {
     // ------------------------validation------------------------
 
     setNameError(!name.trim() || name.trim().length > 50);
@@ -62,7 +60,7 @@ export default function Example() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/addNfts",
+        "http://localhost:4988/addNfts",
         nftData
       );
       console.log(response.data);
@@ -114,7 +112,7 @@ export default function Example() {
       const response = await pinFileToIPFS(file);
       const pinataURL =
         "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash;
-      setImageUrl(pinataURL);
+      // setImageUrl(pinataURL);
       return pinataURL;
     } catch (error) {
       console.error(error);
@@ -130,13 +128,12 @@ export default function Example() {
     const response = await pinJsonToIPFS(jsonBody);
     const pinataURL =
       "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash;
-    setJsonUrl(pinataURL);
+    // setJsonUrl(pinataURL);
     return pinataURL;
   };
 
   const mintNFT = async (e) => {
     e.preventDefault();
-    const { name, description } = formParams;
     console.log("in mint function");
     const imagehash = await hashImage(imageFile, name);
     console.log("image url", imagehash);
@@ -154,6 +151,7 @@ export default function Example() {
         console.log(id);
         const token_id = await contract.methods.getTokenId().call();
         console.log("token id after minting ", token_id);
+        addNft();
       }
     } catch (error) {
       console.error(error);

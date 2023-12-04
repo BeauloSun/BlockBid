@@ -19,7 +19,7 @@ export const Profile = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/getNfts");
+        const response = await axios.get("http://localhost:4988/getNfts");
         console.log(response.data);
 
         const names = response.data.map((item) => item.name);
