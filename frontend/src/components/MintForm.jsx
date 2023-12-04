@@ -4,19 +4,15 @@ import nftcontract from "../backend-constants/nft721.json";
 import { useState } from "react";
 import Web3 from "web3";
 import { pinFileToIPFS, pinJsonToIPFS } from "../utils/pinata";
+import { getContract } from "../utils/getNft721";
 import axios from "axios";
 export default function Example() {
-  const [contract, setContract] = useState(null);
+  // all the states
   const [imageFile, setImageFile] = useState(null);
-  // const [imageURL, setImageUrl] = useState(null);
-  // const [jsonUrl, setJsonUrl] = useState(null);
-
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
-
   const [nameError, setNameError] = useState(false);
   const [descriptionError, setDescriptionError] = useState(false);
 
@@ -73,37 +69,6 @@ export default function Example() {
       setMessage("Submission failed!");
       setMessageClass("font-bold text-lg text-red-600");
     }
-  };
-
-  const getContract = async () => {
-    return new Promise(async (resolve, reject) => {
-      const contractAddress = nftcontract.address;
-      const contractAbi = nftcontract.abi;
-      if (window.ethereum !== "undefined") {
-        if (window.localStorage.getItem("currentAddr") !== null) {
-          // getting the contract and setting the message sender to the address connected to the frontend
-          const web3 = new Web3(window.ethereum);
-          const mintcontract = new web3.eth.Contract(
-            contractAbi,
-            contractAddress
-          );
-
-          const token_id = await mintcontract.methods.getTokenId().call();
-
-          // checking if the contract is connected successfully
-          if (token_id !== null || token_id !== "undefined") {
-            resolve(mintcontract);
-          } else {
-            console.error("Not connected to smart contract");
-            reject("not connected to smart contract");
-          }
-        } else {
-          console.log("wallet not connected");
-        }
-      } else {
-        reject("Ethereum provider not found");
-      }
-    });
   };
 
   const storeFile = (event) => {
