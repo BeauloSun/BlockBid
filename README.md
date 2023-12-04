@@ -42,3 +42,9 @@ To deploy contract (in main folder)
 hh deploy --network ganache
 yarn hardhat deploy --network ganache
 ```
+
+Start Project
+
+```shell
+node start .js
+```

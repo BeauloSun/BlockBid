@@ -396,7 +396,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-./coverage
-./cache
+/coverage/
+/cache/
 .env
-./deployments
+/deployments/
+/frontend/src/backend-constants/
