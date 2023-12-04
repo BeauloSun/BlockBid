@@ -7,9 +7,11 @@ import nft6 from "../assets/nft6.jpg";
 import Wallet from "../components/Wallet";
 import Security from "../components/Security";
 import axios from "axios";
+import { getContract } from "../utils/getNft721";
 
 export const Profile = () => {
   const holdings = [nft2, nft3, nft6];
+  const [TokenIDs, setTokenIDs] = useState([]);
   const [activeTab, setActiveTab] = useState("holdings");
   const [images, setImages] = useState(holdings);
   const [name, setName] = useState([]);
@@ -17,10 +19,19 @@ export const Profile = () => {
   const [price, setPrice] = useState([]);
 
   useEffect(() => {
+    const getOwnerNfts = async () => {
+      const contract = await getContract();
+      const address = window.localStorage.getItem("currentAddr");
+      const Token_Ids = await contract.methods.getOwnerNFTs(address).call();
+      setTokenIDs(Token_Ids);
+    };
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:4988/getNfts");
-        console.log(response.data);
+        const response = await axios.get(
+          "http://localhost:4988/ownerNftNotOnSale",
+          TokenIDs
+        );
+        console.log("response from db", response.data);
 
         const names = response.data.map((item) => item.name);
         const descriptions = response.data.map((item) => item.description);
@@ -33,9 +44,16 @@ export const Profile = () => {
         console.error(error);
       }
     };
-
+    getOwnerNfts();
     fetchData();
   }, []);
+
+  const getOwnerNfts = async () => {
+    const contract = await getContract();
+    const address = window.localStorage.getItem("currentAddr");
+    const TokenIds = await contract.methods.getOwnerNFTs(address).call();
+    return TokenIds;
+  };
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
