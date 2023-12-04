@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CardC from "../components/CardC";
 
 import nft2 from "../assets/nft2.jpg";
@@ -6,11 +6,36 @@ import nft3 from "../assets/nft3.jpg";
 import nft6 from "../assets/nft6.jpg";
 import Wallet from "../components/Wallet";
 import Security from "../components/Security";
+import axios from "axios";
 
 export const Profile = () => {
   const holdings = [nft2, nft3, nft6];
   const [activeTab, setActiveTab] = useState("holdings");
   const [images, setImages] = useState(holdings);
+  const [name, setName] = useState([]);
+  const [description, setDescription] = useState([]);
+  const [price, setPrice] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/getNfts");
+        console.log(response.data);
+
+        const names = response.data.map((item) => item.name);
+        const descriptions = response.data.map((item) => item.description);
+        const prices = response.data.map((item) => item.price);
+
+        setName(names);
+        setDescription(descriptions);
+        setPrice(prices);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -88,7 +113,13 @@ export const Profile = () => {
               key={index}
               className="flex flex-col items-center py-4 hover:scale-105 duration-300"
             >
-              <CardC img_src={img_src} />
+              <CardC
+                img_src={img_src}
+                name={name[index]}
+                description={description[index]}
+                price={price[index]}
+                market={false}
+              />
             </div>
           ))}
         </div>

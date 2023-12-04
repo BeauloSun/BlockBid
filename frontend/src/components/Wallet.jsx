@@ -15,18 +15,23 @@ export default function Wallet() {
   useEffect(() => {
     if (window.ethereum) {
       const handler = function (accounts) {
-        // Time to reload your interface with accounts[0]!
         accountChangeHandler(accounts[0]);
       };
 
       window.ethereum.on("accountsChanged", handler);
-
-      // Cleanup function
-      return () => {
-        window.ethereum.removeListener("accountsChanged", handler);
-      };
+    }
+    const cur_acc = window.localStorage.getItem("currentAddr");
+    if (cur_acc !== null && cur_acc !== "undefined") {
+      accountChangeHandler(cur_acc);
     }
   }, []);
+
+  useEffect(() => {
+    const cur_acc = window.localStorage.getItem("currentAddr");
+    if (cur_acc === "undefined") {
+      disconnectWallet();
+    }
+  }, [data]);
 
   const btnHandler = () => {
     if (window.ethereum) {
@@ -48,6 +53,7 @@ export default function Wallet() {
       balance: null,
       isConnected: true,
     });
+    window.localStorage.setItem("currentAddr", account);
   };
 
   const disconnectWallet = () => {
@@ -56,6 +62,7 @@ export default function Wallet() {
       balance: null,
       isConnected: false,
     });
+    window.localStorage.removeItem("currentAddr");
   };
 
   return (
