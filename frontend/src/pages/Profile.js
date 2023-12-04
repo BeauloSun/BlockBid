@@ -8,36 +8,20 @@ import { getContract } from "../utils/getNft721";
 
 export const Profile = () => {
   // const holdings = [nft2, nft3, nft6];
-  const [TokenIDs, setTokenIDs] = useState([]);
   const [activeTab, setActiveTab] = useState("holdings");
   const [images, setImages] = useState([]);
   const [name, setName] = useState([]);
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
-  const [userAddress, setUserAddress] = useState("");
+  const [tokens, setTokens] = useState([]);
 
   useEffect(() => {
-    const getOwnerNfts = async () => {
-      const contract = await getContract();
-      const address = window.localStorage.getItem("currentAddr");
-
-      const Token_Ids = await contract.methods.getOwnerNFTs(address).call();
-      const tokens_integers = [];
-      for (const bigint of Token_Ids) {
-        tokens_integers.push(Number(bigint));
-      }
-      setTokenIDs(tokens_integers);
-      setUserAddress(address);
-
-      console.log("tokens ", tokens_integers);
-      console.log("address ", userAddress);
-    };
-    const fetchData = async () => {
+    const fetchData = async (tokens) => {
       try {
-        console.log("inside db request ", TokenIDs);
+        console.log("inside db request ", tokens);
         const response = await axios.get(
           "http://localhost:4988/ownerNftNotOnSale",
-          { TokenIDs: TokenIDs }
+          { TokenIDs: tokens }
         );
         console.log("response from db", response.data);
 
@@ -54,15 +38,30 @@ export const Profile = () => {
         console.error(error);
       }
     };
-    getOwnerNfts();
-    fetchData();
+    setOwnerTokens();
+    fetchData(tokens);
   }, []);
 
   const getOwnerNfts = async () => {
-    const contract = await getContract();
-    const address = window.localStorage.getItem("currentAddr");
-    const TokenIds = await contract.methods.getOwnerNFTs(address).call();
-    return TokenIds;
+    return new Promise(async (resolve, reject) => {
+      const contract = await getContract();
+      const address = window.localStorage.getItem("currentAddr");
+      const tokens = await contract.methods.getOwnerNFTs(address).call();
+      const tokens_integers = [];
+      for (const bigint of tokens) {
+        tokens_integers.push(Number(bigint));
+      }
+      if (tokens_integers.length > 0) {
+        resolve(tokens_integers);
+      } else {
+        reject("no nft owned");
+      }
+    });
+  };
+
+  const setOwnerTokens = async () => {
+    const tokens = await getOwnerNfts();
+    setTokens(tokens);
   };
 
   const handleTabClick = (tab) => {
