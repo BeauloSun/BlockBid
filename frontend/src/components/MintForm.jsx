@@ -1,11 +1,10 @@
 import nft_mint from "../assets/minting_nft.png";
 import { PhotoIcon } from "@heroicons/react/24/solid";
-import nftcontract from "../backend-constants/nft721.json";
 import { useState } from "react";
-import Web3 from "web3";
 import { pinFileToIPFS, pinJsonToIPFS } from "../utils/pinata";
 import { getContract } from "../utils/getNft721";
 import axios from "axios";
+
 export default function Example() {
   // all the states
   const [imageFile, setImageFile] = useState(null);
@@ -16,16 +15,14 @@ export default function Example() {
   const [nameError, setNameError] = useState(false);
   const [descriptionError, setDescriptionError] = useState(false);
 
-  const addNft = async () => {
-    // ------------------------validation------------------------
-
+  const formValid = async () => {
     setNameError(!name.trim() || name.trim().length > 50);
     setDescriptionError(!description.trim() || description.trim().length > 100);
 
     if (!name.trim() || !description.trim()) {
       setMessage("Name and Description cannot be empty");
       setMessageClass("font-bold text-lg text-red-600");
-      return;
+      return false;
     }
 
     if (name.trim().length > 50 || description.trim().length > 100) {
@@ -33,25 +30,23 @@ export default function Example() {
         "Name cannot be longer than 50 characters\nDescription cannot be longer than 100 characters"
       );
       setMessageClass("font-bold text-lg text-red-600");
-      return;
+      return false;
     }
-    // ------------------------validation------------------------
+    return true;
+  };
 
+  const addNft = async (imageuri, walletaddr, imagehash, tokenid) => {
     const nftData = {
-      nft_address: "0x1234asudhieo292903903jr23iorf",
-      token_id: 1,
+      token_id: tokenid,
       name,
       description,
-      image_uri: "ipfs://example.com/image.jpg",
-      price: 3.2,
-      owner: "0x567845a46312354aw1e",
-      on_auction: true,
+      image_uri: imageuri,
+      image_hash: imagehash,
+      price: 0,
+      owner: walletaddr,
+      on_auction: false,
       on_sale: false,
-      bids: {
-        JS: 2.5,
-        SG: 3.6,
-        BM: 2.8,
-      },
+      bids: {},
     };
 
     try {
@@ -59,9 +54,9 @@ export default function Example() {
         "http://localhost:4988/addNfts",
         nftData
       );
-      console.log(response.data);
       setName("");
       setDescription("");
+      setImageFile(null);
       setMessage("Submission successful!");
       setMessageClass("font-bold text-lg text-[#48f9ff]");
     } catch (error) {
@@ -76,7 +71,7 @@ export default function Example() {
     setImageFile(file);
   };
 
-  const hashImage = async (file, name) => {
+  const pinata_Image = async (file, name) => {
     try {
       const response = await pinFileToIPFS(file);
       const pinataURL =
@@ -87,7 +82,7 @@ export default function Example() {
     }
   };
 
-  const hasJson = async (name, description, imagehash) => {
+  const pinata_Json = async (name, description, imagehash) => {
     const jsonBody = {
       imageHash: imagehash,
       name: name,
@@ -101,31 +96,31 @@ export default function Example() {
 
   const mintNFT = async (e) => {
     e.preventDefault();
+    if (formValid()) {
+      try {
+        const contract = await getContract();
+        if (contract !== null) {
+          if (window.localStorage.getItem("currentAddr") !== null) {
+            // get the image and json hashes
+            const imageuri = await pinata_Image(imageFile, name);
+            const jsonhash = await pinata_Json(name, description, imageuri);
 
-    try {
-      const contract = await getContract();
-      if (contract !== null) {
-        if (window.localStorage.getItem("currentAddr") !== null) {
-          // get the image and json hashes
-          const imagehash = await hashImage(imageFile, name);
-          const jsonhash = await hasJson(name, description, imagehash);
+            const address = window.localStorage.getItem("currentAddr");
 
-          const address = window.localStorage.getItem("currentAddr");
-
-          const id = await contract.methods
-            .mintNft(address, jsonhash)
-            .send({ from: address });
-          console.log(id);
-          const token_id = await contract.methods.getTokenId().call();
-          console.log("token id after minting ", token_id);
-          addNft();
-          window.location.href = "/marketplace";
-        } else {
-          console.error("wallet is not connected");
+            const token_id = await contract.methods.getTokenId().call();
+            await contract.methods
+              .mintNft(address, jsonhash)
+              .send({ from: address });
+            const imagehash = "image_hash_placeholder";
+            addNft(imageuri, address, imagehash, token_id.toString());
+            // window.location.href = "/marketplace";
+          } else {
+            console.error("wallet is not connected");
+          }
         }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
     }
   };
 
