@@ -1,9 +1,6 @@
 const mongoose = require("mongoose");
 
 const NftSchema = new mongoose.Schema({
-  nft_address: {
-    type: String,
-  },
   token_id: {
     type: Number,
   },
@@ -14,6 +11,9 @@ const NftSchema = new mongoose.Schema({
     type: String,
   },
   image_uri: {
+    type: String,
+  },
+  image_hash: {
     type: String,
   },
   price: {
