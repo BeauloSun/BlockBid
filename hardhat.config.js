@@ -2,6 +2,7 @@ require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-deploy");
 require("ethers");
 require("@nomicfoundation/hardhat-ethers");
+require("dotenv").config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -17,9 +18,8 @@ module.exports = {
     },
     ganache: {
       url: "HTTP://127.0.0.1:7545",
-      accounts: [
-        "0xb2a8a0ce65df5e5eb5df35b9ce2c57384c17ed659802876218a6d469256c0b23",
-      ],
+      accounts: [process.env.PRIVATE_ADDRESS],
+      chainId: 1337,
     },
   },
   namedAccounts: {

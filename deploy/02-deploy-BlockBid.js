@@ -43,10 +43,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   }
 
   const chainId = network.config.chainId;
-  if (
-    !developmentChains.includes(network.name) &&
-    process.env.ETHERSCAN_API_KEY
-  ) {
+  if (!developmentChains.includes(chainId) && process.env.ETHERSCAN_API_KEY) {
     log("verifying the contract");
     await verify(BlockBid.address, args);
   }
