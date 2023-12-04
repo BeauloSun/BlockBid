@@ -10,10 +10,10 @@ import axios from "axios";
 import { getContract } from "../utils/getNft721";
 
 export const Profile = () => {
-  const holdings = [nft2, nft3, nft6];
+  // const holdings = [nft2, nft3, nft6];
   const [TokenIDs, setTokenIDs] = useState([]);
   const [activeTab, setActiveTab] = useState("holdings");
-  const [images, setImages] = useState(holdings);
+  const [images, setImages] = useState([]);
   const [name, setName] = useState([]);
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
@@ -23,7 +23,11 @@ export const Profile = () => {
       const contract = await getContract();
       const address = window.localStorage.getItem("currentAddr");
       const Token_Ids = await contract.methods.getOwnerNFTs(address).call();
-      setTokenIDs(Token_Ids);
+      const tokens_integers = [];
+      for (const bigint of Token_Ids) {
+        tokens_integers.push(Number(bigint));
+      }
+      setTokenIDs(tokens_integers);
     };
     const fetchData = async () => {
       try {
@@ -36,10 +40,12 @@ export const Profile = () => {
         const names = response.data.map((item) => item.name);
         const descriptions = response.data.map((item) => item.description);
         const prices = response.data.map((item) => item.price);
+        const images = response.data.map((item) => item.image_uri);
 
         setName(names);
         setDescription(descriptions);
         setPrice(prices);
+        setImages(images);
       } catch (error) {
         console.error(error);
       }
