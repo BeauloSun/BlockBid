@@ -22,16 +22,18 @@ app.get("/getNfts", (req, res) => {
       res.json(err);
     });
 });
-app.get("/ownerNftNotOnSale", (req, res) => {
-  const tokenIds = req.body.TokenIDs;
-  console.log(tokenIds);
-  NftModel.find({ token_id: { $in: tokenIds }, on_sale: false })
-    .then(function (nfts) {
-      res.json(nfts);
-    })
-    .catch(function (err) {
-      res.json(err);
+
+app.get("/getNftOwned", async (req, res) => {
+  const tokenIds = req.body.tokenIds;
+  try {
+    const nfts = await NftModel.find({
+      token_id: { $in: tokenIds },
+      on_sale: false,
     });
+    res.json(nfts);
+  } catch (err) {
+    res.json(err);
+  }
 });
 
 app.post("/addNfts", async (req, res) => {
