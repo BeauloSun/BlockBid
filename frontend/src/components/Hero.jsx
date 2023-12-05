@@ -34,9 +34,11 @@ const Hero = () => {
         <p className="md:text-2xl text-xl font-bold text-[#46ff65]">
           Connect to your own crypto wallet, Start trading today to earn!
         </p>
-        <button className="bg-[#fff537] w-[200px] rounded-md font-medium my-6 mx-auto py-3 text-black">
-          Explore Marketplace
-        </button>
+        <Link to="/marketplace">
+          <button className="bg-[#fff537] w-[200px] rounded-md font-medium my-6 mx-auto py-3 text-black">
+            Explore Marketplace
+          </button>
+        </Link>
         <Link to="/mint">
           <button className="bg-[#bc37ff] w-[200px] rounded-md font-medium my-6 mx-auto py-3 text-black">
             Mint Your Own NFT

@@ -1,4 +1,5 @@
 import nft_mint from "../assets/minting_nft.png";
+import bg from "../assets/mint_bg.jpg";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import { pinFileToIPFS, pinJsonToIPFS } from "../utils/pinata";
@@ -130,8 +131,16 @@ export default function Example() {
 
   return (
     <div>
-      <section className="bg-[#0f103e] min-h-screen flex items-center justify-center">
-        <div className="bg-[#724fff] flex rounded-2xl shadow-lg max-w-[1100px] p-5 items-center">
+      <section
+        className="bg-[#1e1e1e] min-h-screen flex items-center justify-center"
+        style={{
+          backgroundImage: `url(${bg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <div className="bg-slate-400 bg-opacity-50 flex rounded-2xl shadow-lg max-w-[1100px] p-5 items-center">
           <div className="md:w-1/2 px-6 md:px-10">
             <h2 className="font-bold text-8xl text-[#ffffff] font-shadows">
               Minting
@@ -202,7 +211,7 @@ export default function Example() {
               <p className={messageClass}>{message}</p>
               <button
                 type="submit"
-                className="bg-[#440074] flex justify-center items-center w-full rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
+                className="bg-slate-800 flex justify-center items-center w-full rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
                 onClick={mintNFT}
               >
                 {buttonLoading ? (
@@ -236,7 +245,7 @@ export default function Example() {
             </form>
           </div>
           <div className="md:block hidden w-1/2">
-            <img alt="" className="rounded-2xl" src={nft_mint} />
+            <img alt="" className="rounded-2xl opacity-80" src={nft_mint} />
           </div>
         </div>
       </section>

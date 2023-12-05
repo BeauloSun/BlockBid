@@ -1,12 +1,21 @@
 import { useLocation } from "react-router-dom";
+import bg from "../assets/bid_bg.jpg";
 
 export default function Bid() {
   const location = useLocation();
   const { img_src, name, description, price } = location.state;
 
   return (
-    <section class="bg-[#0f103e] min-h-screen flex items-center justify-center">
-      <div class="bg-[#724fff] flex flex-col rounded-2xl shadow-lg max-w-[1100px] p-5 items-center">
+    <section
+      class="bg-[#1e1e1e] min-h-screen flex items-center justify-center"
+      style={{
+        backgroundImage: `url(${bg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <div class="bg-slate-400 flex flex-col rounded-2xl shadow-lg py-10 max-w-[1100px] p-5 items-center bg-opacity-50">
         <div class="w-full text-center">
           <h2 class="text-white font-bold text-8xl pb-10">Place your bid</h2>
         </div>
@@ -34,11 +43,11 @@ export default function Bid() {
                 placeholder="Enter your bid"
               />
 
-              <button class="bg-[#440074] rounded-xl text-3xl font-bold text-white py-2 hover:scale-105 duration-300">
+              <button class="bg-slate-800 rounded-xl text-3xl font-bold text-white py-2 hover:scale-105 duration-300">
                 Place Bid
               </button>
 
-              <button class="bg-[#440074] rounded-xl text-3xl font-bold text-white py-2 hover:scale-105 duration-300">
+              <button class="bg-slate-800 rounded-xl text-3xl font-bold text-white py-2 hover:scale-105 duration-300">
                 Buy Out
               </button>
             </form>
