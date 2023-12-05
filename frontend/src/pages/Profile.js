@@ -21,9 +21,8 @@ export const Profile = () => {
   const fetchData = async () => {
     try {
       const tokens = await getOwnerNfts();
-      console.log("inside db request ", tokens);
-      const response = await axios.get("http://localhost:4988/getOwnedNft", {
-        TokenIDs: tokens,
+      const response = await axios.post("http://localhost:4988/getOwnedNft", {
+        tokenIds: tokens,
       });
       console.log("response from db", response.data);
 

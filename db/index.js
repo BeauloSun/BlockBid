@@ -23,7 +23,7 @@ app.get("/getNfts", (req, res) => {
     });
 });
 
-app.get("/getOwnedNft", async (req, res) => {
+app.post("/getOwnedNft", async (req, res) => {
   const tokenIds = req.body.tokenIds;
   try {
     const nfts = await NftModel.find({
