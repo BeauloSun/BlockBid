@@ -5,6 +5,8 @@ import { useState } from "react";
 import { pinFileToIPFS, pinJsonToIPFS } from "../utils/pinata";
 import { getContract } from "../utils/getNft721";
 import axios from "axios";
+import { DotLottiePlayer } from "@dotlottie/react-player";
+import "@dotlottie/react-player/dist/index.css";
 
 export default function Example() {
   // all the states
@@ -16,6 +18,7 @@ export default function Example() {
   const [nameError, setNameError] = useState(false);
   const [descriptionError, setDescriptionError] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
+  const [pageLoading, setpageLoading] = useState(false);
 
   const formValid = async () => {
     setNameError(!name.trim() || name.trim().length > 50);
@@ -100,6 +103,7 @@ export default function Example() {
     if (await formValid()) {
       console.log("valid");
       try {
+        setpageLoading(true);
         const contract = await getContract();
         if (contract !== null) {
           if (window.localStorage.getItem("currentAddr") !== null) {
@@ -116,11 +120,13 @@ export default function Example() {
             const imagehash = "image_hash_placeholder";
             addNft(imageuri, address, imagehash, token_id.toString());
             setbuttonLoading(false);
+            setpageLoading(false);
           } else {
             console.error("wallet is not connected");
           }
         }
       } catch (error) {
+        setpageLoading(false);
         console.error(error);
       }
     }
@@ -140,6 +146,20 @@ export default function Example() {
           backgroundRepeat: "no-repeat",
         }}
       >
+        {pageLoading ? (
+          <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="w-[150px] h-[150px]">
+              <DotLottiePlayer
+                src="https://lottie.host/8a351e58-efa2-424e-a738-bf8a7ad5c16e/nyVDUynd67.lottie"
+                autoplay
+                loop
+                playMode="bounce"
+              />
+            </div>
+          </div>
+        ) : (
+          <span></span>
+        )}
         <div className="bg-slate-400 bg-opacity-50 flex rounded-2xl shadow-lg max-w-[1100px] p-5 items-center">
           <div className="md:w-1/2 px-6 md:px-10">
             <h2 className="font-bold text-8xl text-[#ffffff] font-shadows">

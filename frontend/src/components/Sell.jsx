@@ -1,9 +1,21 @@
 import { useLocation } from "react-router-dom";
+import { useState } from "react";
 import bg from "../assets/sell_bg.jpg";
+import { DotLottiePlayer } from "@dotlottie/react-player";
+import "@dotlottie/react-player/dist/index.css";
 
 export default function Sell() {
   const location = useLocation();
   const { img_src, name, description } = location.state;
+  const [loadingController, setloadingController] = useState(false);
+
+  const buttonHandler = async (e) => {
+    e.preventDefault();
+    setloadingController(true);
+    setTimeout(() => {
+      setloadingController(false);
+    }, 1500);
+  };
   return (
     <section
       class="bg-[#1e1e1e] min-h-screen flex items-center justify-center"
@@ -14,6 +26,21 @@ export default function Sell() {
         backgroundRepeat: "no-repeat",
       }}
     >
+      {loadingController ? (
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div class="w-[150px] h-[150px]">
+            <DotLottiePlayer
+              src="https://lottie.host/8a351e58-efa2-424e-a738-bf8a7ad5c16e/nyVDUynd67.lottie"
+              autoplay
+              loop
+              playMode="bounce"
+            />
+          </div>
+        </div>
+      ) : (
+        <span></span>
+      )}
+
       <div class="bg-slate-400 bg-opacity-50 flex flex-col rounded-2xl shadow-lg max-w-[1100px] p-5 items-center">
         <div class="w-full text-center">
           <h2 class="text-white font-bold text-8xl pb-10">Sell your NFT</h2>
@@ -39,7 +66,10 @@ export default function Sell() {
                 placeholder="Enter price you want to sell for"
               />
 
-              <button class="bg-slate-800 rounded-xl text-3xl font-bold text-white py-2 hover:scale-105 duration-300">
+              <button
+                onClick={buttonHandler}
+                class="bg-slate-800 rounded-xl text-3xl font-bold text-white py-2 hover:scale-105 duration-300"
+              >
                 Sell !
               </button>
             </form>
