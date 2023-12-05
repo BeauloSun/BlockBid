@@ -14,6 +14,7 @@ export default function Example() {
   const [messageClass, setMessageClass] = useState("");
   const [nameError, setNameError] = useState(false);
   const [descriptionError, setDescriptionError] = useState(false);
+  const [buttonLoading, setbuttonLoading] = useState(false);
 
   const formValid = async () => {
     setNameError(!name.trim() || name.trim().length > 50);
@@ -32,6 +33,7 @@ export default function Example() {
       setMessageClass("font-bold text-lg text-red-600");
       return false;
     }
+    setMessage("");
     return true;
   };
 
@@ -50,10 +52,7 @@ export default function Example() {
     };
 
     try {
-      const response = await axios.post(
-        "http://localhost:4988/addNfts",
-        nftData
-      );
+      await axios.post("http://localhost:4988/addNfts", nftData);
       setName("");
       setDescription("");
       setImageFile(null);
@@ -96,7 +95,9 @@ export default function Example() {
 
   const mintNFT = async (e) => {
     e.preventDefault();
-    if (formValid()) {
+    setbuttonLoading(true);
+    if (await formValid()) {
+      console.log("valid");
       try {
         const contract = await getContract();
         if (contract !== null) {
@@ -113,7 +114,7 @@ export default function Example() {
               .send({ from: address });
             const imagehash = "image_hash_placeholder";
             addNft(imageuri, address, imagehash, token_id.toString());
-            // window.location.href = "/marketplace";
+            setbuttonLoading(false);
           } else {
             console.error("wallet is not connected");
           }
@@ -122,6 +123,9 @@ export default function Example() {
         console.error(error);
       }
     }
+    setTimeout(() => {
+      setbuttonLoading(false);
+    }, 500);
   };
 
   return (
@@ -198,10 +202,36 @@ export default function Example() {
               <p className={messageClass}>{message}</p>
               <button
                 type="submit"
-                className="bg-[#440074] rounded-xl text-3xl font-bold text-white py-2 hover:scale-105 duration-300"
+                className="bg-[#440074] flex justify-center items-center w-full rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
                 onClick={mintNFT}
               >
-                Mint !
+                {buttonLoading ? (
+                  <>
+                    <svg
+                      class="mr-5 h-6 w-6 animate-spin text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        class="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                      ></circle>
+                      <path
+                        class="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    <span> Processing... </span>
+                  </>
+                ) : (
+                  "Mint !"
+                )}
               </button>
             </form>
           </div>
