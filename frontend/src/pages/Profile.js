@@ -13,55 +13,47 @@ export const Profile = () => {
   const [name, setName] = useState([]);
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
-  const [tokens, setTokens] = useState([]);
 
   useEffect(() => {
-    const fetchData = async (tokens) => {
-      try {
-        console.log("inside db request ", tokens);
-        const response = await axios.get(
-          "http://localhost:4988/ownerNftNotOnSale",
-          { TokenIDs: tokens }
-        );
-        console.log("response from db", response.data);
-
-        const names = response.data.map((item) => item.name);
-        const descriptions = response.data.map((item) => item.description);
-        const prices = response.data.map((item) => item.price);
-        const images = response.data.map((item) => item.image_uri);
-
-        setName(names);
-        setDescription(descriptions);
-        setPrice(prices);
-        setImages(images);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    setOwnerTokens();
-    fetchData(tokens);
+    fetchData();
   }, []);
 
-  const getOwnerNfts = async () => {
-    return new Promise(async (resolve, reject) => {
-      const contract = await getContract();
-      const address = window.localStorage.getItem("currentAddr");
-      const tokens = await contract.methods.getOwnerNFTs(address).call();
-      const tokens_integers = [];
-      for (const bigint of tokens) {
-        tokens_integers.push(Number(bigint));
-      }
-      if (tokens_integers.length > 0) {
-        resolve(tokens_integers);
-      } else {
-        reject("no nft owned");
-      }
-    });
+  const fetchData = async () => {
+    try {
+      const tokens = await getOwnerNfts();
+      console.log("inside db request ", tokens);
+      const response = await axios.get("http://localhost:4988/getOwnedNft", {
+        TokenIDs: tokens,
+      });
+      console.log("response from db", response.data);
+
+      const names = response.data.map((item) => item.name);
+      const descriptions = response.data.map((item) => item.description);
+      const prices = response.data.map((item) => item.price);
+      const images = response.data.map((item) => item.image_uri);
+
+      setName(names);
+      setDescription(descriptions);
+      setPrice(prices);
+      setImages(images);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const setOwnerTokens = async () => {
-    const tokens = await getOwnerNfts();
-    setTokens(tokens);
+  const getOwnerNfts = async () => {
+    const contract = await getContract();
+    const address = window.localStorage.getItem("currentAddr");
+    const tokens = await contract.methods.getOwnerNFTs(address).call();
+    const tokens_integers = [];
+    for (const bigint of tokens) {
+      tokens_integers.push(Number(bigint));
+    }
+    if (tokens_integers.length > 0) {
+      return tokens_integers;
+    } else {
+      console.error("no nft owned");
+    }
   };
 
   const handleTabClick = (tab) => {
