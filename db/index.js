@@ -36,6 +36,11 @@ app.post("/getOwnedNft", async (req, res) => {
   }
 });
 
+app.get("/getNftImageHashes", async (req, res) => {
+  const users = await NftModel.find({}, { image_hash: 1 });
+  res.json(users);
+});
+
 app.post("/addNfts", async (req, res) => {
   const nft = req.body;
   const newNft = new NftModel(nft);

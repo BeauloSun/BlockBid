@@ -7,6 +7,7 @@ import { getContract } from "../utils/getNft721";
 import axios from "axios";
 import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
+import { getImageHash } from "../utils/imageHash";
 
 export default function Example() {
   // all the states
@@ -20,7 +21,7 @@ export default function Example() {
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [pageLoading, setpageLoading] = useState(false);
 
-  const formValid = async () => {
+  const formValid = async (computeImageHash) => {
     setNameError(!name.trim() || name.trim().length > 50);
     setDescriptionError(!description.trim() || description.trim().length > 100);
 
@@ -38,6 +39,21 @@ export default function Example() {
       return false;
     }
     setMessage("");
+
+    // checking if the image already exists in the data base
+    let hashDataList = [];
+    const hashDataFromDatabase = await axios.get(
+      "http://localhost:4988/getNftImageHashes"
+    );
+    for (let i = 0; i < hashDataFromDatabase.data.length; i++) {
+      hashDataList.push(hashDataFromDatabase.data[i].image_hash);
+    }
+
+    if (hashDataList.includes(computeImageHash)) {
+      console.log("image hash already exists");
+      return false;
+    }
+
     return true;
   };
 
@@ -100,7 +116,8 @@ export default function Example() {
   const mintNFT = async (e) => {
     e.preventDefault();
     setbuttonLoading(true);
-    if (await formValid()) {
+    const imagehash = getImageHash(imageFile);
+    if (await formValid(imagehash)) {
       console.log("valid");
       try {
         setpageLoading(true);
@@ -117,7 +134,7 @@ export default function Example() {
             await contract.methods
               .mintNft(address, jsonhash)
               .send({ from: address });
-            const imagehash = "image_hash_placeholder";
+
             addNft(imageuri, address, imagehash, token_id.toString());
             setbuttonLoading(false);
             setpageLoading(false);
