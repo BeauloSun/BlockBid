@@ -76,9 +76,16 @@ export default function Example() {
     return true;
   };
 
-  const addNft = async (imageuri, walletaddr, imagehash, tokenid) => {
+  const addNft = async (
+    imageuri,
+    walletaddr,
+    imagehash,
+    tokenid,
+    nftAddress
+  ) => {
     const nftData = {
       token_id: tokenid,
+      nft_address: nftAddress,
       name,
       description,
       image_uri: imageuri,
@@ -154,7 +161,13 @@ export default function Example() {
               .mintNft(address, jsonhash)
               .send({ from: address });
 
-            addNft(imageuri, address, currentImageHash, token_id.toString());
+            addNft(
+              imageuri,
+              address,
+              currentImageHash,
+              token_id.toString(),
+              contract.options.address
+            );
             handleDeleteImage();
             setbuttonLoading(false);
             setpageLoading(false);

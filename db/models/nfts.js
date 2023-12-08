@@ -4,6 +4,9 @@ const NftSchema = new mongoose.Schema({
   token_id: {
     type: Number,
   },
+  nft_address: {
+    type: String,
+  },
   name: {
     type: String,
   },

@@ -11,6 +11,8 @@ export const Profile = () => {
   const [activeTab, setActiveTab] = useState("holdings");
   const [images, setImages] = useState([]);
   const [name, setName] = useState([]);
+  const [tokenIds, setTokenIds] = useState([]);
+  const [nftAddress, setNftAddress] = useState([]);
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
 
@@ -24,17 +26,20 @@ export const Profile = () => {
       const response = await axios.post("http://localhost:4988/getOwnedNft", {
         tokenIds: tokens,
       });
-      console.log("response from db", response.data);
 
       const names = response.data.map((item) => item.name);
       const descriptions = response.data.map((item) => item.description);
       const prices = response.data.map((item) => item.price);
       const images = response.data.map((item) => item.image_uri);
+      const tokenids = response.data.map((item) => item.token_id);
+      const nftAddresses = response.data.map((item) => item.nft_address);
 
       setName(names);
       setDescription(descriptions);
       setPrice(prices);
       setImages(images);
+      setNftAddress(nftAddress);
+      setTokenIds(tokenIds);
     } catch (error) {
       console.error(error);
     }
