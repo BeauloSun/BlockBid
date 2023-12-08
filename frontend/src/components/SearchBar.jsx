@@ -1,7 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const SearchBar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -48,6 +63,7 @@ const SearchBar = () => {
         <div
           id="dropdown"
           style={dropdownStyle}
+          ref={dropdownRef}
           className={`z-10 ${
             isOpen ? "block" : "hidden"
           } bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700`}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import logo from "../assets/logo.svg";
 import SearchBar from "./SearchBar.jsx";
@@ -7,10 +7,27 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
+  const navRef = useRef(null);
 
   const handleNav = () => {
     setNav(!nav);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (navRef.current && !navRef.current.contains(event.target)) {
+        setNav(false);
+      }
+    };
+
+    // Bind the event listener
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [navRef]);
+
   return (
     <div className="grid grid-cols-3 items-center h-24 max-w-[1800px] mx-auto px-4 text-white bg-black">
       <Link to="/" className="justify-self-start">
@@ -49,6 +66,7 @@ const Navbar = () => {
         {nav ? <AiOutlineClose size={35} /> : <AiOutlineMenu size={35} />}
       </div>
       <ul
+        ref={navRef}
         className={
           nav
             ? "flex flex-col fixed right-0 top-4 w-[30%] h-full border-r border-r-gray-900 bg-[#000300] transition-transform duration-500 ease-in-out transform translate-x-0 z-40"
