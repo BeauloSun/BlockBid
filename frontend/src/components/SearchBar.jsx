@@ -40,7 +40,7 @@ const SearchBar = () => {
           onClick={toggleDropdown}
           id="dropdown-button"
           data-dropdown-toggle="dropdown"
-          className="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-100 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-yellow-400 dark:bg-gray-800 dark:hover:bg-gray-800 dark:focus:ring-green-300 dark:text-white dark:border-gray-500"
+          className="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-slate-400 border border-white rounded-s-lg focus:ring-2 focus:outline-none focus:ring-green-300"
           type="button"
         >
           All categories{" "}
@@ -94,7 +94,7 @@ const SearchBar = () => {
           <input
             type="search"
             id="search-dropdown"
-            className="block p-2.5 w-full z-20 text-m text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-200 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-green-300"
+            className="block p-2.5 w-full z-20 text-m text-gray-900 bg-gray-50 rounded-e-lg border-white border-s-2 border dark:bg-gray-700 dark:border-s-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:border-green-300"
             placeholder="Search the marketplace..."
             required
           />

@@ -136,9 +136,7 @@ export default function Example() {
       setbuttonLoading(false);
       return;
     }
-    console.log("file: ", imageFile);
     const currentImageHash = await getImageHash(imageFile);
-    console.log("hash: ", currentImageHash);
     if (await formValid(currentImageHash)) {
       try {
         setpageLoading(true);
