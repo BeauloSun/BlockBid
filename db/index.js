@@ -45,6 +45,32 @@ app.post("/getOwnedNft", async (req, res) => {
   }
 });
 
+app.get("/getNftsOnSale", async (req, res) => {
+  const tokenIds = req.body.tokenIds;
+  try {
+    const nfts = await NftModel.find({
+      token_id: { $in: tokenIds },
+    });
+    res.json(nfts);
+  } catch (err) {
+    res.json(err);
+  }
+});
+
+app.put("/putNftInMarketplace", async (req, res) => {
+  const { token_id, nft_address, owner, price } = req.body;
+  try {
+    const nft = await NftModel.findOneAndUpdate(
+      { token_id, nft_address, owner },
+      { price, on_sale: true },
+      { new: true }
+    );
+    res.json(nft);
+  } catch (err) {
+    res.json(err);
+  }
+});
+
 app.get("/getNftImageHashes", async (req, res) => {
   const users = await NftModel.find({}, { image_hash: 1 });
   res.json(users);
