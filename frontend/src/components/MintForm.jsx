@@ -12,16 +12,31 @@ import { getImageHash } from "../utils/imageHash";
 export default function Example() {
   // all the states
   const [imageFile, setImageFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
+  const [duplicateNftImageMessage, setDuplicateNftImageMessage] = useState("");
+  const [duplicateNftImageMessageClass, setDuplicateNftImageMessageClass] =
+    useState("");
   const [nameError, setNameError] = useState(false);
   const [descriptionError, setDescriptionError] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [pageLoading, setpageLoading] = useState(false);
 
-  const formValid = async (computeImageHash) => {
+  const handleImageUpload = (e) => {
+    setImageFile(e.target.files[0]);
+    setPreviewImage(URL.createObjectURL(e.target.files[0]));
+  };
+
+  const handleDeleteImage = () => {
+    setImageFile(null);
+    setPreviewImage(null);
+    document.getElementById("file-upload").value = null;
+  };
+
+  const formValid = async (currentImageHash) => {
     setNameError(!name.trim() || name.trim().length > 50);
     setDescriptionError(!description.trim() || description.trim().length > 100);
 
@@ -49,10 +64,14 @@ export default function Example() {
       hashDataList.push(hashDataFromDatabase.data[i].image_hash);
     }
 
-    if (hashDataList.includes(computeImageHash)) {
-      console.log("image hash already exists");
+    if (hashDataList.includes(currentImageHash)) {
+      setDuplicateNftImageMessage(
+        "Image is already in the chain, use another one"
+      );
+      setDuplicateNftImageMessageClass("font-bold text-lg text-red-600");
       return false;
     }
+    setDuplicateNftImageMessage("");
 
     return true;
   };
@@ -85,11 +104,6 @@ export default function Example() {
     }
   };
 
-  const storeFile = (event) => {
-    const file = event.target.files[0];
-    setImageFile(file);
-  };
-
   const pinata_Image = async (file, name) => {
     try {
       const response = await pinFileToIPFS(file);
@@ -116,9 +130,16 @@ export default function Example() {
   const mintNFT = async (e) => {
     e.preventDefault();
     setbuttonLoading(true);
-    const imagehash = getImageHash(imageFile);
-    if (await formValid(imagehash)) {
-      console.log("valid");
+    if (imageFile === null) {
+      setMessage("Please upload an image.");
+      setMessageClass("font-bold text-lg text-red-600");
+      setbuttonLoading(false);
+      return;
+    }
+    console.log("file: ", imageFile);
+    const currentImageHash = await getImageHash(imageFile);
+    console.log("hash: ", currentImageHash);
+    if (await formValid(currentImageHash)) {
       try {
         setpageLoading(true);
         const contract = await getContract();
@@ -135,7 +156,8 @@ export default function Example() {
               .mintNft(address, jsonhash)
               .send({ from: address });
 
-            addNft(imageuri, address, imagehash, token_id.toString());
+            addNft(imageuri, address, currentImageHash, token_id.toString());
+            handleDeleteImage();
             setbuttonLoading(false);
             setpageLoading(false);
           } else {
@@ -189,8 +211,8 @@ export default function Example() {
             <form action="" className="flex flex-col gap-4">
               <input
                 className={`p-2 mt-8 rounded-xl border ${
-                  nameError ? "border-red-500 border-2" : ""
-                }`}
+                  nameError ? "border-red-500" : ""
+                } focus:outline-[#35fefe]`}
                 type="name"
                 name="name"
                 placeholder="Name"
@@ -199,9 +221,9 @@ export default function Example() {
               />
               <div className="relative">
                 <input
-                  className={`p-2 rounded-xl border w-full ${
-                    descriptionError ? "border-red-500 border-2" : ""
-                  }`}
+                  className={`p-2 rounded-xl border w-full${
+                    descriptionError ? "border-red-500" : ""
+                  } focus:outline-[#35fefe]`}
                   type="description"
                   name="description"
                   placeholder="Description"
@@ -219,14 +241,32 @@ export default function Example() {
                 </label>
                 <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white px-6 py-10">
                   <div className="text-center">
-                    <PhotoIcon
-                      className="mx-auto h-12 w-12 text-gray-300"
-                      aria-hidden="true"
-                    />
+                    {previewImage ? (
+                      <>
+                        <div className="flex justify-center py-3">
+                          <img
+                            src={previewImage}
+                            alt="Preview"
+                            className="rounded-xl max-w-[300px] max-h-[100px]"
+                          />
+                        </div>
+                        <button
+                          onClick={handleDeleteImage}
+                          className="text-red-500 font-bold hover:text-red-700"
+                        >
+                          X Delete Image
+                        </button>
+                      </>
+                    ) : (
+                      <PhotoIcon
+                        className="mx-auto h-12 w-12 text-gray-300"
+                        aria-hidden="true"
+                      />
+                    )}
                     <div className="mt-4 flex text-sm leading-6 text-white font-bold">
                       <label
                         htmlFor="file-upload"
-                        className="relative cursor-pointer rounded-md bg-blue-500 font-semibold text-white focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-red-500"
+                        className="relative cursor-pointer rounded-md bg-yellow-600 px-1 font-semibold text-white focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-[#66f587]"
                       >
                         <span>Upload a file</span>
                         <input
@@ -234,7 +274,7 @@ export default function Example() {
                           name="file-upload"
                           type="file"
                           className="sr-only"
-                          onChange={storeFile}
+                          onChange={handleImageUpload}
                         />
                       </label>
                       <p className="pl-1">or drag and drop</p>
@@ -246,6 +286,9 @@ export default function Example() {
                 </div>
               </div>
               <p className={messageClass}>{message}</p>
+              <p className={duplicateNftImageMessageClass}>
+                {duplicateNftImageMessage}
+              </p>
               <button
                 type="submit"
                 className="bg-slate-800 flex justify-center items-center w-full rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
