@@ -8,17 +8,25 @@ import {
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 
-const CardC = ({ img_src, name, description, price, market }) => {
+const CardC = ({
+  img_src,
+  name,
+  description,
+  price,
+  token_id,
+  nft_address,
+  market,
+}) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
     var state;
 
     if (market) {
-      state = { img_src, name, description, price };
+      state = { img_src, name, description, price, token_id, nft_address };
       navigate("/bid", { state });
     } else {
-      state = { img_src, name, description };
+      state = { img_src, name, description, token_id, nft_address };
       navigate("/sell", { state });
     }
   };

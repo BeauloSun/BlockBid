@@ -6,7 +6,7 @@ import "@dotlottie/react-player/dist/index.css";
 
 export default function Sell() {
   const location = useLocation();
-  const { img_src, name, description } = location.state;
+  const { img_src, name, description, token_id, nft_address } = location.state;
   const [loadingController, setloadingController] = useState(false);
 
   const buttonHandler = async (e) => {
@@ -54,18 +54,20 @@ export default function Sell() {
               {name}
             </h2>
             <p class="text-3xl mt-4 pt-4 text-[#ffffff]">{description}</p>
-            <p class="text-3xl mt-4 pt-4 text-[#ffffff]">
-              Time Left: Unlimited
-            </p>
 
             <form action="" class="flex flex-col gap-4">
+              <label
+                for="Price"
+                class="block text-left font-bold mt-8 text-white"
+              >
+                Set Your Price:
+              </label>
               <input
-                class="p-2 mt-8 rounded-xl border"
+                class="p-2 rounded-xl border"
                 type="number"
                 name="Price"
                 placeholder="Enter price you want to sell for"
               />
-
               <button
                 onClick={buttonHandler}
                 class="bg-slate-800 rounded-xl text-3xl font-bold text-white py-2 hover:scale-105 duration-300"

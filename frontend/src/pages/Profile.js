@@ -38,8 +38,8 @@ export const Profile = () => {
       setDescription(descriptions);
       setPrice(prices);
       setImages(images);
-      setNftAddress(nftAddress);
-      setTokenIds(tokenIds);
+      setNftAddress(nftAddresses);
+      setTokenIds(tokenids);
     } catch (error) {
       console.error(error);
     }
@@ -141,6 +141,8 @@ export const Profile = () => {
                 name={name[index]}
                 description={description[index]}
                 price={price[index]}
+                token_id={tokenIds[index]}
+                nft_address={nftAddress[index]}
                 market={false}
               />
             </div>
