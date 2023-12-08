@@ -24,9 +24,9 @@ contract BlockBid is ReentrancyGuard{
 
 
     // mapping of nftaddress => (tokenid  => (listing721)) so that we can access the listing price and owner from nftaddress and tokenid
-    mapping (address => mapping (uint256 => listing721)) nftListed721;
+    // mapping (address => mapping (uint256 => listing721)) nftListed721;
 
-    listing721[] tokensOnSale;
+    mapping (uint256 => listing721) nftListed721;
     
     
     // to check if an nft is owned by the person looking to do operations on it
@@ -40,15 +40,16 @@ contract BlockBid is ReentrancyGuard{
 
     // to check if the particular erc721 token is for sale or not
     modifier ForSale721(address nftAddress , uint tokenId){
-        listing721 memory displayed = nftListed721[nftAddress][tokenId];
+        // listing721 memory displayed = nftListed721[nftAddress][tokenId];
+        listing721 memory displayed = nftListed721[tokenId];
         if(displayed.price <= 0){
             revert NotForSale(nftAddress , tokenId);
         }
         _;
     }
 
-    function getListedNFT721 () public view returns (listing721[] memory){
-        return tokensOnSale;
+    function getListedNFT721 (uint256 _tokenId) public view returns (listing721 memory){
+        return nftListed721[_tokenId];
 
     }
 
@@ -65,14 +66,17 @@ contract BlockBid is ReentrancyGuard{
         }
 
         //Update the nft listing
-        nftListed721[_nftAddress][_tokenId] = listing721(_tokenId, payable(msg.sender) , price);
-        tokensOnSale.push(listing721(_tokenId, payable(msg.sender) , price));
+        // nftListed721[_nftAddress][_tokenId] = listing721(_tokenId, payable(msg.sender) , price);
+
+        
+        nftListed721[_tokenId] = listing721(_tokenId, payable(msg.sender) , price);
 
     }
 
     // to buy a NFT from the market place
     function buyNft721 (address _nftAddress , uint256 _tokenId) external payable ForSale721(_nftAddress , _tokenId) nonReentrant{
-        listing721 memory item721 = nftListed721[_nftAddress][_tokenId];
+        // listing721 memory item721 = nftListed721[_nftAddress][_tokenId];
+        listing721 memory item721 = nftListed721[_tokenId];
         if(msg.value < item721.price){
             revert PriceNotMatched(_nftAddress , _tokenId);
         }
@@ -81,7 +85,10 @@ contract BlockBid is ReentrancyGuard{
         require(success, "Transfer failed");
 
         // delete the nft from the market place
-        delete (nftListed721[_nftAddress][_tokenId]);
+        // delete (nftListed721[_nftAddress][_tokenId]);
+
+
+        delete (nftListed721[_tokenId]);
         IERC721(_nftAddress).safeTransferFrom(item721.owner, msg.sender, _tokenId);
 
         
