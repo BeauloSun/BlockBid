@@ -3,17 +3,49 @@ import { useState } from "react";
 import bg from "../assets/sell_bg.jpg";
 import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
+import { getMarketContract } from "../utils/getBlockBid";
+import { getContract } from "../utils/getNft721";
+import Web3 from "web3";
 
 export default function Sell() {
   const location = useLocation();
   const { img_src, name, description, token_id, nft_address } = location.state;
   const [loadingController, setloadingController] = useState(false);
   const [timeSetterbox, setTimeSetterbox] = useState(true);
+  const [price, setPrice] = useState(null);
   const [timeSetterboxStyle, setTimeSetterboxStyle] = useState("bg-gray-500");
 
   const buttonHandler = async (e) => {
     e.preventDefault();
     setloadingController(true);
+
+    //get the nft contract
+    const nftContract = await getContract();
+
+    // get the market place contract
+    const marketPlace = await getMarketContract();
+
+    // sell add the nft to the market place
+    const address = window.localStorage.getItem("currentAddr");
+
+    await nftContract.methods
+      .approve(marketPlace.options.address, token_id)
+      .send({ from: address });
+
+    const weiprice = Number(Web3.utils.toWei(price, "ether"));
+
+    console.log("price", weiprice);
+    console.log("address", nft_address);
+    console.log("token id", token_id);
+
+    await marketPlace.methods
+      .sellNft721(nftContract.options.address, Number(token_id), weiprice)
+      .send({ from: address });
+
+    // check if the nft was listted
+    const listing = await marketPlace.methods.getListedNFT721(token_id).call();
+    console.log(listing);
+
     setTimeout(() => {
       setloadingController(false);
     }, 1500);
@@ -123,6 +155,7 @@ export default function Sell() {
                 type="number"
                 name="Price"
                 placeholder="Enter price you want to sell for"
+                onChange={(e) => setPrice(e.target.value)}
               />
               <button
                 onClick={buttonHandler}
