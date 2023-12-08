@@ -17,6 +17,7 @@ contract BlockBid is ReentrancyGuard{
 
     // struct for storing the owners address and price of the listed nft
     struct listing721{
+        uint256 tokenId;
         address payable owner;
         uint256 price;
     }
@@ -24,6 +25,8 @@ contract BlockBid is ReentrancyGuard{
 
     // mapping of nftaddress => (tokenid  => (listing721)) so that we can access the listing price and owner from nftaddress and tokenid
     mapping (address => mapping (uint256 => listing721)) nftListed721;
+
+    listing721[] tokensOnSale;
     
     
     // to check if an nft is owned by the person looking to do operations on it
@@ -44,6 +47,11 @@ contract BlockBid is ReentrancyGuard{
         _;
     }
 
+    function getListedNFT721 () public view returns (listing721[] memory){
+        return tokensOnSale;
+
+    }
+
     // to list the nft on the marketplace
     function sellNft721 (address _nftAddress , uint256 _tokenId , uint256 price) external Owner721(_nftAddress , _tokenId ,msg.sender){
         if (price <= 0){
@@ -57,7 +65,8 @@ contract BlockBid is ReentrancyGuard{
         }
 
         //Update the nft listing
-        nftListed721[_nftAddress][_tokenId] = listing721(payable(msg.sender) , price);
+        nftListed721[_nftAddress][_tokenId] = listing721(_tokenId, payable(msg.sender) , price);
+        tokensOnSale.push(listing721(_tokenId, payable(msg.sender) , price));
 
     }
 
