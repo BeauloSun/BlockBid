@@ -14,7 +14,6 @@ error TheTokenDoesNotBelongToTheSender();
 error DoNotHaveApprovalToSellNft();
 
 contract BlockBid is ReentrancyGuard{
-
     // struct for storing the owners address and price of the listed nft
     struct listing721{
         uint256 tokenId;

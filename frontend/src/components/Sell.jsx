@@ -6,6 +6,7 @@ import "@dotlottie/react-player/dist/index.css";
 import { getMarketContract } from "../utils/getBlockBid";
 import { getContract } from "../utils/getNft721";
 import Web3 from "web3";
+import axios from "axios";
 
 export default function Sell() {
   const location = useLocation();
@@ -34,21 +35,23 @@ export default function Sell() {
 
     const weiprice = Number(Web3.utils.toWei(price, "ether"));
 
-    console.log("price", weiprice);
-    console.log("address", nft_address);
-    console.log("token id", token_id);
-
     await marketPlace.methods
       .sellNft721(nftContract.options.address, Number(token_id), weiprice)
       .send({ from: address });
 
-    // check if the nft was listted
-    const listing = await marketPlace.methods.getListedNFT721(token_id).call();
-    console.log(listing);
+    const puttingMarketplaceBody = {
+      token_id: token_id,
+      nft_address: nftContract.options.address,
+      owner: address,
+      price: Number(price),
+    };
+    console.log(puttingMarketplaceBody);
+    const response = await axios.put(
+      "http://localhost:4988/putNftInMarketplace",
+      puttingMarketplaceBody
+    );
 
-    setTimeout(() => {
-      setloadingController(false);
-    }, 1500);
+    setloadingController(false);
   };
 
   const auctionTick = () => {

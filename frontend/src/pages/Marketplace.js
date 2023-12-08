@@ -3,22 +3,13 @@ import CardC from "../components/CardC";
 import bg from "../assets/marketplace_bg.jpg";
 import axios from "axios";
 
-import nft1 from "../assets/nft1.jpg";
-import nft2 from "../assets/nft2.jpg";
-import nft3 from "../assets/nft3.jpg";
-import nft4 from "../assets/nft4.jpg";
-import nft5 from "../assets/nft5.jpg";
-import nft6 from "../assets/nft6.jpg";
-import nft7 from "../assets/nft7.jpg";
-import nft8 from "../assets/nft8.jpg";
-import nft9 from "../assets/nft9.jpg";
-import nft10 from "../assets/nft10.jpg";
+import { getMarketContract } from "../utils/getBlockBid";
 
 export const Marketplace = () => {
-  const ERC_721 = [nft1, nft2, nft3, nft4, nft5, nft9];
-  const ERC_1155 = [nft6, nft7, nft8, nft10];
   const [activeTab, setActiveTab] = useState("ERC_721");
-  const [images, setImages] = useState(ERC_721);
+  const [images, setImages] = useState([]);
+  const [images721, setImages721] = useState([]);
+  const [images1155, setImages1155] = useState([]);
   const [offsetY, setOffsetY] = useState(0);
   const handleScroll = () => setOffsetY(window.scrollY);
   const [name, setName] = useState([]);
@@ -26,23 +17,6 @@ export const Marketplace = () => {
   const [price, setPrice] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://localhost:4988/getNfts");
-        console.log(response.data);
-
-        const names = response.data.map((item) => item.name);
-        const descriptions = response.data.map((item) => item.description);
-        const prices = response.data.map((item) => item.price);
-
-        setName(names);
-        setDescription(descriptions);
-        setPrice(prices);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -52,12 +26,45 @@ export const Marketplace = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const fetchData = async () => {
+    try {
+      const marketplace_contract = await getMarketContract();
+      const listedTokens = await marketplace_contract.methods
+        .getListedTokens()
+        .call();
+      const numbered_listedTokens = [];
+      for (const bigint of listedTokens) {
+        numbered_listedTokens.push(Number(bigint));
+      }
+      console.log(numbered_listedTokens);
+      const gettingOnSaleBody = { tokenIds: numbered_listedTokens };
+      const response = await axios.post(
+        "http://localhost:4988/getNftsOnSale",
+        gettingOnSaleBody
+      );
+      console.log(response.data);
+
+      const names721 = response.data.map((item) => item.name);
+      const descriptions721 = response.data.map((item) => item.description);
+      const prices721 = response.data.map((item) => item.price);
+      const images721 = response.data.map((item) => item.image_uri);
+
+      setName(names721);
+      setDescription(descriptions721);
+      setPrice(prices721);
+      setImages721(images721);
+      setImages(images721);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleTabClick = (tab) => {
     setActiveTab(tab);
     if (tab === "ERC_721") {
-      setImages(ERC_721);
+      setImages(images721);
     } else if (tab === "ERC_1155") {
-      setImages(ERC_1155);
+      setImages(images1155);
     }
   };
 
