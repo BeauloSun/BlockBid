@@ -13,6 +13,15 @@ mongoose
   )
   .then(() => console.log("MongoDB connected."));
 
+app.delete("/deleteAllNfts", async (req, res) => {
+  try {
+    await NftModel.deleteMany({});
+    res.json({ message: "All NFTs have been deleted." });
+  } catch (err) {
+    res.json(err);
+  }
+});
+
 app.get("/getNfts", (req, res) => {
   NftModel.find({})
     .then(function (nfts) {
