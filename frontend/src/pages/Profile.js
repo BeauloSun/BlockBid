@@ -23,6 +23,7 @@ export const Profile = () => {
   const fetchData = async () => {
     try {
       const tokens = await getOwnerNfts();
+      // console.log("owner nfts", tokens);
       const response = await axios.post("http://localhost:4988/getOwnedNft", {
         tokenIds: tokens,
       });
