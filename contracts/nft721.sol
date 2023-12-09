@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract nft721 is ERC721URIStorage{
     uint256 private _tokenId;
+    
     mapping(address => uint256[]) private ownerNFTs;
 
 
