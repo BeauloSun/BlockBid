@@ -1307,6 +1307,17 @@
     sharp-phash "2.1.0"
     valibot "^0.13.1"
 
+"@dotlottie/dotlottie-js@^0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@dotlottie/dotlottie-js/-/dotlottie-js-0.6.1.tgz#29b317841049a893b61a56c116d62363e2117af2"
+  integrity sha512-hkdR+5y62our/fnM20ecZKgeQ5XuklQDlIZ+KMAEgVOxLtqEFxH+x5maCdkTzTLRGybQ0d6zPjeLLfPDa6aLHA==
+  dependencies:
+    browser-image-hash "0.0.5"
+    fflate "0.8.0"
+    sharp "0.32.5"
+    sharp-phash "2.1.0"
+    valibot "^0.13.1"
+
 "@dotlottie/react-player@^1.6.5":
   version "1.6.5"
   resolved "https://registry.yarnpkg.com/@dotlottie/react-player/-/react-player-1.6.5.tgz#ed1a20814b94cac7ad3058bd1f42fef3ee09818b"

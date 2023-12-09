@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@babel/runtime": "^7.23.4",
+    "@dotlottie/dotlottie-js": "^0.6.1",
     "@dotlottie/react-player": "^1.6.5",
     "@material-tailwind/react": "^2.1.4",
     "@testing-library/jest-dom": "^5.14.1",
