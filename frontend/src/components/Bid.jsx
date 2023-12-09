@@ -1,9 +1,12 @@
 import { useLocation } from "react-router-dom";
+import { useState } from "react";
 import bg from "../assets/bid_bg.jpg";
 
 export default function Bid() {
   const location = useLocation();
   const { img_src, name, description, price } = location.state;
+  const [message, setMessage] = useState("");
+  const [messageClass, setMessageClass] = useState("");
 
   return (
     <section
@@ -28,7 +31,7 @@ export default function Bid() {
               {name}
             </h2>
             <p class="text-3xl mt-4 pt-4 text-[#ffffff]">
-              Current Price: {price}
+              Current Price: {price} ETH
             </p>
             <p class="text-3xl mt-4 pt-4 text-[#ffffff]">{description}</p>
             <p class="text-3xl mt-4 pt-4 text-[#ffffff]">
