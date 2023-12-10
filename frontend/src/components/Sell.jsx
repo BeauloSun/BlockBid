@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import bg from "../assets/sell_bg.jpg";
 import { DotLottiePlayer } from "@dotlottie/react-player";
@@ -18,6 +18,7 @@ export default function Sell() {
   const [timeSetterboxStyle, setTimeSetterboxStyle] = useState("bg-gray-500");
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
+  const navigate = useNavigate();
 
   const formValid = async () => {
     if (!price) {
@@ -74,19 +75,24 @@ export default function Sell() {
           puttingMarketplaceBody
         );
 
-        setMessage("Submission successful!");
+        setMessage("Sell successful!");
         setMessageClass("font-bold text-xl text-[#48f9ff]");
+        setPrice("");
         setloadingController(false);
+        setTimeout(() => {
+          setbuttonLoading(false);
+          navigate("/marketplace");
+        }, 1500);
       } catch (error) {
         console.error(error);
-        setMessage("Submission failed!");
+        setMessage("Sell failed!");
         setMessageClass("font-bold text-lg text-red-600");
         setloadingController(false);
+        setTimeout(() => {
+          setbuttonLoading(false);
+        }, 500);
       }
     }
-    setTimeout(() => {
-      setbuttonLoading(false);
-    }, 500);
   };
 
   const auctionTick = () => {
@@ -193,6 +199,7 @@ export default function Sell() {
                   class="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
                   type="number"
                   name="Price"
+                  value={price}
                   placeholder="Enter price"
                   onChange={(e) => setPrice(e.target.value)}
                 />
