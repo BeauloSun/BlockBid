@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 contract nft721 is ERC721URIStorage{
     uint256 private _tokenId;
 
-
     event nft721Minted (string tokenURI , uint256 _tokenId);
     constructor () ERC721("BlockBid" , "BBT"){
         _tokenId = 1;

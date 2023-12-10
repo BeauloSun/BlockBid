@@ -8,7 +8,6 @@ export default function Wallet() {
 
   const [data, setData] = useState({
     address: "",
-    balance: null,
     isConnected: false,
   });
 

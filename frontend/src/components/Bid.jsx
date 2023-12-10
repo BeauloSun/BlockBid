@@ -9,29 +9,31 @@ export default function Bid() {
   const location = useLocation();
   const { img_src, name, description, price, token_id, nft_address } =
     location.state;
+
   const buyNft = async (e) => {
     e.preventDefault();
     //get the nft contract
     const nftContract = await getContract();
-
     // get the market place contract
     const marketPlace = await getMarketContract();
-
     // sell add the nft to the market place
     const address = window.localStorage.getItem("currentAddr");
-
-    const weiprice = Number(Web3.utils.toWei(7, "ether"));
-
-    console.log(nftContract.options.address);
-
-    const data = await marketPlace.methods
-      .getListedNFT721(Number(token_id))
-      .call();
-    console.log(data);
+    const weiprice = Number(Web3.utils.toWei(price, "ether"));
 
     await marketPlace.methods
       .buyNft721(nftContract.options.address, Number(token_id))
       .send({ from: address, value: weiprice });
+
+    const puttingProfileBody = {
+      token_id: Number(token_id),
+      nft_address: nftContract.options.address,
+      owner: address,
+      price: Number(price),
+    };
+    await axios.put(
+      "http://localhost:4988/putNftInProfile",
+      puttingProfileBody
+    );
   };
 
   return (
