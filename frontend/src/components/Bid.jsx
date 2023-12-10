@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import bg from "../assets/bid_bg.jpg";
 import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
@@ -7,6 +7,7 @@ import { getMarketContract } from "../utils/getBlockBid";
 import { getContract } from "../utils/getNft721";
 import Web3 from "web3";
 import axios from "axios";
+import { seconds } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time/duration";
 
 export default function Bid() {
   const location = useLocation();
@@ -16,6 +17,9 @@ export default function Bid() {
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
+  const [hour, setHour] = useState(10);
+  const [minute, setMinute] = useState(30);
+  const [second, setSecond] = useState(30);
 
   const buyNft = async (e) => {
     e.preventDefault();
@@ -60,6 +64,29 @@ export default function Bid() {
     }, 500);
   };
 
+  useEffect(() => {
+    const countdown = setInterval(() => {
+      if (second > 0) {
+        setSecond(second - 1);
+      }
+      if (second === 0) {
+        if (minute === 0) {
+          if (hour === 0) {
+            clearInterval(countdown);
+          } else {
+            setHour(hour - 1);
+            setMinute(59);
+            setSecond(59);
+          }
+        } else {
+          setMinute(minute - 1);
+          setSecond(59);
+        }
+      }
+    }, 1000);
+    return () => clearInterval(countdown);
+  }, [hour, minute, second]);
+
   return (
     <section
       class="bg-[#1e1e1e] min-h-screen flex items-center justify-center"
@@ -100,10 +127,30 @@ export default function Bid() {
             <p class="text-3xl mt-4 pt-4 text-[#ffffff]">
               Current Price: {price} ETH
             </p>
-            <p class="text-3xl mt-4 pt-4 text-[#ffffff]">{description}</p>
-            <p class="text-3xl mt-4 pt-4 text-[#ffffff]">
-              Time Left: 10 minutes
+            <p class="text-3xl mb-4 pt-4 text-[#ffffff]">
+              Description: {description}
             </p>
+            <p class="text-3xl mb-4 pt-4 text-[#ffffff]">Time remaining:</p>
+            <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
+              <div className="flex flex-col p-2 bg-slate-800 text-white rounded-xl">
+                <span className="countdown font-mono text-5xl ">
+                  <span>{hour}</span>
+                </span>
+                hours
+              </div>
+              <div className="flex flex-col p-2 bg-slate-800 text-white rounded-xl">
+                <span className="countdown font-mono text-5xl ">
+                  <span>{minute}</span>
+                </span>
+                min
+              </div>
+              <div className="flex flex-col p-2 bg-slate-800 text-white rounded-xl">
+                <span className="countdown font-mono text-5xl">
+                  <span>{second}</span>
+                </span>
+                sec
+              </div>
+            </div>
 
             <form action="" class="flex flex-col gap-4">
               <input
