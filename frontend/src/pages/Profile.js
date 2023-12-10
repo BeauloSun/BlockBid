@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import CardC from "../components/CardC";
 
 import Wallet from "../components/Wallet";
@@ -16,18 +16,27 @@ export const Profile = () => {
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
 
-  useEffect(() => {
-    fetchData();
-  }, [activeTab]);
+  const getOwnerNfts = async () => {
+    const contract = await getContract();
+    const address = window.localStorage.getItem("currentAddr");
+    const tokens = await contract.methods.getOwnerNFTs(address).call();
+    const tokens_integers = [];
+    for (const bigint of tokens) {
+      tokens_integers.push(Number(bigint));
+    }
+    if (tokens_integers.length > 0) {
+      return tokens_integers;
+    } else {
+      console.error("no nft owned");
+    }
+  };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const tokens = await getOwnerNfts();
-      // console.log("owner nfts", tokens);
       const response = await axios.post("http://localhost:4988/getOwnedNft", {
         tokenIds: tokens,
       });
-
       const names = response.data.map((item) => item.name);
       const descriptions = response.data.map((item) => item.description);
       const prices = response.data.map((item) => item.price);
@@ -44,22 +53,46 @@ export const Profile = () => {
     } catch (error) {
       console.error(error);
     }
+  }, [
+    setName,
+    setDescription,
+    setPrice,
+    setImages,
+    setNftAddress,
+    setTokenIds,
+  ]);
+
+  const fetchDataRef = useRef(fetchData);
+
+  useEffect(() => {
+    fetchDataRef.current = fetchData;
+  }, [fetchData]);
+
+  const accountChangeHandler = (account) => {
+    window.localStorage.setItem("currentAddr", account);
+    fetchDataRef.current();
   };
 
-  const getOwnerNfts = async () => {
-    const contract = await getContract();
-    const address = window.localStorage.getItem("currentAddr");
-    const tokens = await contract.methods.getOwnerNFTs(address).call();
-    const tokens_integers = [];
-    for (const bigint of tokens) {
-      tokens_integers.push(Number(bigint));
+  useEffect(() => {
+    if (window.ethereum) {
+      const handler = function (accounts) {
+        accountChangeHandler(accounts[0]);
+      };
+
+      window.ethereum.on("accountsChanged", handler);
+      return () => {
+        window.ethereum.off("accountsChanged", handler); // Clean up the event listener
+      };
     }
-    if (tokens_integers.length > 0) {
-      return tokens_integers;
-    } else {
-      console.error("no nft owned");
+    const cur_acc = window.localStorage.getItem("currentAddr");
+    if (cur_acc !== null && cur_acc !== "undefined") {
+      accountChangeHandler(cur_acc);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);

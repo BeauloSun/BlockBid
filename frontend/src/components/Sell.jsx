@@ -69,8 +69,7 @@ export default function Sell() {
           owner: address,
           price: Number(price),
         };
-        console.log(puttingMarketplaceBody);
-        const response = await axios.put(
+        await axios.put(
           "http://localhost:4988/putNftInMarketplace",
           puttingMarketplaceBody
         );

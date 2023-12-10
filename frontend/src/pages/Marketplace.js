@@ -15,6 +15,7 @@ export const Marketplace = () => {
   const [name, setName] = useState([]);
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
+  const [tokenIDs_721, setTokenIDs_721] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -48,11 +49,13 @@ export const Marketplace = () => {
       const descriptions721 = response.data.map((item) => item.description);
       const prices721 = response.data.map((item) => item.price);
       const images721 = response.data.map((item) => item.image_uri);
-
+      const tokenIDs721 = response.data.map((item) => item.token_id);
+      console.log("tokenIds", tokenIDs721);
       setName(names721);
       setDescription(descriptions721);
       setPrice(prices721);
       setImages721(images721);
+      setTokenIDs_721(tokenIDs721);
       setImages(images721);
     } catch (error) {
       console.error(error);
@@ -126,6 +129,7 @@ export const Marketplace = () => {
                 name={name[index]}
                 description={description[index]}
                 price={price[index]}
+                token_id={tokenIDs_721[index]}
                 market={true}
               />
             </div>

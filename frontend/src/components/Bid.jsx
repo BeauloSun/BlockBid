@@ -1,12 +1,43 @@
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import bg from "../assets/bid_bg.jpg";
+import { getMarketContract } from "../utils/getBlockBid";
+import { getContract } from "../utils/getNft721";
+import Web3 from "web3";
+import axios from "axios";
 
 export default function Bid() {
   const location = useLocation();
-  const { img_src, name, description, price } = location.state;
+  const { img_src, name, description, price, token_id, nft_address } =
+    location.state;
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
+
+  const buyNft = async (e) => {
+    e.preventDefault();
+    //get the nft contract
+    const nftContract = await getContract();
+    // get the market place contract
+    const marketPlace = await getMarketContract();
+    // sell add the nft to the market place
+    const address = window.localStorage.getItem("currentAddr");
+    const weiprice = Number(Web3.utils.toWei(price, "ether"));
+
+    await marketPlace.methods
+      .buyNft721(nftContract.options.address, Number(token_id))
+      .send({ from: address, value: weiprice });
+
+    const puttingProfileBody = {
+      token_id: Number(token_id),
+      nft_address: nftContract.options.address,
+      owner: address,
+      price: Number(price),
+    };
+    await axios.put(
+      "http://localhost:4988/putNftInProfile",
+      puttingProfileBody
+    );
+  };
 
   return (
     <section
@@ -29,6 +60,7 @@ export default function Bid() {
           <div class="md:w-1/2 px-6 md:px-10">
             <h2 class="font-bold text-5xl text-[#ffffff] font-shadows">
               {name}
+              {token_id}
             </h2>
             <p class="text-3xl mt-4 pt-4 text-[#ffffff]">
               Current Price: {price} ETH
@@ -50,7 +82,10 @@ export default function Bid() {
                 Place Bid
               </button>
 
-              <button class="bg-slate-800 rounded-xl text-3xl font-bold text-white py-2 hover:scale-105 duration-300">
+              <button
+                class="bg-slate-800 rounded-xl text-3xl font-bold text-white py-2 hover:scale-105 duration-300"
+                onClick={buyNft}
+              >
                 Buy Out
               </button>
             </form>

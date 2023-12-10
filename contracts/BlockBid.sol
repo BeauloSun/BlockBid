@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
-
 error NotForSale(address nftAddress , uint256 tokenId);
 error PriceNotMatched(address _nftAddress , uint256 _tokenId);
 error PriceShouldBeGreaterThanZero();
@@ -14,6 +13,7 @@ error TheTokenDoesNotBelongToTheSender();
 error DoNotHaveApprovalToSellNft();
 
 contract BlockBid is ReentrancyGuard{
+
     // struct for storing the owners address and price of the listed nft
     struct listing721{
         uint256 tokenId;
