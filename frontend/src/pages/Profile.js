@@ -15,33 +15,6 @@ export const Profile = () => {
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
 
-  const fetchDataRef = useRef(fetchData);
-
-  useEffect(() => {
-    fetchDataRef.current = fetchData;
-  }, [fetchData]);
-
-  useEffect(() => {
-    if (window.ethereum) {
-      const handler = function (accounts) {
-        accountChangeHandler(accounts[0]);
-      };
-
-      window.ethereum.on("accountsChanged", handler);
-      return () => {
-        window.ethereum.off("accountsChanged", handler); // Clean up the event listener
-      };
-    }
-    const cur_acc = window.localStorage.getItem("currentAddr");
-    if (cur_acc !== null && cur_acc !== "undefined") {
-      accountChangeHandler(cur_acc);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
   const getOwnerNfts = async () => {
     const contract = await getContract();
     const address = window.localStorage.getItem("currentAddr");
@@ -99,6 +72,33 @@ export const Profile = () => {
       setImages(images);
     }
   };
+
+  const fetchDataRef = useRef(fetchData);
+
+  useEffect(() => {
+    fetchDataRef.current = fetchData;
+  }, [fetchData]);
+
+  useEffect(() => {
+    if (window.ethereum) {
+      const handler = function (accounts) {
+        accountChangeHandler(accounts[0]);
+      };
+
+      window.ethereum.on("accountsChanged", handler);
+      return () => {
+        window.ethereum.off("accountsChanged", handler); // Clean up the event listener
+      };
+    }
+    const cur_acc = window.localStorage.getItem("currentAddr");
+    if (cur_acc !== null && cur_acc !== "undefined") {
+      accountChangeHandler(cur_acc);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   return (
     <div className="mt-5 px-5 shadow">
@@ -175,8 +175,6 @@ export const Profile = () => {
                   name={name[index]}
                   description={description[index]}
                   price={price[index]}
-                  token_id={tokenIds[index]}
-                  nft_address={nftAddress[index]}
                   market={false}
                 />
               </Link>

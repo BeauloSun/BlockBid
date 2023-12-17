@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import bg from "../assets/bid_bg.jpg";
 import { DotLottiePlayer } from "@dotlottie/react-player";
@@ -10,9 +10,8 @@ import axios from "axios";
 import { seconds } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time/duration";
 
 export default function Bid() {
-  const location = useLocation();
-  const { img_src, name, description, price, token_id, nft_address } =
-    location.state;
+  const { id } = useParams();
+  const token_id = Number(id);
   const [loadingController, setloadingController] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -20,6 +19,30 @@ export default function Bid() {
   const [hour, setHour] = useState(10);
   const [minute, setMinute] = useState(30);
   const [second, setSecond] = useState(30);
+  const [data, setData] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post("http://localhost:4988/getNftById", {
+          tokenId: token_id,
+        });
+        if (response.data && response.data.length > 0) {
+          const res = response.data[0];
+          setData({
+            img_src: res.image_uri,
+            name: res.name,
+            description: res.description,
+            price: res.price,
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const buyNft = async (e) => {
     e.preventDefault();
@@ -33,7 +56,7 @@ export default function Bid() {
     const marketPlace = await getMarketContract();
     // sell add the nft to the market place
     const address = window.localStorage.getItem("currentAddr");
-    const weiprice = Number(Web3.utils.toWei(price, "ether"));
+    const weiprice = Number(Web3.utils.toWei(data.price, "ether"));
 
     try {
       await marketPlace.methods
@@ -44,7 +67,7 @@ export default function Bid() {
         token_id: Number(token_id),
         nft_address: nftContract.options.address,
         owner: address,
-        price: Number(price),
+        price: Number(data.price),
       };
       await axios.put(
         "http://localhost:4988/putNftInProfile",
@@ -117,18 +140,17 @@ export default function Bid() {
         </div>
         <div class="flex w-full">
           <div class="md:w-1/2 px-6 md:px-10">
-            <img alt="" class="rounded-2xl" src={img_src} />
+            <img alt="" class="rounded-2xl" src={data.img_src} />
           </div>
           <div class="md:w-1/2 px-6 md:px-10">
             <h2 class="font-bold text-5xl text-[#ffffff] font-shadows">
-              {name}
-              {token_id}
+              {data.name}
             </h2>
             <p class="text-3xl mt-4 pt-4 text-[#ffffff]">
-              Current Price: {price} ETH
+              Current Price: {data.price} ETH
             </p>
             <p class="text-3xl mb-4 pt-4 text-[#ffffff]">
-              Description: {description}
+              Description: {data.description}
             </p>
             <p class="text-3xl mb-4 pt-4 text-[#ffffff]">Time remaining:</p>
             <div className="grid grid-flow-col gap-5 text-center auto-cols-max">

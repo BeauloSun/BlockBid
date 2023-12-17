@@ -8,15 +8,7 @@ import {
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 
-const CardC = ({
-  img_src,
-  name,
-  description,
-  price,
-  token_id,
-  nft_address,
-  market,
-}) => {
+const CardC = ({ img_src, name, description, price, market }) => {
   return (
     <div className="w-[350px]">
       <Card className="bg-purple-300">

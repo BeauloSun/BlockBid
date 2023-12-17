@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import CardC from "../components/CardC";
 import bg from "../assets/marketplace_bg.jpg";
 import axios from "axios";
@@ -124,14 +125,18 @@ export const Marketplace = () => {
               key={index}
               className="flex flex-col items-center py-4 hover:scale-105 duration-300"
             >
-              <CardC
-                img_src={img_src}
-                name={name[index]}
-                description={description[index]}
-                price={price[index]}
-                token_id={tokenIDs_721[index]}
-                market={true}
-              />
+              <Link
+                to={`/marketplace/${tokenIDs_721[index]}`}
+                key={tokenIDs_721[index]}
+              >
+                <CardC
+                  img_src={img_src}
+                  name={name[index]}
+                  description={description[index]}
+                  price={price[index]}
+                  market={true}
+                />
+              </Link>
             </div>
           ))}
         </div>

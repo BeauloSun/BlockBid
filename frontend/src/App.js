@@ -22,7 +22,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:id" element={<Selling />} />
           <Route path="/marketplace" element={<Marketplace />} />
-          <Route path="/bid" element={<Bidding />} />
+          <Route path="/marketplace/:id" element={<Bidding />} />
           <Route path="/mint" element={<Mint />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

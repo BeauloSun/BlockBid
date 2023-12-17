@@ -15,7 +15,10 @@ export default function Sell() {
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [timeSetterbox, setTimeSetterbox] = useState(true);
   const [price, setPrice] = useState(null);
+  const [priceMsg, setPriceMsg] = useState("Set Your Price");
+  const [buttonText, setButtonText] = useState("Sell !");
   const [timeSetterboxStyle, setTimeSetterboxStyle] = useState("bg-gray-500");
+  const [auctionBool, setAuctionBool] = useState(false);
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
   const [data, setData] = useState({});
@@ -120,10 +123,15 @@ export default function Sell() {
 
   const auctionTick = () => {
     setTimeSetterbox(!timeSetterbox);
+    setAuctionBool(!auctionBool);
     if (timeSetterboxStyle === "bg-gray-500") {
       setTimeSetterboxStyle("");
+      setButtonText("Auction !");
+      setPriceMsg("Set your starting price:");
     } else {
       setTimeSetterboxStyle("bg-gray-500");
+      setButtonText("Sell !");
+      setPriceMsg("Set your price:");
     }
   };
 
@@ -182,6 +190,24 @@ export default function Sell() {
                   Selling for auction?
                 </label>
               </div>
+
+              <label
+                for="Price"
+                class="block text-left text-2xl font-bold text-white"
+              >
+                {priceMsg}
+              </label>
+              <div class="flex justify-between items-center">
+                <input
+                  class="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
+                  type="number"
+                  name="Price"
+                  value={price}
+                  placeholder="Enter price"
+                  onChange={(e) => setPrice(e.target.value)}
+                />
+                <div class="font-bold text-3xl text-white pr-10 mb-4">ETH</div>
+              </div>
               <label
                 for="Time"
                 class="block text-left font-bold text-2xl text-white"
@@ -210,23 +236,6 @@ export default function Sell() {
                   disabled={timeSetterbox}
                 />
                 <div class="font-bold text-xl text-white">Sec(s)</div>
-              </div>
-              <label
-                for="Price"
-                class="block text-left text-2xl font-bold text-white"
-              >
-                Set Your Price:
-              </label>
-              <div class="flex justify-between items-center">
-                <input
-                  class="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
-                  type="number"
-                  name="Price"
-                  value={price}
-                  placeholder="Enter price"
-                  onChange={(e) => setPrice(e.target.value)}
-                />
-                <div class="font-bold text-3xl text-white pr-10 mb-4">ETH</div>
               </div>
               <p className={messageClass}>{message}</p>
               <button
@@ -259,7 +268,7 @@ export default function Sell() {
                     <span> Processing... </span>
                   </>
                 ) : (
-                  "Sell !"
+                  buttonText
                 )}
               </button>
             </form>
