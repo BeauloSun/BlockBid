@@ -45,6 +45,18 @@ app.post("/getOwnedNft", async (req, res) => {
   }
 });
 
+app.post("/getNftById", async (req, res) => {
+  const tokenId = req.body.tokenId;
+  try {
+    const nft = await NftModel.find({
+      token_id: tokenId,
+    });
+    res.json(nft);
+  } catch (err) {
+    res.json(err);
+  }
+});
+
 app.post("/getNftsOnSale", async (req, res) => {
   const tokenIds = req.body.tokenIds;
   try {
