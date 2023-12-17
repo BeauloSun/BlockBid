@@ -20,9 +20,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:id" element={<Selling />} />
           <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/bid" element={<Bidding />} />
-          <Route path="/sell" element={<Selling />} />
           <Route path="/mint" element={<Mint />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

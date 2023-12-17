@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import CardC from "../components/CardC";
-
+import { Link } from "react-router-dom";
 import Wallet from "../components/Wallet";
 import Security from "../components/Security";
 import axios from "axios";
 import { getContract } from "../utils/getNft721";
 
 export const Profile = () => {
-  // const holdings = [nft2, nft3, nft6];
   const [activeTab, setActiveTab] = useState("holdings");
   const [images, setImages] = useState([]);
   const [name, setName] = useState([]);
@@ -15,6 +14,33 @@ export const Profile = () => {
   const [nftAddress, setNftAddress] = useState([]);
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
+
+  const fetchDataRef = useRef(fetchData);
+
+  useEffect(() => {
+    fetchDataRef.current = fetchData;
+  }, [fetchData]);
+
+  useEffect(() => {
+    if (window.ethereum) {
+      const handler = function (accounts) {
+        accountChangeHandler(accounts[0]);
+      };
+
+      window.ethereum.on("accountsChanged", handler);
+      return () => {
+        window.ethereum.off("accountsChanged", handler); // Clean up the event listener
+      };
+    }
+    const cur_acc = window.localStorage.getItem("currentAddr");
+    if (cur_acc !== null && cur_acc !== "undefined") {
+      accountChangeHandler(cur_acc);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const getOwnerNfts = async () => {
     const contract = await getContract();
@@ -62,37 +88,10 @@ export const Profile = () => {
     setTokenIds,
   ]);
 
-  const fetchDataRef = useRef(fetchData);
-
-  useEffect(() => {
-    fetchDataRef.current = fetchData;
-  }, [fetchData]);
-
   const accountChangeHandler = (account) => {
     window.localStorage.setItem("currentAddr", account);
     fetchDataRef.current();
   };
-
-  useEffect(() => {
-    if (window.ethereum) {
-      const handler = function (accounts) {
-        accountChangeHandler(accounts[0]);
-      };
-
-      window.ethereum.on("accountsChanged", handler);
-      return () => {
-        window.ethereum.off("accountsChanged", handler); // Clean up the event listener
-      };
-    }
-    const cur_acc = window.localStorage.getItem("currentAddr");
-    if (cur_acc !== null && cur_acc !== "undefined") {
-      accountChangeHandler(cur_acc);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -170,15 +169,17 @@ export const Profile = () => {
               key={index}
               className="flex flex-col items-center py-4 hover:scale-105 duration-300"
             >
-              <CardC
-                img_src={img_src}
-                name={name[index]}
-                description={description[index]}
-                price={price[index]}
-                token_id={tokenIds[index]}
-                nft_address={nftAddress[index]}
-                market={false}
-              />
+              <Link to={`/profile/${tokenIds[index]}`} key={tokenIds[index]}>
+                <CardC
+                  img_src={img_src}
+                  name={name[index]}
+                  description={description[index]}
+                  price={price[index]}
+                  token_id={tokenIds[index]}
+                  nft_address={nftAddress[index]}
+                  market={false}
+                />
+              </Link>
             </div>
           ))}
         </div>

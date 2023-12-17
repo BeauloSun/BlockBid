@@ -1,5 +1,5 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import bg from "../assets/sell_bg.jpg";
 import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
@@ -9,8 +9,8 @@ import Web3 from "web3";
 import axios from "axios";
 
 export default function Sell() {
-  const location = useLocation();
-  const { img_src, name, description, token_id, nft_address } = location.state;
+  const { id } = useParams();
+  const token_id = Number(id);
   const [loadingController, setloadingController] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [timeSetterbox, setTimeSetterbox] = useState(true);
@@ -18,7 +18,30 @@ export default function Sell() {
   const [timeSetterboxStyle, setTimeSetterboxStyle] = useState("bg-gray-500");
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
+  const [data, setData] = useState({});
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post("http://localhost:4988/getNftById", {
+          tokenId: token_id,
+        });
+        if (response.data && response.data.length > 0) {
+          const res = response.data[0];
+          setData({
+            img_src: res.image_uri,
+            name: res.name,
+            description: res.description,
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const formValid = async () => {
     if (!price) {
@@ -135,13 +158,13 @@ export default function Sell() {
         </div>
         <div class="flex w-full">
           <div class="md:w-1/2 px-6 md:px-10">
-            <img alt="" class="rounded-2xl" src={img_src} />
+            <img alt="" class="rounded-2xl" src={data.img_src} />
           </div>
           <div class="md:w-1/2 px-3 md:px-10">
             <h2 class="font-bold text-8xl text-[#ffffff] font-shadows">
-              {name}
+              {data.name}
             </h2>
-            <p class="text-3xl mt-4 pt-4 text-[#ffffff]">{description}</p>
+            <p class="text-3xl mt-4 pt-4 text-[#ffffff]">{data.description}</p>
 
             <form action="" class="flex flex-col gap-4 mt-10">
               <div class="flex items-center justify-left gap-2 pt-3">
