@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { Home } from "./pages/Home";
@@ -21,8 +22,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:id" element={<Selling />} />
-          <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/marketplace/:id" element={<Bidding />} />
+          <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/mint" element={<Mint />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

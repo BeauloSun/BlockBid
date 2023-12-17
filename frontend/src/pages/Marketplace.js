@@ -38,20 +38,17 @@ export const Marketplace = () => {
       for (const bigint of listedTokens) {
         numbered_listedTokens.push(Number(bigint));
       }
-      console.log(numbered_listedTokens);
       const gettingOnSaleBody = { tokenIds: numbered_listedTokens };
       const response = await axios.post(
         "http://localhost:4988/getNftsOnSale",
         gettingOnSaleBody
       );
-      console.log(response.data);
 
       const names721 = response.data.map((item) => item.name);
       const descriptions721 = response.data.map((item) => item.description);
       const prices721 = response.data.map((item) => item.price);
       const images721 = response.data.map((item) => item.image_uri);
       const tokenIDs721 = response.data.map((item) => item.token_id);
-      console.log("tokenIds", tokenIDs721);
       setName(names721);
       setDescription(descriptions721);
       setPrice(prices721);

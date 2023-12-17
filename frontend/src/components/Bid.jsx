@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import bg from "../assets/bid_bg.jpg";
 import { DotLottiePlayer } from "@dotlottie/react-player";
@@ -7,7 +7,6 @@ import { getMarketContract } from "../utils/getBlockBid";
 import { getContract } from "../utils/getNft721";
 import Web3 from "web3";
 import axios from "axios";
-import { seconds } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time/duration";
 
 export default function Bid() {
   const { id } = useParams();
@@ -20,29 +19,52 @@ export default function Bid() {
   const [minute, setMinute] = useState(30);
   const [second, setSecond] = useState(30);
   const [data, setData] = useState({});
+  const navigate = useNavigate();
+  var isValid = false;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post("http://localhost:4988/getNftById", {
-          tokenId: token_id,
-        });
-        if (response.data && response.data.length > 0) {
-          const res = response.data[0];
-          setData({
-            img_src: res.image_uri,
-            name: res.name,
-            description: res.description,
-            price: res.price,
-          });
-        }
+        const response = await axios.post(
+          "http://localhost:4988/getAccessibleMarketNft",
+          {
+            tokenId: token_id,
+            marketplace: true,
+          }
+        );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        isValid = response.data;
       } catch (err) {
         console.error(err);
+      }
+
+      if (isValid) {
+        try {
+          const response = await axios.post(
+            "http://localhost:4988/getNftById",
+            {
+              tokenId: token_id,
+            }
+          );
+          if (response.data && response.data.length > 0) {
+            const res = response.data[0];
+            setData({
+              img_src: res.image_uri,
+              name: res.name,
+              description: res.description,
+              price: res.price,
+            });
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        navigate("/NotFound");
       }
     };
 
     fetchData();
-  }, [id]);
+  }, [id, token_id]);
 
   const buyNft = async (e) => {
     e.preventDefault();

@@ -23,28 +23,50 @@ export default function Sell() {
   const [messageClass, setMessageClass] = useState("");
   const [data, setData] = useState({});
   const navigate = useNavigate();
+  var isValid = false;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post("http://localhost:4988/getNftById", {
-          tokenId: token_id,
-        });
-        if (response.data && response.data.length > 0) {
-          const res = response.data[0];
-          setData({
-            img_src: res.image_uri,
-            name: res.name,
-            description: res.description,
-          });
-        }
+        const response = await axios.post(
+          "http://localhost:4988/getAccessibleProfileNft",
+          {
+            tokenId: token_id,
+            marketplace: false,
+            walletaddress: window.localStorage.getItem("currentAddr"),
+          }
+        );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        isValid = response.data;
       } catch (err) {
         console.error(err);
+      }
+      if (isValid) {
+        try {
+          const response = await axios.post(
+            "http://localhost:4988/getNftById",
+            {
+              tokenId: token_id,
+            }
+          );
+          if (response.data && response.data.length > 0) {
+            const res = response.data[0];
+            setData({
+              img_src: res.image_uri,
+              name: res.name,
+              description: res.description,
+            });
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        navigate("/NotFound");
       }
     };
 
     fetchData();
-  }, [id]);
+  }, [id, token_id]);
 
   const formValid = async () => {
     if (!price) {

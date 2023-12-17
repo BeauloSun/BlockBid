@@ -57,6 +57,41 @@ app.post("/getNftById", async (req, res) => {
   }
 });
 
+app.post("/getAccessibleProfileNft", async (req, res) => {
+  const tokenId = req.body.tokenId;
+  const marketplace = req.body.marketplace;
+  const wallet = req.body.walletaddress;
+  try {
+    const nft = await NftModel.findOne({ token_id: tokenId });
+    if (!nft) {
+      return res.json(false);
+    }
+    if (nft.on_sale !== marketplace || nft.owner !== wallet) {
+      return res.json(false);
+    }
+    return res.json(true);
+  } catch (err) {
+    res.json(err);
+  }
+});
+
+app.post("/getAccessibleMarketNft", async (req, res) => {
+  const tokenId = req.body.tokenId;
+  const marketplace = req.body.marketplace;
+  try {
+    const nft = await NftModel.findOne({ token_id: tokenId });
+    if (!nft) {
+      return res.json(false);
+    }
+    if (nft.on_sale !== marketplace) {
+      return res.json(false);
+    }
+    return res.json(true);
+  } catch (err) {
+    res.json(err);
+  }
+});
+
 app.post("/getNftsOnSale", async (req, res) => {
   const tokenIds = req.body.tokenIds;
   try {
