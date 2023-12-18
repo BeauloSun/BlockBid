@@ -13,6 +13,7 @@ error DoNotHaveApprovalToSellNft();
 error AuctionNotEnded();
 error BidNotHighest();
 error AuctionItemNotExists(uint256 _tokenId);
+error UserHaveNoFunds();
 
 contract BlockBid is ReentrancyGuard{
 
@@ -34,8 +35,11 @@ contract BlockBid is ReentrancyGuard{
 
     mapping(uint256 => listing721) nftListed721;
     mapping (uint256 => auctionListing721) auctionNftListed721;
+    mapping (address => uint256) UserFunds;
     uint256[] ListedTokens721;
-    
+
+
+
     modifier Owner721(address nftAddress ,uint256 tokenId, address sender){
         IERC721 nft = IERC721(nftAddress);
         if (nft.ownerOf(tokenId) != sender){
@@ -87,6 +91,7 @@ contract BlockBid is ReentrancyGuard{
         if(msg.value < item721.price){
             revert PriceNotMatched(_nftAddress , _tokenId);
         }
+
         // transfer the funds to the sellers account
         (bool success, ) = item721.owner.call{value: msg.value}("");
         require(success, "Transfer failed");
@@ -123,8 +128,6 @@ contract BlockBid is ReentrancyGuard{
 
         auctionNftListed721[_tokenId] = auctionListing721(_tokenId , payable(msg.sender) , minPrice , endtime, address(0), 0 , false);
     }
-    
-    
     // bid function
     
     function bid( uint256 _tokenId) external payable AuctionExists(_tokenId){
@@ -136,8 +139,9 @@ contract BlockBid is ReentrancyGuard{
 
         if (auctionItem.highestBid > 0) {
             // Refund the previously highest bidder.
-            (bool success , ) = auctionItem.highestBidder.call{value: auctionItem.highestBid}("");
-            require(success , "fund not returned yet");
+            UserFunds[auctionItem.highestBidder] += auctionItem.highestBid;
+            // (bool success , ) = auctionItem.highestBidder.call{value: auctionItem.highestBid}("");
+            // require(success , "fund not returned yet");
         }
         auctionItem.highestBid = msg.value;
         auctionItem.highestBidder = msg.sender;
@@ -150,8 +154,10 @@ contract BlockBid is ReentrancyGuard{
         require(!auction.ended, "AuctionEnd has already been called.");
 
         auction.ended = true;
-        (bool success , ) = auction.owner.call{value : auction.highestBid}("");
-        require(success , "Transfer not completed");
+        // store the user funds
+        UserFunds[auction.owner] += auction.highestBid;
+        // (bool success , ) = auction.owner.call{value : auction.highestBid}("");
+        // require(success , "Transfer not completed");
 
         IERC721(_nftAddress).safeTransferFrom(auction.owner, auction.highestBidder, _tokenId);
         delete auctionNftListed721[_tokenId];
@@ -161,4 +167,25 @@ contract BlockBid is ReentrancyGuard{
         return auctionNftListed721[_tokenId];
 
     }
+
+
+    function getUserFunds(address user) public view returns(uint256){
+        return UserFunds[user];
+    }
+
+
+    function getFundBack(address user) external {
+        uint256 userfunds = UserFunds[user];
+        if(userfunds <= 0){
+            revert UserHaveNoFunds();
+        }
+        UserFunds[user] = 0;
+        (bool success , ) = payable(user).call{value:userfunds}("");
+        require(success , "There was an error in transferring funds");
+    }
+
+
+
+
+
 }
