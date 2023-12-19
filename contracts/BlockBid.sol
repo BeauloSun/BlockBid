@@ -137,6 +137,7 @@ contract BlockBid is ReentrancyGuard{
         // check owner should not bid
         auctionListing721 storage auctionItem = auctionNftListed721[_tokenId];
         require(auctionItem.owner != msg.sender  , "Owner cannot bid on their own nft");
+        require(block.timestamp < auctionItem.auctionEndTime, "The auction has ended");
 
         // check the new added value is greater than previous value + new value
         uint256 newTotalBid = auctionBids[_tokenId][msg.sender] + msg.value;
@@ -155,7 +156,7 @@ contract BlockBid is ReentrancyGuard{
         auctionItem.highestBidder = msg.sender;
     }
 
-    function auctionEnd(address _nftAddress, uint256 _tokenId) external Owner721(_nftAddress , _tokenId , msg.sender){
+    function auctionEnd(address _nftAddress, uint256 _tokenId) external {
         auctionListing721 memory auction = auctionNftListed721[_tokenId];
 
         require(block.timestamp >= auction.auctionEndTime, "Auction not yet ended.");
@@ -235,9 +236,5 @@ contract BlockBid is ReentrancyGuard{
         }
         return false;
 }
-
-
-
-
 
 }
