@@ -1,5 +1,5 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import bg from "../assets/sell_bg.jpg";
 import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
@@ -9,16 +9,64 @@ import Web3 from "web3";
 import axios from "axios";
 
 export default function Sell() {
-  const location = useLocation();
-  const { img_src, name, description, token_id, nft_address } = location.state;
+  const { id } = useParams();
+  const token_id = Number(id);
   const [loadingController, setloadingController] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [timeSetterbox, setTimeSetterbox] = useState(true);
   const [price, setPrice] = useState(null);
+  const [priceMsg, setPriceMsg] = useState("Set Your Price");
+  const [buttonText, setButtonText] = useState("Sell !");
   const [timeSetterboxStyle, setTimeSetterboxStyle] = useState("bg-gray-500");
+  const [auctionBool, setAuctionBool] = useState(false);
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
+  const [data, setData] = useState({});
   const navigate = useNavigate();
+  var isValid = false;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post(
+          "http://localhost:4988/getAccessibleProfileNft",
+          {
+            tokenId: token_id,
+            marketplace: false,
+            walletaddress: window.localStorage.getItem("currentAddr"),
+          }
+        );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        isValid = response.data;
+      } catch (err) {
+        console.error(err);
+      }
+      if (isValid) {
+        try {
+          const response = await axios.post(
+            "http://localhost:4988/getNftById",
+            {
+              tokenId: token_id,
+            }
+          );
+          if (response.data && response.data.length > 0) {
+            const res = response.data[0];
+            setData({
+              img_src: res.image_uri,
+              name: res.name,
+              description: res.description,
+            });
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        navigate("/NotFound");
+      }
+    };
+
+    fetchData();
+  }, [id, token_id]);
 
   const formValid = async () => {
     if (!price) {
@@ -97,10 +145,15 @@ export default function Sell() {
 
   const auctionTick = () => {
     setTimeSetterbox(!timeSetterbox);
+    setAuctionBool(!auctionBool);
     if (timeSetterboxStyle === "bg-gray-500") {
       setTimeSetterboxStyle("");
+      setButtonText("Auction !");
+      setPriceMsg("Set your starting price:");
     } else {
       setTimeSetterboxStyle("bg-gray-500");
+      setButtonText("Sell !");
+      setPriceMsg("Set your price:");
     }
   };
 
@@ -135,13 +188,13 @@ export default function Sell() {
         </div>
         <div class="flex w-full">
           <div class="md:w-1/2 px-6 md:px-10">
-            <img alt="" class="rounded-2xl" src={img_src} />
+            <img alt="" class="rounded-2xl" src={data.img_src} />
           </div>
           <div class="md:w-1/2 px-3 md:px-10">
             <h2 class="font-bold text-8xl text-[#ffffff] font-shadows">
-              {name}
+              {data.name}
             </h2>
-            <p class="text-3xl mt-4 pt-4 text-[#ffffff]">{description}</p>
+            <p class="text-3xl mt-4 pt-4 text-[#ffffff]">{data.description}</p>
 
             <form action="" class="flex flex-col gap-4 mt-10">
               <div class="flex items-center justify-left gap-2 pt-3">
@@ -158,6 +211,24 @@ export default function Sell() {
                 >
                   Selling for auction?
                 </label>
+              </div>
+
+              <label
+                for="Price"
+                class="block text-left text-2xl font-bold text-white"
+              >
+                {priceMsg}
+              </label>
+              <div class="flex justify-between items-center">
+                <input
+                  class="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
+                  type="number"
+                  name="Price"
+                  value={price}
+                  placeholder="Enter price"
+                  onChange={(e) => setPrice(e.target.value)}
+                />
+                <div class="font-bold text-3xl text-white pr-10 mb-4">ETH</div>
               </div>
               <label
                 for="Time"
@@ -187,23 +258,6 @@ export default function Sell() {
                   disabled={timeSetterbox}
                 />
                 <div class="font-bold text-xl text-white">Sec(s)</div>
-              </div>
-              <label
-                for="Price"
-                class="block text-left text-2xl font-bold text-white"
-              >
-                Set Your Price:
-              </label>
-              <div class="flex justify-between items-center">
-                <input
-                  class="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
-                  type="number"
-                  name="Price"
-                  value={price}
-                  placeholder="Enter price"
-                  onChange={(e) => setPrice(e.target.value)}
-                />
-                <div class="font-bold text-3xl text-white pr-10 mb-4">ETH</div>
               </div>
               <p className={messageClass}>{message}</p>
               <button
@@ -236,7 +290,7 @@ export default function Sell() {
                     <span> Processing... </span>
                   </>
                 ) : (
-                  "Sell !"
+                  buttonText
                 )}
               </button>
             </form>

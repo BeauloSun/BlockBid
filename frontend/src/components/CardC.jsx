@@ -8,29 +8,7 @@ import {
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 
-const CardC = ({
-  img_src,
-  name,
-  description,
-  price,
-  token_id,
-  nft_address,
-  market,
-}) => {
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    var state;
-
-    if (market) {
-      state = { img_src, name, description, price, token_id, nft_address };
-      navigate("/bid", { state });
-    } else {
-      state = { img_src, name, description, token_id, nft_address };
-      navigate("/sell", { state });
-    }
-  };
-
+const CardC = ({ img_src, name, description, price, market }) => {
   return (
     <div className="w-[350px]">
       <Card className="bg-purple-300">
@@ -61,16 +39,6 @@ const CardC = ({
             {description}
           </Typography>
         </CardBody>
-        <CardFooter className="pt-0">
-          <Button
-            onClick={handleClick}
-            ripple={false}
-            fullWidth={true}
-            className="bg-blue-gray-900/10 text-blue-gray-900 text-xl bg-pink-400 rounded-xl shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
-          >
-            {market ? "Place a bid" : "Sell"}
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );

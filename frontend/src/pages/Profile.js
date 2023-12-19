@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import CardC from "../components/CardC";
-
+import { Link } from "react-router-dom";
 import Wallet from "../components/Wallet";
 import Security from "../components/Security";
 import axios from "axios";
 import { getContract } from "../utils/getNft721";
 
 export const Profile = () => {
-  // const holdings = [nft2, nft3, nft6];
   const [activeTab, setActiveTab] = useState("holdings");
   const [images, setImages] = useState([]);
   const [name, setName] = useState([]);
@@ -62,16 +61,23 @@ export const Profile = () => {
     setTokenIds,
   ]);
 
+  const accountChangeHandler = (account) => {
+    window.localStorage.setItem("currentAddr", account);
+    fetchDataRef.current();
+  };
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+    if (tab === "holdings") {
+      setImages(images);
+    }
+  };
+
   const fetchDataRef = useRef(fetchData);
 
   useEffect(() => {
     fetchDataRef.current = fetchData;
   }, [fetchData]);
-
-  const accountChangeHandler = (account) => {
-    window.localStorage.setItem("currentAddr", account);
-    fetchDataRef.current();
-  };
 
   useEffect(() => {
     if (window.ethereum) {
@@ -93,13 +99,6 @@ export const Profile = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
-    if (tab === "holdings") {
-      setImages(images);
-    }
-  };
 
   return (
     <div className="mt-5 px-5 shadow">
@@ -170,15 +169,15 @@ export const Profile = () => {
               key={index}
               className="flex flex-col items-center py-4 hover:scale-105 duration-300"
             >
-              <CardC
-                img_src={img_src}
-                name={name[index]}
-                description={description[index]}
-                price={price[index]}
-                token_id={tokenIds[index]}
-                nft_address={nftAddress[index]}
-                market={false}
-              />
+              <Link to={`/profile/${tokenIds[index]}`} key={tokenIds[index]}>
+                <CardC
+                  img_src={img_src}
+                  name={name[index]}
+                  description={description[index]}
+                  price={price[index]}
+                  market={false}
+                />
+              </Link>
             </div>
           ))}
         </div>
