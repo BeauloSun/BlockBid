@@ -41,7 +41,7 @@ const Navbar = () => {
       <ul className="hidden navbar:flex justify-self-end text-xl">
         <Link
           className="p-4 transition-all duration-500 ease-in-out font-bold hover:text-[#46ff65]"
-          to="/marketplace"
+          to="/marketplace/ERC721/Sale"
         >
           Marketplace
         </Link>

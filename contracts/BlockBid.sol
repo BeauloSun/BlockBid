@@ -40,6 +40,7 @@ contract BlockBid is ReentrancyGuard{
     mapping (uint256 => address[]) auctionBidders;
     mapping (address => uint256) UserFunds;
     uint256[] ListedTokens721;
+    uint256[] ListedAuctionTokens721;
 
 
 
@@ -130,12 +131,13 @@ contract BlockBid is ReentrancyGuard{
         }
 
         auctionNftListed721[_tokenId] = auctionListing721(_tokenId , payable(msg.sender) , minPrice , endtime, address(0), 0 , false);
+        ListedAuctionTokens721.push(_tokenId);
     }
 
     function getAuctionEndTime(uint256 _tokenId) external view AuctionExists(_tokenId) returns(uint256) {
-        return auctionNftListed721[_tokenId].auctionEndTime;
-    }
+        return auctionNftListed721[_tokenId].auctionEndTime;}
     
+
     function bid( uint256 _tokenId) external payable AuctionExists(_tokenId){
 
         // check owner should not bid
@@ -181,9 +183,9 @@ contract BlockBid is ReentrancyGuard{
                 auctionBids[_tokenId][auction.highestBidder] = 0;
             }
             // transfer the money to all the bidders fund
-            for(uint256 i = 0 ; i < bidders.length; i++){
-                UserFunds[bidders[i]] += auctionBids[_tokenId][bidders[i]];
-                delete auctionBids[_tokenId][bidders[i]];
+            for(uint256 j = 0 ; j < bidders.length; j++){
+                UserFunds[bidders[j]] += auctionBids[_tokenId][bidders[j]];
+                delete auctionBids[_tokenId][bidders[j]];
             }
 
             
@@ -192,7 +194,21 @@ contract BlockBid is ReentrancyGuard{
             delete auctionNftListed721[_tokenId];
 
         }
+        uint i = 0;
+        while(ListedAuctionTokens721[i] != _tokenId){
+            i ++;
+        } 
+        if (i<ListedAuctionTokens721.length){
+            for (uint k = i ; k < ListedAuctionTokens721.length-1 ; k++){
+                ListedAuctionTokens721[k]= ListedAuctionTokens721[k+1];
+            }
+            ListedAuctionTokens721.pop();
+        }
 
+    }
+
+    function getListedAuctionTokens721() public view returns (uint256 [] memory){
+        return ListedAuctionTokens721;
     }
 
     function getTheBidDifference(uint256 _tokenId, address currUser) external view returns (uint256){

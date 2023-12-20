@@ -6,8 +6,8 @@ import axios from "axios";
 
 import { getMarketContract } from "../utils/getBlockBid";
 
-export const Marketplace = () => {
-  const [activeTab, setActiveTab] = useState("ERC_721");
+export const Auction721 = () => {
+  const [activeTab, setActiveTab] = useState("ERC_721 - Auction");
   const [images, setImages] = useState([]);
   const [images721, setImages721] = useState([]);
   const [images1155, setImages1155] = useState([]);
@@ -32,7 +32,7 @@ export const Marketplace = () => {
     try {
       const marketplace_contract = await getMarketContract();
       const listedTokens = await marketplace_contract.methods
-        .getListedTokens()
+        .getListedAuctionTokens721()
         .call();
       const numbered_listedTokens = [];
       for (const bigint of listedTokens) {
@@ -40,7 +40,7 @@ export const Marketplace = () => {
       }
       const gettingOnSaleBody = { tokenIds: numbered_listedTokens };
       const response = await axios.post(
-        "http://localhost:4988/getNftsOnSale",
+        "http://localhost:4988/getNftsOnAuction",
         gettingOnSaleBody
       );
 
@@ -62,10 +62,8 @@ export const Marketplace = () => {
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
-    if (tab === "ERC_721") {
+    if (tab === "ERC_721 - Auction") {
       setImages(images721);
-    } else if (tab === "ERC_1155") {
-      setImages(images1155);
     }
   };
 
@@ -102,18 +100,18 @@ export const Marketplace = () => {
               Sale (ERC-721)
             </button>
           </Link>
-
-          <button
-            onClick={() => handleTabClick("ERC_721 - Auction")}
-            className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
-              activeTab === "ERC_721 - Auction"
-                ? "bg-blue-500 text-white"
-                : "bg-gray-300 text-white bg-opacity-50"
-            }`}
-          >
-            Auction (ERC-721)
-          </button>
-
+          <Link to="">
+            <button
+              onClick={() => handleTabClick("ERC_721 - Auction")}
+              className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
+                activeTab === "ERC_721 - Auction"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-300 text-white bg-opacity-50"
+              }`}
+            >
+              Auction (ERC-721)
+            </button>
+          </Link>
           <button
             onClick={() => handleTabClick("ERC_1155 - Sale")}
             className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
@@ -134,6 +132,32 @@ export const Marketplace = () => {
           >
             Auction (ERC-1155)
           </button>
+        </div>
+        <div
+          className="grid grid-flow-row-dense gap-1 mx-[17%]"
+          style={{
+            gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
+          }}
+        >
+          {images.map((img_src, index) => (
+            <div
+              key={index}
+              className="flex flex-col items-center py-4 hover:scale-105 duration-300"
+            >
+              <Link
+                to={`/marketplace/ERC721/Auction/${tokenIDs_721[index]}`}
+                key={tokenIDs_721[index]}
+              >
+                <CardC
+                  img_src={img_src}
+                  name={name[index]}
+                  description={description[index]}
+                  price={price[index]}
+                  market={true}
+                />
+              </Link>
+            </div>
+          ))}
         </div>
       </div>
     </div>
