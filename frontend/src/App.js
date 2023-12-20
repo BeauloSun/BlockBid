@@ -12,6 +12,9 @@ import { Bidding } from "./pages/Bidding";
 import { Selling } from "./pages/Selling";
 import { Marketplace721Sale } from "./pages/Marketplace721Sale";
 import { Marketplace721Auction } from "./pages/Marketplace721Auction";
+import { Holdings } from "./pages/Holdings";
+import { UserListedHoldings } from "./pages/UserListedHoldings";
+import { CancelListings } from "./pages/CancelListings";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -23,7 +26,16 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/profile/:id" element={<Selling />} />
+          <Route path="/profile/holdings" element={<Holdings />} />
+          <Route
+            path="/profile/listed_holdings"
+            element={<UserListedHoldings />}
+          />
+          <Route
+            path="/profile/listed_holdings/:id"
+            element={<CancelListings />}
+          />
+          <Route path="/profile/holdings/:id" element={<Selling />} />
           <Route path="/marketplace/:id" element={<Bidding />} />
           <Route path="/marketplace" element={<Marketplace />} />
           <Route

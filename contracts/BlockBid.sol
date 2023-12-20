@@ -91,7 +91,11 @@ contract BlockBid is ReentrancyGuard{
     }
 
     function buyNft721 (address _nftAddress , uint256 _tokenId) external payable ForSale721(_nftAddress , _tokenId) nonReentrant{
+
         listing721 memory item721 = nftListed721[_tokenId];
+        
+        require(item721.owner != msg.sender , "Owner cannot buy their own NFTs");
+
         if(msg.value < item721.price){
             revert PriceNotMatched(_nftAddress , _tokenId);
         }
@@ -114,6 +118,21 @@ contract BlockBid is ReentrancyGuard{
         }
 
         IERC721(_nftAddress).safeTransferFrom(item721.owner, msg.sender, _tokenId);
+    }
+
+    function cancelListing721(address _nftAddress , uint256 _tokenId) external Owner721(_nftAddress , _tokenId , msg.sender){
+        delete (nftListed721[_tokenId]);
+        
+        uint i = 0;
+        while(ListedTokens721[i] != _tokenId){
+            i ++;
+        } 
+        if (i<ListedTokens721.length){
+            for (uint j = i ; j < ListedTokens721.length-1 ; j++){
+                ListedTokens721[j]= ListedTokens721[j+1];
+            }
+            ListedTokens721.pop();
+        }
     }
 
     function auctionNft721(address _nftAddress , uint256 _tokenId ,uint256 minPrice,uint256 auctionduration) external Owner721(_nftAddress , _tokenId , msg.sender){
