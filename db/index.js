@@ -51,6 +51,7 @@ app.post("/getListedOwnedNft", async (req, res) => {
     const nfts = await NftModel.find({
       token_id: { $in: tokenIds },
       on_sale: true,
+      on_auction: false,
     });
     res.json(nfts);
   } catch (err) {
@@ -137,6 +138,20 @@ app.put("/putNftInProfile", async (req, res) => {
     const nft = await NftModel.findOneAndUpdate(
       { token_id, nft_address },
       { price, on_sale: false, owner },
+      { new: true }
+    );
+    res.json(nft);
+  } catch (err) {
+    res.json(err);
+  }
+});
+
+app.put("/cancelListing", async (req, res) => {
+  const { token_id, nft_address } = req.body;
+  try {
+    const nft = await NftModel.findOneAndUpdate(
+      { token_id, nft_address },
+      { on_sale: false },
       { new: true }
     );
     res.json(nft);
