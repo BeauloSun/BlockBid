@@ -54,6 +54,15 @@ export default function Bid() {
               description: res.description,
               price: res.price,
             });
+
+            const now = Math.floor(Date.now() / 1000); // Current Unix timestamp
+            let timeLeft = res.auction_time - now; // Time left in seconds
+
+            if (timeLeft < 0) timeLeft = 0; // If the end time has passed, set timeLeft to 0
+
+            setHour(Math.floor(timeLeft / 3600));
+            setMinute(Math.floor((timeLeft % 3600) / 60));
+            setSecond(timeLeft % 60);
           }
         } catch (err) {
           console.error(err);

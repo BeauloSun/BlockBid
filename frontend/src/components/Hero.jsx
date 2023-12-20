@@ -35,7 +35,7 @@ const Hero = () => {
           Connect to your own crypto wallet, Start trading today to earn!
         </p>
         <Link
-          to="/marketplace"
+          to="/marketplace/ERC721/Sale"
           className="bg-[#fff537] w-[200px] hover:scale-105 duration-200 rounded-md font-medium my-6 mx-auto py-3 text-black"
         >
           Explore Marketplace
