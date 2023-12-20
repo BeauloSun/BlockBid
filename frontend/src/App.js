@@ -15,6 +15,7 @@ import { Marketplace721Auction } from "./pages/Marketplace721Auction";
 import { Holdings } from "./pages/Holdings";
 import { UserListedHoldings } from "./pages/UserListedHoldings";
 import { CancelListings } from "./pages/CancelListings";
+import { BuyNft721 } from "./pages/BuyNft721";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -36,13 +37,11 @@ function App() {
             element={<CancelListings />}
           />
           <Route path="/profile/holdings/:id" element={<Selling />} />
-          <Route path="/marketplace/:id" element={<Bidding />} />
-          <Route path="/marketplace" element={<Marketplace />} />
           <Route
             path="/marketplace/ERC721/Sale"
             element={<Marketplace721Sale />}
           />
-          <Route path="/marketplace/ERC721/Sale/:id" element={<Bidding />} />
+          <Route path="/marketplace/ERC721/Sale/:id" element={<BuyNft721 />} />
           <Route
             path="/marketplace/ERC721/Auction"
             element={<Marketplace721Auction />}
