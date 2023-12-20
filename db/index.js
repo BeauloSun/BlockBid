@@ -118,6 +118,20 @@ app.put("/putNftInMarketplace", async (req, res) => {
   }
 });
 
+app.put("/putNftAuctionInMarketplace", async (req, res) => {
+  const { token_id, nft_address, owner, price, time } = req.body;
+  try {
+    const nft = await NftModel.findOneAndUpdate(
+      { token_id, nft_address, owner },
+      { price, on_sale: true, on_auction: true, auction_time: time },
+      { new: true }
+    );
+    res.json(nft);
+  } catch (err) {
+    res.json(err);
+  }
+});
+
 app.put("/putNftInProfile", async (req, res) => {
   const { token_id, nft_address, owner, price } = req.body;
   try {

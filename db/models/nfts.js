@@ -28,6 +28,10 @@ const NftSchema = new mongoose.Schema({
   on_auction: {
     type: Boolean,
   },
+  auction_time: {
+    type: Number,
+    default: 0,
+  },
   on_sale: {
     type: Boolean,
   },

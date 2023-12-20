@@ -131,6 +131,10 @@ contract BlockBid is ReentrancyGuard{
 
         auctionNftListed721[_tokenId] = auctionListing721(_tokenId , payable(msg.sender) , minPrice , endtime, address(0), 0 , false);
     }
+
+    function getAuctionEndTime(uint256 _tokenId) external view AuctionExists(_tokenId) returns(uint256) {
+        return auctionNftListed721[_tokenId].auctionEndTime;
+    }
     
     function bid( uint256 _tokenId) external payable AuctionExists(_tokenId){
 

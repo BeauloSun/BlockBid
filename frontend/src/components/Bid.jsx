@@ -109,6 +109,49 @@ export default function Bid() {
     }, 500);
   };
 
+  const bidNft = async (e) => {
+    e.preventDefault();
+
+    setbuttonLoading(true);
+    setloadingController(true);
+
+    //get the nft contract
+    const nftContract = await getContract();
+    // get the market place contract
+    const marketPlace = await getMarketContract();
+    // sell add the nft to the market place
+    const address = window.localStorage.getItem("currentAddr");
+    const weiprice = Number(Web3.utils.toWei(data.price, "ether"));
+
+    try {
+      await marketPlace.methods
+        .buyNft721(nftContract.options.address, Number(token_id))
+        .send({ from: address, value: weiprice });
+
+      const puttingProfileBody = {
+        token_id: Number(token_id),
+        nft_address: nftContract.options.address,
+        owner: address,
+        price: Number(data.price),
+      };
+      await axios.put(
+        "http://localhost:4988/putNftInProfile",
+        puttingProfileBody
+      );
+      setMessage("Buy out successful!");
+      setMessageClass("font-bold text-xl text-[#48f9ff]");
+      setloadingController(false);
+    } catch (error) {
+      console.error(error);
+      setMessage("Buy out failed!");
+      setMessageClass("font-bold text-lg text-red-600");
+      setloadingController(false);
+    }
+    setTimeout(() => {
+      setbuttonLoading(false);
+    }, 500);
+  };
+
   useEffect(() => {
     const countdown = setInterval(() => {
       if (second > 0) {

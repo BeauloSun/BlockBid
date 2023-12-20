@@ -16,7 +16,9 @@ export default function Sell() {
   const [timeSetterbox, setTimeSetterbox] = useState(true);
   const [price, setPrice] = useState(null);
   const [priceMsg, setPriceMsg] = useState("Set Your Price");
-  const [buttonText, setButtonText] = useState("Sell !");
+  const [days, setDays] = useState(null);
+  const [hours, setHours] = useState(null);
+  const [minutes, setMinutes] = useState(null);
   const [timeSetterboxStyle, setTimeSetterboxStyle] = useState("bg-gray-500");
   const [auctionBool, setAuctionBool] = useState(false);
   const [message, setMessage] = useState("");
@@ -86,7 +88,7 @@ export default function Sell() {
     return true;
   };
 
-  const buttonHandler = async (e) => {
+  const sellHandler = async (e) => {
     e.preventDefault();
 
     setbuttonLoading(true);
@@ -143,16 +145,83 @@ export default function Sell() {
     }
   };
 
+  const auctionHandler = async (e) => {
+    e.preventDefault();
+
+    setbuttonLoading(true);
+    if (await formValid()) {
+      setloadingController(true);
+      try {
+        //get the nft contract
+        const nftContract = await getContract();
+
+        // get the market place contract
+        const marketPlace = await getMarketContract();
+
+        // sell add the nft to the market place
+        const address = window.localStorage.getItem("currentAddr");
+
+        await nftContract.methods
+          .approve(marketPlace.options.address, token_id)
+          .send({ from: address });
+
+        const weiprice = Number(Web3.utils.toWei(price, "ether"));
+        const duration = days * 24 * 3600 + hours * 3600 + minutes * 60;
+
+        await marketPlace.methods
+          .auctionNft721(
+            nftContract.options.address,
+            Number(token_id),
+            weiprice,
+            duration
+          )
+          .send({ from: address });
+
+        const time = await marketPlace.methods
+          .getAuctionEndTime(Number(token_id))
+          .call();
+
+        const puttingAuctionMarketplaceBody = {
+          token_id: token_id,
+          nft_address: nftContract.options.address,
+          owner: address,
+          price: Number(price),
+          time: Number(time),
+        };
+
+        await axios.put(
+          "http://localhost:4988/putNftAuctionInMarketplace",
+          puttingAuctionMarketplaceBody
+        );
+
+        setMessage("Sell successful!");
+        setMessageClass("font-bold text-xl text-[#48f9ff]");
+        setPrice("");
+        setloadingController(false);
+        setTimeout(() => {
+          setbuttonLoading(false);
+          //navigate("/marketplace");
+        }, 800);
+      } catch (error) {
+        console.error(error);
+        setMessage("Sell failed!");
+        setMessageClass("font-bold text-lg text-red-600");
+        setloadingController(false);
+        setTimeout(() => {
+          setbuttonLoading(false);
+        }, 500);
+      }
+    }
+  };
+
   const auctionTick = () => {
     setTimeSetterbox(!timeSetterbox);
     setAuctionBool(!auctionBool);
     if (timeSetterboxStyle === "bg-gray-500") {
       setTimeSetterboxStyle("");
-      setButtonText("Auction !");
       setPriceMsg("Set your starting price:");
     } else {
       setTimeSetterboxStyle("bg-gray-500");
-      setButtonText("Sell !");
       setPriceMsg("Set your price:");
     }
   };
@@ -224,8 +293,8 @@ export default function Sell() {
                   class="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
                   type="number"
                   name="Price"
-                  value={price}
                   placeholder="Enter price"
+                  value={price}
                   onChange={(e) => setPrice(e.target.value)}
                 />
                 <div class="font-bold text-3xl text-white pr-10 mb-4">ETH</div>
@@ -242,6 +311,8 @@ export default function Sell() {
                   type="number"
                   name="Day"
                   disabled={timeSetterbox}
+                  value={days}
+                  onChange={(e) => setDays(e.target.value)}
                 />
                 <div class="font-bold text-xl text-white">Day(s)</div>
                 <input
@@ -249,50 +320,90 @@ export default function Sell() {
                   type="number"
                   name="Hour"
                   disabled={timeSetterbox}
+                  value={hours}
+                  onChange={(e) => setHours(e.target.value)}
                 />
-                <div class="font-bold text-xl text-white">Min(s)</div>
+                <div class="font-bold text-xl text-white">Hour(s)</div>
                 <input
                   class={`p-2 rounded-xl border w-1/3 pl-2 text-xl ${timeSetterboxStyle} duration-300`}
                   type="number"
                   name="Minute"
                   disabled={timeSetterbox}
+                  value={minutes}
+                  onChange={(e) => setMinutes(e.target.value)}
                 />
-                <div class="font-bold text-xl text-white">Sec(s)</div>
+                <div class="font-bold text-xl text-white">Min(s)</div>
               </div>
               <p className={messageClass}>{message}</p>
-              <button
-                type="submit"
-                className="bg-slate-800 flex justify-center items-center w-full rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
-                onClick={buttonHandler}
-              >
-                {buttonLoading ? (
-                  <>
-                    <svg
-                      class="mr-5 h-6 w-6 animate-spin text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        class="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        stroke-width="4"
-                      ></circle>
-                      <path
-                        class="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    <span> Processing... </span>
-                  </>
-                ) : (
-                  buttonText
-                )}
-              </button>
+              {auctionBool ? (
+                <button
+                  type="submit"
+                  className="bg-slate-800 flex justify-center items-center w-full rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
+                  onClick={auctionHandler}
+                >
+                  {buttonLoading ? (
+                    <>
+                      <svg
+                        class="mr-5 h-6 w-6 animate-spin text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          class="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          stroke-width="4"
+                        ></circle>
+                        <path
+                          class="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      <span> Processing... </span>
+                    </>
+                  ) : (
+                    <span>Auction !</span>
+                  )}
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  className="bg-slate-800 flex justify-center items-center w-full rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
+                  onClick={sellHandler}
+                >
+                  {buttonLoading ? (
+                    <>
+                      <svg
+                        class="mr-5 h-6 w-6 animate-spin text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          class="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          stroke-width="4"
+                        ></circle>
+                        <path
+                          class="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      <span> Processing... </span>
+                    </>
+                  ) : (
+                    <span>Sell !</span>
+                  )}
+                </button>
+              )}
             </form>
           </div>
         </div>
