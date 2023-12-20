@@ -6,8 +6,8 @@ import Security from "../components/Security";
 import axios from "axios";
 import { getContract } from "../utils/getNft721";
 
-export const Profile = () => {
-  const [activeTab, setActiveTab] = useState("wallet");
+export const Holding = () => {
+  const [activeTab, setActiveTab] = useState("holdings");
   const [images, setImages] = useState([]);
   const [name, setName] = useState([]);
   const [tokenIds, setTokenIds] = useState([]);
@@ -29,6 +29,38 @@ export const Profile = () => {
       console.error("no nft owned");
     }
   };
+
+  const fetchData = useCallback(async () => {
+    try {
+      const tokens = await getOwnerNfts();
+      const response = await axios.post("http://localhost:4988/getOwnedNft", {
+        tokenIds: tokens,
+      });
+      const names = response.data.map((item) => item.name);
+      const descriptions = response.data.map((item) => item.description);
+      const prices = response.data.map((item) => item.price);
+      const images = response.data.map((item) => item.image_uri);
+      const tokenids = response.data.map((item) => item.token_id);
+      const nftAddresses = response.data.map((item) => item.nft_address);
+
+      setName(names);
+      setDescription(descriptions);
+      setPrice(prices);
+      setImages(images);
+      setNftAddress(nftAddresses);
+      setTokenIds(tokenids);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [
+    setName,
+    setDescription,
+    setPrice,
+    setImages,
+    setNftAddress,
+    setTokenIds,
+  ]);
+
   const accountChangeHandler = (account) => {
     window.localStorage.setItem("currentAddr", account);
     fetchDataRef.current();
@@ -36,12 +68,16 @@ export const Profile = () => {
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
-    if (tab === "Listed Holdings") {
+    if (tab === "holdings") {
       setImages(images);
     }
   };
 
-  const fetchDataRef = useRef();
+  const fetchDataRef = useRef(fetchData);
+
+  useEffect(() => {
+    fetchDataRef.current = fetchData;
+  }, [fetchData]);
 
   useEffect(() => {
     if (window.ethereum) {
@@ -59,6 +95,10 @@ export const Profile = () => {
       accountChangeHandler(cur_acc);
     }
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   return (
     <div className="mt-5 px-5 shadow">
@@ -93,7 +133,7 @@ export const Profile = () => {
             Listed Holdings
           </button>
         </Link>
-        <Link to="/profile/holdings">
+        <Link to="">
           <button
             onClick={() => handleTabClick("holdings")}
             className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
@@ -105,29 +145,57 @@ export const Profile = () => {
             Holdings
           </button>
         </Link>
-        <button
-          onClick={() => handleTabClick("wallet")}
-          className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
-            activeTab === "wallet"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-300 text-white bg-opacity-50"
-          }`}
-        >
-          Wallet
-        </button>
-        <button
-          onClick={() => handleTabClick("security")}
-          className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
-            activeTab === "security"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-300 text-white bg-opacity-50"
-          }`}
-        >
-          Profile & Security
-        </button>
+        <Link to="/profile">
+          <button
+            onClick={() => handleTabClick("wallet")}
+            className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
+              activeTab === "wallet"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-300 text-white bg-opacity-50"
+            }`}
+          >
+            Wallet
+          </button>
+        </Link>
+        <Link to="/profile">
+          <button
+            onClick={() => handleTabClick("security")}
+            className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
+              activeTab === "security"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-300 text-white bg-opacity-50"
+            }`}
+          >
+            Profile & Security
+          </button>
+        </Link>
       </div>
-
-      {activeTab === "wallet" ? <Wallet /> : <Security />}
+      <div
+        className="grid grid-flow-row-dense gap-1 mt-20 mx-[17%]"
+        style={{
+          gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
+        }}
+      >
+        {images.map((img_src, index) => (
+          <div
+            key={index}
+            className="flex flex-col items-center py-4 hover:scale-105 duration-300"
+          >
+            <Link
+              to={`/profile/holdings/${tokenIds[index]}`}
+              key={tokenIds[index]}
+            >
+              <CardC
+                img_src={img_src}
+                name={name[index]}
+                description={description[index]}
+                price={price[index]}
+                market={false}
+              />
+            </Link>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
