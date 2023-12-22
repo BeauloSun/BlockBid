@@ -30,11 +30,11 @@ export const Profile = () => {
     }
   };
 
-  const fetchDataRef = useRef();
+  //const fetchDataRef = useRef();
 
   const accountChangeHandler = (account) => {
     window.localStorage.setItem("currentAddr", account);
-    fetchDataRef.current();
+    //fetchDataRef.current();
   };
 
   const handleTabClick = (tab) => {
