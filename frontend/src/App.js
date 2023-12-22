@@ -18,6 +18,26 @@ import { CancelListings } from "./pages/CancelListings";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
+  const accountChangeHandler = (account) => {
+    window.localStorage.setItem("currentAddr", account);
+  };
+
+  useEffect(() => {
+    if (window.ethereum) {
+      const handler = function (accounts) {
+        accountChangeHandler(accounts[0]);
+      };
+
+      window.ethereum.on("accountsChanged", handler);
+      return () => {
+        window.ethereum.off("accountsChanged", handler); // Clean up the event listener
+      };
+    }
+    const cur_acc = window.localStorage.getItem("currentAddr");
+    if (cur_acc !== null && cur_acc !== "undefined") {
+      accountChangeHandler(cur_acc);
+    }
+  }, []);
   return (
     <Router>
       <div>

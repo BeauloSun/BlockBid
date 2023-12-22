@@ -16,7 +16,7 @@ export default function Bid() {
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
   const [bid, setBid] = useState(null);
-  const [prevBid, setPrevBid] = useState(null);
+  const [prevBid, setPrevBid] = useState(0);
   const [bidInformation, setBidInformation] = useState("");
   const [hour, setHour] = useState(10);
   const [minute, setMinute] = useState(30);
@@ -42,7 +42,7 @@ export default function Bid() {
         console.error(err);
       }
 
-      if (isValid) {
+      if (isValid !== 0) {
         try {
           const response = await axios.post(
             "http://localhost:4988/getNftById",
@@ -58,7 +58,7 @@ export default function Bid() {
               description: res.description,
               price: res.price,
             });
-
+            var cur_highest_bid = res.price;
             const now = Math.floor(Date.now() / 1000); // Current Unix timestamp
             let timeLeft = res.auction_time - now; // Time left in seconds
 
@@ -88,21 +88,19 @@ export default function Bid() {
                 token_id: token_id,
               }
             );
-            const cur_highest_bid = highest_bids.data.price;
-            const bidded =
-              sortedBids[window.localStorage.getItem("currentAddr")];
+            if (highest_bids.data) {
+              cur_highest_bid = highest_bids.data.price;
+            }
+            var bidded = sortedBids[window.localStorage.getItem("currentAddr")];
             var difference = 0;
             if (bidded) {
-              difference = cur_highest_bid - bidded;
-              console.log("curP:", bid);
-              console.log("bided:", bidded);
+              difference = (cur_highest_bid - bidded).toFixed(5);
               setPrevBid(bidded);
             } else {
               difference = cur_highest_bid;
               setPrevBid(0);
             }
-
-            const information = `Current highest bid is: ${cur_highest_bid} ETH. You need to spend at least ${difference} ETH more to bid.`;
+            const information = `Current highest bid is: ${cur_highest_bid} ETH. You need to bid more than ${difference} ETH.`;
             setBidInformation(information);
           } catch (err) {
             console.error(err);
@@ -118,46 +116,77 @@ export default function Bid() {
     fetchData();
   }, [id, token_id]);
 
+  const formValid = async () => {
+    if (!bid) {
+      setMessage("Bid cannot be empty");
+      setMessageClass("font-bold text-xl text-red-600");
+      return false;
+    }
+
+    if (Number(bid) <= 0) {
+      setMessage("Bid cannot be negative");
+      setMessageClass("font-bold text-xl text-red-600");
+      return false;
+    }
+
+    if (Number(bid) <= data.price) {
+      setMessage("Bid needs to be greater than the current highest bids");
+      setMessageClass("font-bold text-xl text-red-600");
+      return false;
+    }
+
+    setMessage("");
+    setMessageClass("");
+    return true;
+  };
+
   const bidNft = async (e) => {
     e.preventDefault();
 
     setbuttonLoading(true);
-    setloadingController(true);
 
-    //get the nft contract
-    const nftContract = await getContract();
-    // get the market place contract
-    const marketPlace = await getMarketContract();
-    // sell add the nft to the market place
-    const address = window.localStorage.getItem("currentAddr");
-    const weiprice = Number(Web3.utils.toWei(bid, "ether")); // bid-prevBid
+    if (await formValid()) {
+      setloadingController(true);
 
-    try {
-      await marketPlace.methods
-        .bid(Number(token_id))
-        .send({ from: address, value: weiprice });
+      //get the nft contract
+      const nftContract = await getContract();
+      // get the market place contract
+      const marketPlace = await getMarketContract();
+      // sell add the nft to the market place
+      const address = window.localStorage.getItem("currentAddr");
+      const weiprice = Number(Web3.utils.toWei(bid - prevBid, "ether"));
 
-      const recordBidBody = {
-        token_id: Number(token_id),
-        nft_address: nftContract.options.address,
-        bidder: address,
-        price: Number(bid),
-      };
-      await axios.put("http://localhost:4988/recordBid", recordBidBody);
+      try {
+        await marketPlace.methods
+          .bid(Number(token_id))
+          .send({ from: address, value: weiprice });
 
-      setMessage("Bid successful!");
-      setMessageClass("font-bold text-xl text-[#48f9ff]");
-      setloadingController(false);
+        const recordBidBody = {
+          token_id: Number(token_id),
+          nft_address: nftContract.options.address,
+          bidder: address,
+          price: Number(bid),
+        };
+        await axios.put("http://localhost:4988/recordBid", recordBidBody);
+
+        setMessage("Bid successful!");
+        setMessageClass("font-bold text-xl text-[#48f9ff]");
+        setloadingController(false);
+        setTimeout(() => {
+          setbuttonLoading(false);
+          window.location.reload();
+        }, 500);
+      } catch (error) {
+        console.error(error);
+        setMessage("Bid failed!");
+        setMessageClass("font-bold text-lg text-red-600");
+        setloadingController(false);
+        setbuttonLoading(false);
+      }
+    } else {
       setTimeout(() => {
         setbuttonLoading(false);
-        window.location.reload();
       }, 500);
-    } catch (error) {
-      console.error(error);
-      setMessage("Bid failed!");
-      setMessageClass("font-bold text-lg text-red-600");
-      setloadingController(false);
-      setbuttonLoading(false);
     }
   };
 
@@ -253,9 +282,19 @@ export default function Bid() {
                 {bidInformation}
               </p>
               <p className="font-bold text-xl text-[#6dff48]">
-                {bid
-                  ? `You will be paying ${bid - prevBid} ETH for the new bid.`
-                  : ""}
+                {bid ? (
+                  bid >= prevBid ? (
+                    `You will be paying ${(bid - prevBid).toFixed(
+                      5
+                    )} ETH for the new bid.`
+                  ) : (
+                    <span className="text-red-500">
+                      Please enter a larger bid
+                    </span>
+                  )
+                ) : (
+                  ""
+                )}
               </p>
               <input
                 class="p-2 rounded-xl border"
@@ -265,6 +304,7 @@ export default function Bid() {
                 value={bid}
                 onChange={(e) => setBid(e.target.value)}
               />
+
               <p className={messageClass}>{message}</p>
               <button
                 type="submit"
