@@ -93,9 +93,9 @@ export default function Bid() {
               sortedBids[window.localStorage.getItem("currentAddr")];
             var difference = 0;
             if (bidded) {
-              difference =
-                cur_highest_bid -
-                sortedBids[window.localStorage.getItem("currentAddr")];
+              difference = cur_highest_bid - bidded;
+              console.log("curP:", bid);
+              console.log("bided:", bidded);
               setPrevBid(bidded);
             } else {
               difference = cur_highest_bid;

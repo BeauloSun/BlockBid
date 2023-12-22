@@ -131,7 +131,11 @@ export default function Sell() {
         setloadingController(false);
         setTimeout(() => {
           setbuttonLoading(false);
-          navigate("/marketplace");
+          if (auctionBool) {
+            navigate("/marketplace/ERC721/Auction");
+          } else {
+            navigate("/marketplace/ERC721/Sale");
+          }
         }, 1500);
       } catch (error) {
         console.error(error);
