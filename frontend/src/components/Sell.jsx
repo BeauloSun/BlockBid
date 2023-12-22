@@ -200,7 +200,7 @@ export default function Sell() {
         setloadingController(false);
         setTimeout(() => {
           setbuttonLoading(false);
-          //navigate("/marketplace");
+          navigate("/marketplace");
         }, 800);
       } catch (error) {
         console.error(error);

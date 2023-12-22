@@ -29,6 +29,9 @@ export const Profile = () => {
       console.error("no nft owned");
     }
   };
+
+  const fetchDataRef = useRef();
+
   const accountChangeHandler = (account) => {
     window.localStorage.setItem("currentAddr", account);
     fetchDataRef.current();
@@ -40,8 +43,6 @@ export const Profile = () => {
       setImages(images);
     }
   };
-
-  const fetchDataRef = useRef();
 
   useEffect(() => {
     if (window.ethereum) {

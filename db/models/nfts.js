@@ -38,6 +38,7 @@ const NftSchema = new mongoose.Schema({
   bids: {
     type: Map,
     of: Number,
+    default: {},
   },
 });
 

@@ -133,6 +133,66 @@ app.post("/getNftsOnAuction", async (req, res) => {
   }
 });
 
+app.post("/getBids", async (req, res) => {
+  const { token_id } = req.body;
+  try {
+    const nft = await NftModel.findOne({
+      token_id,
+      on_auction: true,
+      on_sale: true,
+    });
+    res.json(nft.bids);
+  } catch (err) {
+    res.json(err);
+  }
+});
+
+app.post("/getHighestBid", async (req, res) => {
+  const { token_id } = req.body;
+  try {
+    const nft = await NftModel.findOne({
+      token_id,
+      on_auction: true,
+      on_sale: true,
+    });
+    if (nft) {
+      let highestBid = null;
+      for (let [bidder, price] of nft.bids.entries()) {
+        if (!highestBid || price > highestBid.price) {
+          highestBid = { bidder, price };
+        }
+      }
+      res.json(highestBid);
+    } else {
+      res.status(404).json({ message: "NFT not found" });
+    }
+  } catch (err) {
+    res.json(err);
+  }
+});
+
+app.put("/recordBid", async (req, res) => {
+  const { token_id, nft_address, bidder, price } = req.body;
+  try {
+    const nft = await NftModel.findOneAndUpdate(
+      {
+        token_id,
+        nft_address,
+        on_sale: true,
+        on_auction: true,
+      },
+      { price },
+      { new: true }
+    );
+    nft.bids.set(bidder, price);
+    nft.markModified("bids");
+    await nft.save();
+    res.json(nft);
+  } catch (err) {
+    res.json(err);
+  }
+});
+
 app.put("/putNftInMarketplace", async (req, res) => {
   const { token_id, nft_address, owner, price } = req.body;
   try {

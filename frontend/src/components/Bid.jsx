@@ -15,10 +15,14 @@ export default function Bid() {
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
+  const [bid, setBid] = useState(null);
+  const [prevBid, setPrevBid] = useState(null);
+  const [bidInformation, setBidInformation] = useState("");
   const [hour, setHour] = useState(10);
   const [minute, setMinute] = useState(30);
   const [second, setSecond] = useState(30);
   const [data, setData] = useState({});
+  const [bidHistory, setBidHistory] = useState({});
   const navigate = useNavigate();
   var isValid = false;
 
@@ -64,6 +68,45 @@ export default function Bid() {
             setMinute(Math.floor((timeLeft % 3600) / 60));
             setSecond(timeLeft % 60);
           }
+
+          try {
+            const bids = await axios.post("http://localhost:4988/getBids", {
+              token_id: token_id,
+            });
+            // sort the bids for display
+            const obj = bids.data;
+            let sortedKeys = Object.keys(obj).sort((a, b) => obj[b] - obj[a]);
+            let sortedBids = {};
+            for (let key of sortedKeys) {
+              sortedBids[key] = obj[key];
+            }
+            setBidHistory(sortedBids);
+
+            const highest_bids = await axios.post(
+              "http://localhost:4988/getHighestBid",
+              {
+                token_id: token_id,
+              }
+            );
+            const cur_highest_bid = highest_bids.data.price;
+            const bidded =
+              sortedBids[window.localStorage.getItem("currentAddr")];
+            var difference = 0;
+            if (bidded) {
+              difference =
+                cur_highest_bid -
+                sortedBids[window.localStorage.getItem("currentAddr")];
+              setPrevBid(bidded);
+            } else {
+              difference = cur_highest_bid;
+              setPrevBid(0);
+            }
+
+            const information = `Current highest bid is: ${cur_highest_bid} ETH. You need to spend at least ${difference} ETH more to bid.`;
+            setBidInformation(information);
+          } catch (err) {
+            console.error(err);
+          }
         } catch (err) {
           console.error(err);
         }
@@ -74,49 +117,6 @@ export default function Bid() {
 
     fetchData();
   }, [id, token_id]);
-
-  const buyNft = async (e) => {
-    e.preventDefault();
-
-    setbuttonLoading(true);
-    setloadingController(true);
-
-    //get the nft contract
-    const nftContract = await getContract();
-    // get the market place contract
-    const marketPlace = await getMarketContract();
-    // sell add the nft to the market place
-    const address = window.localStorage.getItem("currentAddr");
-    const weiprice = Number(Web3.utils.toWei(data.price, "ether"));
-
-    try {
-      await marketPlace.methods
-        .buyNft721(nftContract.options.address, Number(token_id))
-        .send({ from: address, value: weiprice });
-
-      const puttingProfileBody = {
-        token_id: Number(token_id),
-        nft_address: nftContract.options.address,
-        owner: address,
-        price: Number(data.price),
-      };
-      await axios.put(
-        "http://localhost:4988/putNftInProfile",
-        puttingProfileBody
-      );
-      setMessage("Buy out successful!");
-      setMessageClass("font-bold text-xl text-[#48f9ff]");
-      setloadingController(false);
-    } catch (error) {
-      console.error(error);
-      setMessage("Buy out failed!");
-      setMessageClass("font-bold text-lg text-red-600");
-      setloadingController(false);
-    }
-    setTimeout(() => {
-      setbuttonLoading(false);
-    }, 500);
-  };
 
   const bidNft = async (e) => {
     e.preventDefault();
@@ -130,35 +130,35 @@ export default function Bid() {
     const marketPlace = await getMarketContract();
     // sell add the nft to the market place
     const address = window.localStorage.getItem("currentAddr");
-    const weiprice = Number(Web3.utils.toWei(data.price, "ether"));
+    const weiprice = Number(Web3.utils.toWei(bid, "ether")); // bid-prevBid
 
     try {
       await marketPlace.methods
-        .buyNft721(nftContract.options.address, Number(token_id))
+        .bid(Number(token_id))
         .send({ from: address, value: weiprice });
 
-      const puttingProfileBody = {
+      const recordBidBody = {
         token_id: Number(token_id),
         nft_address: nftContract.options.address,
-        owner: address,
-        price: Number(data.price),
+        bidder: address,
+        price: Number(bid),
       };
-      await axios.put(
-        "http://localhost:4988/putNftInProfile",
-        puttingProfileBody
-      );
-      setMessage("Buy out successful!");
+      await axios.put("http://localhost:4988/recordBid", recordBidBody);
+
+      setMessage("Bid successful!");
       setMessageClass("font-bold text-xl text-[#48f9ff]");
       setloadingController(false);
+      setTimeout(() => {
+        setbuttonLoading(false);
+        window.location.reload();
+      }, 500);
     } catch (error) {
       console.error(error);
-      setMessage("Buy out failed!");
+      setMessage("Bid failed!");
       setMessageClass("font-bold text-lg text-red-600");
       setloadingController(false);
-    }
-    setTimeout(() => {
       setbuttonLoading(false);
-    }, 500);
+    }
   };
 
   useEffect(() => {
@@ -186,12 +186,12 @@ export default function Bid() {
 
   return (
     <section
-      class="bg-[#1e1e1e] min-h-screen flex items-center justify-center"
+      class="bg-[#1e1e1e] min-h-screen flex flex-col items-center justify-center py-20"
       style={{
         backgroundImage: `url(${bg})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
+        backgroundRepeat: "repeat-y",
       }}
     >
       {loadingController ? (
@@ -249,21 +249,27 @@ export default function Bid() {
             </div>
 
             <form action="" class="flex flex-col gap-4">
+              <p className="font-bold text-xl mt-8 text-[#6dff48]">
+                {bidInformation}
+              </p>
+              <p className="font-bold text-xl text-[#6dff48]">
+                {bid
+                  ? `You will be paying ${bid - prevBid} ETH for the new bid.`
+                  : ""}
+              </p>
               <input
-                class="p-2 mt-8 rounded-xl border"
+                class="p-2 rounded-xl border"
                 type="number"
                 name="bid"
                 placeholder="Enter your bid"
+                value={bid}
+                onChange={(e) => setBid(e.target.value)}
               />
               <p className={messageClass}>{message}</p>
-              <button class="bg-slate-800 rounded-xl text-3xl font-bold text-white py-2 hover:scale-105 duration-300">
-                Place Bid
-              </button>
-
               <button
                 type="submit"
                 className="bg-slate-800 flex justify-center items-center w-full rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
-                onClick={buyNft}
+                onClick={bidNft}
               >
                 {buttonLoading ? (
                   <>
@@ -290,12 +296,27 @@ export default function Bid() {
                     <span> Processing... </span>
                   </>
                 ) : (
-                  "Buy Out!"
+                  "Place Bid!"
                 )}
               </button>
             </form>
           </div>
         </div>
+      </div>
+
+      <div class="bg-slate-400 flex flex-col rounded-2xl mt-6 shadow-lg py-10 max-w-[1100px] p-5 w-[100%] items-center bg-opacity-50">
+        <div class="w-full text-center">
+          <h2 class="text-white font-bold text-6xl pb-10">Bidding History</h2>
+        </div>
+        {Object.entries(bidHistory).map(([wallet_id, price], index) => (
+          <div
+            key={index}
+            className="bg-[#a2a2a2] p-4 mb-4 flex justify-between w-[100%] bg-opacity-50 rounded-2xl"
+          >
+            <span className="text-white text-2xl font-bold">{wallet_id}</span>
+            <span className="text-white text-2xl font-bold">{price} ETH</span>
+          </div>
+        ))}
       </div>
     </section>
   );
