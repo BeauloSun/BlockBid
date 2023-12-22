@@ -24,6 +24,7 @@ contract nft721 is ERC721URIStorage{
         return _tokenId;
     }
 
+    
 
     function getOwnerNFTs(address owner) public view returns (uint256[] memory) {
         uint256[] memory ownerNFTs = new uint256[](balanceOf(owner));
