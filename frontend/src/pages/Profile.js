@@ -31,7 +31,6 @@ export const Profile = () => {
   };
   const accountChangeHandler = (account) => {
     window.localStorage.setItem("currentAddr", account);
-    fetchDataRef.current();
   };
 
   const handleTabClick = (tab) => {
@@ -40,8 +39,6 @@ export const Profile = () => {
       setImages(images);
     }
   };
-
-  const fetchDataRef = useRef();
 
   useEffect(() => {
     if (window.ethereum) {
