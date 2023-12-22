@@ -26,20 +26,18 @@ export default function Buy721() {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:4988/getMarketAccessForAuctionNft",
+          "http://localhost:4988/getAccessibleSaleNft",
           {
-            tokenIds: token_id,
+            token_id: token_id,
           }
         );
-        console.log("the response data", response.data);
         // eslint-disable-next-line react-hooks/exhaustive-deps
         isValid = response.data;
-        console.log("isvalid", isValid.length);
       } catch (err) {
         console.error(err);
       }
 
-      if (isValid != 0) {
+      if (isValid.length !== 0) {
         try {
           const response = await axios.post(
             "http://localhost:4988/getNftById",

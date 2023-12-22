@@ -30,10 +30,9 @@ export default function Bid() {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:4988/getAccessibleMarketNft",
+          "http://localhost:4988/getAccessibleAuctionNft",
           {
-            tokenId: token_id,
-            marketplace: true,
+            token_id: token_id,
           }
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -42,7 +41,7 @@ export default function Bid() {
         console.error(err);
       }
 
-      if (isValid !== 0) {
+      if (isValid.length !== 0) {
         try {
           const response = await axios.post(
             "http://localhost:4988/getNftById",

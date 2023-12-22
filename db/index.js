@@ -118,12 +118,27 @@ app.post("/getNftsOnSale", async (req, res) => {
     res.json(err);
   }
 });
-app.post("/getMarketAccessForAuctionNft", async (req, res) => {
-  const tokenIds = req.body.tokenIds;
+
+app.post("/getAccessibleSaleNft", async (req, res) => {
+  const token_id = req.body.token_id;
   try {
     const nfts = await NftModel.find({
-      token_id: { $in: tokenIds },
+      token_id: token_id,
       on_auction: false,
+      on_sale: true,
+    });
+    res.json(nfts);
+  } catch (err) {
+    res.json(err);
+  }
+});
+
+app.post("/getAccessibleAuctionNft", async (req, res) => {
+  const token_id = req.body.token_id;
+  try {
+    const nfts = await NftModel.find({
+      token_id: token_id,
+      on_auction: true,
       on_sale: true,
     });
     res.json(nfts);
