@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import bg from "../assets/bid_bg.jpg";
 import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
@@ -21,10 +21,12 @@ export default function Bid() {
   const [hour, setHour] = useState(10);
   const [minute, setMinute] = useState(30);
   const [second, setSecond] = useState(30);
+  const [auctionEndTime, setAuctionEndTime] = useState(null);
   const [data, setData] = useState({});
   const [bidHistory, setBidHistory] = useState({});
   const navigate = useNavigate();
   var isValid = false;
+  const firstUpdate = useRef(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,7 +64,7 @@ export default function Bid() {
             let timeLeft = res.auction_time - now; // Time left in seconds
 
             if (timeLeft < 0) timeLeft = 0; // If the end time has passed, set timeLeft to 0
-
+            setAuctionEndTime(res.auction_time);
             setHour(Math.floor(timeLeft / 3600));
             setMinute(Math.floor((timeLeft % 3600) / 60));
             setSecond(timeLeft % 60);
@@ -114,6 +116,82 @@ export default function Bid() {
 
     fetchData();
   }, [id, token_id]);
+
+  useEffect(() => {
+    const countdown = setInterval(() => {
+      if (second > 0) {
+        setSecond(second - 1);
+      }
+      if (second === 0) {
+        if (minute === 0) {
+          if (hour === 0) {
+            clearInterval(countdown);
+          } else {
+            setHour(hour - 1);
+            setMinute(59);
+            setSecond(59);
+          }
+        } else {
+          setMinute(minute - 1);
+          setSecond(59);
+        }
+      }
+    }, 1000);
+    return () => clearInterval(countdown);
+  }, [hour, minute, second]);
+
+  const formatTime = (time) => String(time).padStart(2, "0");
+
+  useEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
+    }
+
+    const stop_auction = async () => {
+      const now = Math.floor(Date.now() / 1000);
+      let timeLeft = auctionEndTime - now;
+      if (timeLeft < 0) {
+        const nftContract = await getContract();
+        const marketPlace = await getMarketContract();
+        const nft_address = nftContract.options.address;
+        try {
+          await marketPlace.methods
+            .auctionEnd(nft_address, Number(token_id))
+            .call();
+
+          const highest_bid = await axios.post(
+            "http://localhost:4988/getHighestBid",
+            {
+              token_id: Number(token_id),
+            }
+          );
+
+          var highest_bidder = null;
+          if (highest_bid.data) {
+            highest_bidder = highest_bid.data.bidder;
+          }
+          const auctionEndBody = {
+            token_id: Number(token_id),
+            nft_address: nftContract.options.address,
+            owner: highest_bidder,
+          };
+
+          await axios.post("http://localhost:4988/endAuction", auctionEndBody);
+
+          setTimeout(() => {
+            navigate("/NotFound");
+          }, 1500);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    };
+
+    setTimeout(() => {
+      stop_auction();
+    }, 500);
+  }, [auctionEndTime, token_id, navigate]);
 
   const formValid = async () => {
     if (!bid) {
@@ -189,29 +267,6 @@ export default function Bid() {
     }
   };
 
-  useEffect(() => {
-    const countdown = setInterval(() => {
-      if (second > 0) {
-        setSecond(second - 1);
-      }
-      if (second === 0) {
-        if (minute === 0) {
-          if (hour === 0) {
-            clearInterval(countdown);
-          } else {
-            setHour(hour - 1);
-            setMinute(59);
-            setSecond(59);
-          }
-        } else {
-          setMinute(minute - 1);
-          setSecond(59);
-        }
-      }
-    }, 1000);
-    return () => clearInterval(countdown);
-  }, [hour, minute, second]);
-
   return (
     <section
       class="bg-[#1e1e1e] min-h-screen flex flex-col items-center justify-center py-20"
@@ -258,19 +313,19 @@ export default function Bid() {
             <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
               <div className="flex flex-col p-2 bg-slate-800 text-white rounded-xl">
                 <span className="countdown font-mono text-5xl ">
-                  <span>{hour}</span>
+                  <span>{formatTime(hour)}</span>
                 </span>
                 hours
               </div>
               <div className="flex flex-col p-2 bg-slate-800 text-white rounded-xl">
                 <span className="countdown font-mono text-5xl ">
-                  <span>{minute}</span>
+                  <span>{formatTime(minute)}</span>
                 </span>
                 min
               </div>
               <div className="flex flex-col p-2 bg-slate-800 text-white rounded-xl">
                 <span className="countdown font-mono text-5xl">
-                  <span>{second}</span>
+                  <span>{formatTime(second)}</span>
                 </span>
                 sec
               </div>

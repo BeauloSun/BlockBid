@@ -19,6 +19,7 @@ export const Holding = () => {
     const contract = await getContract();
     const address = window.localStorage.getItem("currentAddr");
     const tokens = await contract.methods.getOwnerNFTs(address).call();
+    console.log("tokens:", tokens);
     const tokens_integers = [];
     for (const bigint of tokens) {
       tokens_integers.push(Number(bigint));

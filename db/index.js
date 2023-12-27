@@ -199,6 +199,29 @@ app.post("/getHighestBid", async (req, res) => {
   }
 });
 
+app.post("/endAuction", async (req, res) => {
+  const { token_id, nft_address, owner } = req.body;
+  try {
+    let nft;
+    if (owner !== null) {
+      nft = await NftModel.findOneAndUpdate(
+        { token_id, nft_address },
+        { on_auction: false, on_sale: false, owner },
+        { new: true }
+      );
+    } else {
+      nft = await NftModel.findOneAndUpdate(
+        { token_id, nft_address },
+        { on_auction: false, on_sale: false },
+        { new: true }
+      );
+    }
+    res.json(nft);
+  } catch (err) {
+    res.json(err);
+  }
+});
+
 app.put("/recordBid", async (req, res) => {
   const { token_id, nft_address, bidder, price } = req.body;
   try {

@@ -181,9 +181,18 @@ contract BlockBid is ReentrancyGuard{
         auctionItem.highestBidder = msg.sender;
     }
 
+    function blockTime() public view returns (uint256){
+        return block.timestamp;
+    }
+
+    function auctionEndTime(uint256 _tokenId) public view returns (uint256){
+        auctionListing721 memory auction = auctionNftListed721[_tokenId];
+        return auction.auctionEndTime;
+    }
+
     function auctionEnd(address _nftAddress, uint256 _tokenId) external {
         auctionListing721 memory auction = auctionNftListed721[_tokenId];
-
+        
         require(block.timestamp >= auction.auctionEndTime, "Auction not yet ended.");
         require(!auction.ended, "AuctionEnd has already been called.");
 
