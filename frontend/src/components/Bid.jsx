@@ -155,10 +155,11 @@ export default function Bid() {
         const nftContract = await getContract();
         const marketPlace = await getMarketContract();
         const nft_address = nftContract.options.address;
+        const address = window.localStorage.getItem("currentAddr");
         try {
           await marketPlace.methods
             .auctionEnd(nft_address, Number(token_id))
-            .call();
+            .send({ from: address });
 
           const highest_bid = await axios.post(
             "http://localhost:4988/getHighestBid",
