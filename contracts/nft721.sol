@@ -12,6 +12,7 @@ contract nft721 is ERC721URIStorage{
         _tokenId = 1;
     }
 
+    // mint an nft
     function mintNft(address owner , string memory tokenURI) external returns (uint256){
         _safeMint(owner , _tokenId);
         _setTokenURI(_tokenId , tokenURI);
@@ -20,10 +21,12 @@ contract nft721 is ERC721URIStorage{
         return _tokenId;
     }
 
+    // get the token id
     function getTokenId() public view returns(uint256){
         return _tokenId;
     }
 
+    // get the ownerNFTs
     function getOwnerNFTs(address owner) public view returns (uint256[] memory) {
         uint256[] memory ownerNFTs = new uint256[](balanceOf(owner));
         uint256 count = 0;

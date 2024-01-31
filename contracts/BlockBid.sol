@@ -43,7 +43,7 @@ contract BlockBid is ReentrancyGuard{
     uint256[] ListedAuctionTokens721;
 
 
-
+// check if the message sender is the owner
     modifier Owner721(address nftAddress ,uint256 tokenId, address sender){
         IERC721 nft = IERC721(nftAddress);
         if (nft.ownerOf(tokenId) != sender){
@@ -52,6 +52,7 @@ contract BlockBid is ReentrancyGuard{
         _;
     }
 
+// if the token is on sale
     modifier ForSale721(address nftAddress , uint tokenId){
         listing721 memory displayed = nftListed721[tokenId];
         if(displayed.price <= 0){
@@ -59,7 +60,7 @@ contract BlockBid is ReentrancyGuard{
         }
         _;
     }
-
+// check if token is on auction
     modifier AuctionExists (uint256 _tokenId){
         auctionListing721 memory auctionItem = auctionNftListed721[_tokenId];
         if(auctionItem.tokenId <= 0){
@@ -186,7 +187,6 @@ contract BlockBid is ReentrancyGuard{
 
         require(block.timestamp >= auction.auctionEndTime, "Auction not yet ended.");
         require(!auction.ended, "AuctionEnd has already been called.");
-
         auction.ended = true;
         address[] memory bidders = auctionBidders[_tokenId];
 
