@@ -185,7 +185,7 @@ contract BlockBid is ReentrancyGuard{
         auctionListing721 memory auction = auctionNftListed721[_tokenId];
 
         require(block.timestamp >= auction.auctionEndTime, "Auction not yet ended.");
-        require(!auction.ended, "AuctionEnd has already been called.");
+        //require(!auction.ended, "AuctionEnd has already been called.");
 
         auction.ended = true;
         address[] memory bidders = auctionBidders[_tokenId];
@@ -198,7 +198,7 @@ contract BlockBid is ReentrancyGuard{
         }else{
                     // transfer all the money to the seller's fund
             if(auctionBids[_tokenId][auction.highestBidder] == auction.highestBid){
-                UserFunds[msg.sender] += auctionBids[_tokenId][auction.highestBidder];
+                UserFunds[auction.owner] += auctionBids[_tokenId][auction.highestBidder];
                 auctionBids[_tokenId][auction.highestBidder] = 0;
             }
             // transfer the money to all the bidders fund
