@@ -5,7 +5,7 @@ import SearchBar from "./SearchBar.jsx";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { Link } from "react-router-dom";
 
-const Navbar = () => {
+export const Navbar = () => {
   const [nav, setNav] = useState(false);
   const navRef = useRef(null);
 
@@ -99,5 +99,3 @@ const Navbar = () => {
     </div>
   );
 };
-
-export default Navbar;

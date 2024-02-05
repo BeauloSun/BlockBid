@@ -1,9 +1,9 @@
 import React from "react";
-import Typed from "react-typed";
+import { ReactTyped } from "react-typed";
 import bg from "../assets/landing_bg.png";
 import { Link } from "react-router-dom";
 
-const Hero = () => {
+export const Hero = () => {
   return (
     <div
       className="text-white"
@@ -23,7 +23,7 @@ const Hero = () => {
           <p className="md:text-5xl sm:text-4xl text-xl font-bold py-4">
             Unique, Flexible, Secure trading for
           </p>
-          <Typed
+          <ReactTyped
             className="md:text-5xl sm:text-4xl text-xl font-bold md:pl-4 pl-2 text-[#48f9ff]"
             strings={["NFTS", "MUSIC", "ART", "ASSETS"]}
             typeSpeed={120}
@@ -50,5 +50,3 @@ const Hero = () => {
     </div>
   );
 };
-
-export default Hero;

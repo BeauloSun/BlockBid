@@ -7,7 +7,7 @@ import {
 } from "react-icons/fa";
 import logo from "../assets/logo.svg";
 
-const Footer = () => {
+export const Footer = () => {
   return (
     <div className="max-w-[1700px] mx-auto py-5 px-4 grid lg:grid-cols-3 gap-8 text-gray-300">
       <div>
@@ -48,5 +48,3 @@ const Footer = () => {
     </div>
   );
 };
-
-export default Footer;

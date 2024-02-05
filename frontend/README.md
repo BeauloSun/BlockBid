@@ -1,5 +1,23 @@
 # To do (Frontend)
 
+## Testing commands:
+
+1. General commands:
+
+```shell
+yarn test
+yarn coverage (statement cov, branch cov, function cov, lines cov)
+```
+
+2. Report writing:
+   For only detect coverage from specific file: (example)
+   adding in package.json scripts
+
+```shell
+--collectCoverageFrom='src/components/*.jsx'
+--collectCoverageFrom='!src/components/*.jsx'
+```
+
 ## Pages:
 
 1. Landing page
