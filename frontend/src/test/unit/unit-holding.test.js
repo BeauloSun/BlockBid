@@ -1,8 +1,8 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom/extend-expect";
 import { BrowserRouter as Router } from "react-router-dom";
 import { Holding } from "../../components/holdings";
-import { expect } from "chai";
 
 test("Holding", () => {
   render(
@@ -10,6 +10,8 @@ test("Holding", () => {
       <Holding />
     </Router>
   );
-  const testElement = screen.getAllByAltText("Jiaming Sun");
-  expect(testElement).not.toBeNull();
+  const testElement = screen.getByRole("button", {
+    name: "Profile & Security",
+  });
+  expect(testElement).toBeInTheDocument();
 });
