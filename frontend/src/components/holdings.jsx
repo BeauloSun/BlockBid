@@ -3,7 +3,7 @@ import CardC from "../components/CardC";
 import { Link } from "react-router-dom";
 import Wallet from "../components/Wallet";
 import Security from "../components/Security";
-import { axios } from "axios";
+import axios from "axios";
 import { getContract } from "../utils/getNft721";
 
 export const Holding = () => {
