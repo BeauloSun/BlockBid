@@ -48,3 +48,13 @@ Start Project
 ```shell
 node start .js
 ```
+
+Project Planning (by 9th Feb)
+
+- Tests for Contracts
+- Tests for React
+- Tests for DB
+- Minting Contract for ERC1155 (BackEnd)
+- Minting page for ERC1155 (FrontEnd)
+- Marketplace for ERC1155 (FrontEnd)
+- Buy/Sell Contract for ERC1155 (FrontEnd)
