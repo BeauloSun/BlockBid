@@ -11,9 +11,11 @@ contract nft1155 is ERC1155{
     uint256 private _tokenIds;
     mapping (uint256 => string) private _tokenUris;
 
-    constructor() ERC1155("") {} // Pass the URI to the ERC1155 constructor
+    constructor() ERC1155("") {
+        _tokenIds = 1;
+    }
 
-    function setURI(uint256 tokenId, string memory newuri) public {
+    function setURI(uint256 tokenId, string memory newuri) internal {
         _tokenUris[tokenId] = newuri;
     }
 
@@ -28,7 +30,26 @@ contract nft1155 is ERC1155{
     }
 
     function burn(address account, uint256 id, uint256 amount) public {
-        require(msg.sender == account || isApprovedForAll(account, msg.sender), "ERC1155: caller is not owner nor approved");
+        require(msg.sender == account , "ERC1155: caller is not owner");
+        require(balanceOf(account,id) >= amount , "Not enough to burn");
         _burn(account, id, amount);
+    }
+
+     function getOwnerNFTs(address owner) public view returns (uint256[] memory) {
+        uint256 count = 0;
+        for (uint256 i = 1; i < _tokenIds; i++) {
+            if (balanceOf(owner , i) > 0) {
+                    count++;
+            }
+        }
+        uint256[] memory ownerNFTs = new uint256[](count);
+        uint256 index = 0;
+        for (uint256 i = 1; i < _tokenIds; i++) {
+            if (balanceOf(owner , i) > 0) {
+                ownerNFTs[index] = i;
+                index++;
+            }
+        }
+        return ownerNFTs;
     }
 }

@@ -34,8 +34,6 @@ contract BlockBid1155 is ReentrancyGuard{
         _;
     }
 
-
-
     function SellNft1155(address _nft , uint256 tokenId , uint256 price , uint256 amount) public  Owner1155(_nft , tokenId , msg.sender , amount)returns(uint256){
 
         require(amount >0 ,  "Amount of tokens should be greater than O");
@@ -46,15 +44,58 @@ contract BlockBid1155 is ReentrancyGuard{
 
         nft1155Listing[sellingId] = token1155(tokenId , payable(msg.sender) , price, amount ,buyers ,amount ,false,sellingId);
         nft1155ListedTokens.push(sellingId);
-
         return sellingId;
+    }
+
+
+    function BuyNft1155(address _nft ,uint256 amount , uint256 listedId) public payable nonReentrant{
+
+        token1155 memory listing = nft1155Listing[listedId];
+
+        require(msg.sender != listing.seller, "Owner can not be a buyer");
+        require(amount >0 , "Buyer can not buy 0 tokens");
+        require(amount <= listing.tokensAvailable , "The number of tokens available are less than the amount specified");
+
+        uint256 endPrice = amount*listing.price;
+        require(msg.value >= endPrice, "unsufficient funds to buy tokens");
+
+        nft1155Listing[listedId].tokensAvailable -= amount;
+
+        if (nft1155Listing[listedId].tokensAvailable == 0){
+            nft1155Listing[listedId].complete = true;
+        }
+        nft1155Listing[listedId].buyers.push(msg.sender);
+
+        (bool success, ) = nft1155Listing[listedId].seller.call{value: msg.value}("");
+        require(success, "Transfer failed");
+
+        IERC1155(_nft).safeTransferFrom( nft1155Listing[listedId].seller, msg.sender, nft1155Listing[listedId].tokenId,amount,"");
+
+        if(nft1155Listing[listedId].complete == true){
+            deleteListing(listedId);
+        }
+    }
+
+
+
+    function deleteListing(uint256 listedId) public {
+        require(nft1155Listing[listedId].tokenId != 0 , "token is not listed");
+        require(nft1155Listing[listedId].seller == msg.sender  , "User is not the owner");
+
+        delete(nft1155Listing[listedId]);
+
+        uint i = 0;
+        while(nft1155ListedTokens[i] != listedId){
+            i ++;
+        } 
+        if (i<nft1155ListedTokens.length){
+            for (uint j = i ; j < nft1155ListedTokens.length-1 ; j++){
+                nft1155ListedTokens[j]= nft1155ListedTokens[j+1];
+            }
+            nft1155ListedTokens.pop();
         }
 
-
-
-
-
-
+    }
 
 
 
