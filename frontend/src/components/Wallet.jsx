@@ -81,6 +81,18 @@ export default function Wallet() {
     window.localStorage.removeItem("currentAddr");
   };
 
+  const returnUserFunds = async () => {
+    const contract = await getMarketContract();
+    const address = window.localStorage.getItem("currentAddr");
+
+    try {
+      await contract.methods.getFundBack(address).send({ from: address });
+      setUserFund(0);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <div>
       <div class="flex justify-center max-w-[1250px] mx-auto">
@@ -147,6 +159,12 @@ export default function Wallet() {
               <h3 class="mb-0 text-white pl-5 pt-5 font-bold text-3xl">
                 {userFund}
               </h3>
+              <button
+                onClick={returnUserFunds}
+                class="flex items-center rounded-full py-2 px-4 bg-blue-500 hover:bg-gradient-to-r hover:scale-105 duration-300 from-blue-500 to-green-500 text-white font-bold"
+              >
+                Retrieve Funds
+              </button>
             </div>
             <div class="w-1/3 h-[500px] ml-5 relative flex flex-col min-w-0 break-words bg-slate-400 border-0 shadow-xl rounded-2xl bg-clip-border flex-none">
               <h3 class="mb-0 text-white pl-5 pt-5 font-bold text-3xl">

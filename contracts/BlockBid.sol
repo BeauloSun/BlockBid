@@ -254,6 +254,7 @@ contract BlockBid is ReentrancyGuard{
         return UserFunds[user];
     }
 
+
     function getBiddersForNft721(uint256 _tokenId) public view returns (address[] memory ){
         return auctionBidders[_tokenId];
     }
