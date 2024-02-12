@@ -101,6 +101,7 @@ contract BlockBid is ReentrancyGuard{
             revert PriceNotMatched(_nftAddress , _tokenId);
         }
 
+
         // transfer the funds to the sellers account
         (bool success, ) = item721.owner.call{value: msg.value}("");
         require(success, "Transfer failed");
