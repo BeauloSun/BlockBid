@@ -1,6 +1,8 @@
 import metamask from "../assets/metamask_icon.png";
 
 import React, { useState, useEffect } from "react";
+import { getMarketContract } from "../utils/getBlockBid";
+import { getContract } from "../utils/getNft721";
 
 export default function Wallet() {
   const bg =
@@ -9,6 +11,12 @@ export default function Wallet() {
   const [data, setData] = useState({
     address: "",
     isConnected: false,
+  });
+
+  const [userFund, setUserFund] = useState(0);
+
+  useEffect(() => {
+    getUserFunds();
   });
 
   useEffect(() => {
@@ -53,6 +61,15 @@ export default function Wallet() {
       isConnected: true,
     });
     window.localStorage.setItem("currentAddr", account);
+  };
+
+  const getUserFunds = async () => {
+    const contract = await getMarketContract();
+    const address = window.localStorage.getItem("currentAddr");
+
+    const funds = await contract.methods.getUserFunds(address).call();
+    setUserFund(Number(funds));
+    console.log(funds);
   };
 
   const disconnectWallet = () => {
@@ -128,7 +145,7 @@ export default function Wallet() {
           <div class="flex justify-center w-full">
             <div class="w-2/3 h-[500px] mr-5 relative flex flex-col min-w-0 break-words bg-slate-400 border-0 shadow-xl rounded-2xl bg-clip-border flex-none">
               <h3 class="mb-0 text-white pl-5 pt-5 font-bold text-3xl">
-                Manage Your Wallet
+                {userFund}
               </h3>
             </div>
             <div class="w-1/3 h-[500px] ml-5 relative flex flex-col min-w-0 break-words bg-slate-400 border-0 shadow-xl rounded-2xl bg-clip-border flex-none">
