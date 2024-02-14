@@ -12,6 +12,7 @@ import { Bidding } from "./pages/Bidding";
 import { Selling } from "./pages/Selling";
 import { Marketplace721Sale } from "./pages/Marketplace721Sale";
 import { Marketplace721Auction } from "./pages/Marketplace721Auction";
+import { Marketplace1155Sale } from "./pages/Marketplace1155Sale";
 import { Holdings } from "./pages/Holdings";
 import { UserListedHoldings } from "./pages/UserListedHoldings";
 import { CancelListings } from "./pages/CancelListings";
@@ -61,11 +62,17 @@ function App() {
             path="/marketplace/ERC721/Sale"
             element={<Marketplace721Sale />}
           />
-          <Route path="/marketplace/ERC721/Sale/:id" element={<BuyNft721 />} />
           <Route
             path="/marketplace/ERC721/Auction"
             element={<Marketplace721Auction />}
           />
+          <Route
+            path="/marketplace/ERC1155/Sale"
+            element={<Marketplace1155Sale />}
+          />
+
+          <Route path="/marketplace/ERC721/Sale/:id" element={<BuyNft721 />} />
+
           <Route path="/marketplace/ERC721/Auction/:id" element={<Bidding />} />
 
           <Route path="/mint" element={<Mint />} />

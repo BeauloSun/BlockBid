@@ -111,26 +111,18 @@ export const Sale721 = () => {
               Auction (ERC-721)
             </button>
           </Link>
-          <button
-            onClick={() => handleTabClick("ERC_1155 - Sale")}
-            className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
-              activeTab === "ERC_1155 - Sale"
-                ? "bg-blue-500 text-white"
-                : "bg-gray-300 text-white bg-opacity-50"
-            }`}
-          >
-            Sale (ERC-1155)
-          </button>
-          <button
-            onClick={() => handleTabClick("ERC_1155 - Auction")}
-            className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
-              activeTab === "ERC_1155 - Auction"
-                ? "bg-blue-500 text-white"
-                : "bg-gray-300 text-white bg-opacity-50"
-            }`}
-          >
-            Auction (ERC-1155)
-          </button>
+          <Link to="/marketplace/ERC1155/Sale">
+            <button
+              onClick={() => handleTabClick("ERC_1155 - Sale")}
+              className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
+                activeTab === "ERC_1155 - Sale"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-300 text-white bg-opacity-50"
+              }`}
+            >
+              Sale (ERC-1155)
+            </button>
+          </Link>
         </div>
         <div
           className="grid grid-flow-row-dense gap-1 mx-[17%]"
