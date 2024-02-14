@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import CardC from "../components/CardC";
+import CardC from "./CardC";
 import { Link } from "react-router-dom";
-import Wallet from "../components/Wallet";
-import Security from "../components/Security";
 import axios from "axios";
 import { getContract } from "../utils/getNft721";
 
-export const Holding = () => {
+export const Holdings = () => {
   const [activeTab, setActiveTab] = useState("holdings");
   const [images, setImages] = useState([]);
   const [name, setName] = useState([]);

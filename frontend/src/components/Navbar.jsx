@@ -47,13 +47,13 @@ export const Navbar = () => {
         </Link>
         <Link
           className="p-4 transition-all duration-500 ease-in-out font-bold hover:text-[#46ff65]"
-          to="/profile"
+          to="/analytics"
         >
-          Financials
+          Analytics
         </Link>
         <Link
           className="p-4 transition-all duration-500 ease-in-out font-bold hover:text-[#46ff65]"
-          to="/profile"
+          to="/profile/wallet"
         >
           Profile
         </Link>
@@ -77,21 +77,21 @@ export const Navbar = () => {
         <Link
           onClick={handleNav}
           className="p-4 transition-all duration-500 ease-in-out font-bold hover:text-[#46ff65] border-b border-white"
-          to="/marketplace"
+          to="/marketplace/ERC721/Sale"
         >
           Marketplace
         </Link>
         <Link
           onClick={handleNav}
           className="p-4 transition-all duration-500 ease-in-out font-bold hover:text-[#46ff65] border-b border-white"
-          to="/profile"
+          to="/analytics"
         >
-          Financials
+          Analytics
         </Link>
         <Link
           onClick={handleNav}
           className="p-4 transition-all duration-500 ease-in-out font-bold hover:text-[#46ff65] border-b border-white"
-          to="/profile"
+          to="/profile/wallet"
         >
           Profile
         </Link>

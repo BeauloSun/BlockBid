@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import { Home } from "./pages/Home";
@@ -13,8 +13,9 @@ import { Auction721 } from "./components/Auction721";
 import { Sale1155 } from "./components/Sale1155";
 import { Bidding } from "./pages/Bidding";
 import { Selling } from "./pages/Selling";
-import { Holdings } from "./pages/Holdings";
-import { UserListedHoldings } from "./pages/UserListedHoldings";
+import { Holdings } from "./components/Holdings";
+import Wallet from "./components/Wallet";
+import { ListedHoldings } from "./components/ListedHoldings";
 import { CancelListings } from "./pages/CancelListings";
 import { BuyNft721 } from "./pages/BuyNft721";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -47,17 +48,12 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/profile/holdings" element={<Holdings />} />
-          <Route
-            path="/profile/listed_holdings"
-            element={<UserListedHoldings />}
-          />
-          <Route
-            path="/profile/listed_holdings/:id"
-            element={<CancelListings />}
-          />
-          <Route path="/profile/holdings/:id" element={<Selling />} />
+
+          <Route path="/profile" element={<Profile />}>
+            <Route path="listed_holdings" element={<ListedHoldings />} />
+            <Route path="wallet" element={<Wallet />} />
+            <Route path="holdings" element={<Holdings />} />
+          </Route>
 
           <Route path="/marketplace" element={<Marketplace />}>
             <Route path="ERC721/Sale" element={<Sale721 />} />
@@ -65,8 +61,12 @@ function App() {
             <Route path="ERC1155/Sale" element={<Sale1155 />} />
           </Route>
 
+          <Route
+            path="/profile/listed_holdings/:id"
+            element={<CancelListings />}
+          />
+          <Route path="/profile/holdings/:id" element={<Selling />} />
           <Route path="/marketplace/ERC721/Sale/:id" element={<BuyNft721 />} />
-
           <Route path="/marketplace/ERC721/Auction/:id" element={<Bidding />} />
 
           <Route path="/mint" element={<Mint />} />

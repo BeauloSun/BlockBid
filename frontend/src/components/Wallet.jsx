@@ -1,15 +1,15 @@
 import metamask from "../assets/metamask_icon.png";
+import wallet_bg from "../assets/wallet_bg.jpg";
 
 import React, { useState, useEffect } from "react";
 import { getMarketContract } from "../utils/getBlockBid";
-import { getContract } from "../utils/getNft721";
 
 export default function Wallet() {
-  const bg =
-    "https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/card-visa.jpg";
+  const bg = wallet_bg;
 
   const [data, setData] = useState({
     address: "",
+    balance: null,
     isConnected: false,
   });
 
