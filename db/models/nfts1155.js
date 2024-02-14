@@ -22,7 +22,7 @@ const Nf1155Schema = new mongoose.Schema({
   image_hash: {
     type: String,
   },
-  owner: {
+  owners: {
     type: Map,
     of: Number,
     default: {},

@@ -28,7 +28,7 @@ const Nf1155marketplaceSchema = new mongoose.Schema({
   price: {
     type: Number,
   },
-  owner: {
+  seller: {
     type: String,
   },
   buyers: {
