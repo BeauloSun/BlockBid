@@ -11,6 +11,15 @@ export const Auction721 = () => {
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
   const [tokenIDs_721, setTokenIDs_721] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -28,7 +37,7 @@ export const Auction721 = () => {
       }
       const gettingOnSaleBody = { tokenIds: numbered_listedTokens };
       const response = await axios.post(
-        "http://localhost:4988/getNftsOnAuction",
+        "http://localhost:4988/api/nfts/getNftsOnAuction",
         gettingOnSaleBody
       );
 
@@ -49,32 +58,42 @@ export const Auction721 = () => {
 
   return (
     <div>
-      <div
-        className="grid grid-flow-row-dense gap-1 mx-[17%]"
-        style={{
-          gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
-        }}
-      >
-        {images.map((img_src, index) => (
-          <div
-            key={index}
-            className="flex flex-col items-center py-4 hover:scale-105 duration-300"
-          >
-            <Link
-              to={`/marketplace/ERC721/Auction/${tokenIDs_721[index]}`}
-              key={tokenIDs_721[index]}
+      {isLoading ? (
+        <div className="text-[#b3b3b3] text-4xl mt-20 flex justify-center">
+          Loading...
+        </div>
+      ) : tokenIDs_721.length > 0 ? (
+        <div
+          className="grid grid-flow-row-dense gap-1 mx-[17%]"
+          style={{
+            gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
+          }}
+        >
+          {images.map((img_src, index) => (
+            <div
+              key={index}
+              className="flex flex-col items-center py-4 hover:scale-105 duration-300"
             >
-              <CardC
-                img_src={img_src}
-                name={name[index]}
-                description={description[index]}
-                price={price[index]}
-                market={true}
-              />
-            </Link>
-          </div>
-        ))}
-      </div>
+              <Link
+                to={`/marketplace/ERC721/Auction/${tokenIDs_721[index]}`}
+                key={tokenIDs_721[index]}
+              >
+                <CardC
+                  img_src={img_src}
+                  name={name[index]}
+                  description={description[index]}
+                  price={price[index]}
+                  market={true}
+                />
+              </Link>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-[#b3b3b3] text-4xl mt-20 flex justify-center">
+          No ongoing auction! Come back later or start your own!
+        </div>
+      )}
     </div>
   );
 };

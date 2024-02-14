@@ -49,6 +49,14 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
 
+          <Route
+            path="/profile/listed_holdings/:id"
+            element={<CancelListings />}
+          />
+          <Route path="/profile/holdings/:id" element={<Selling />} />
+          <Route path="/marketplace/ERC721/Sale/:id" element={<BuyNft721 />} />
+          <Route path="/marketplace/ERC721/Auction/:id" element={<Bidding />} />
+
           <Route path="/profile" element={<Profile />}>
             <Route path="listed_holdings" element={<ListedHoldings />} />
             <Route path="wallet" element={<Wallet />} />
@@ -60,14 +68,6 @@ function App() {
             <Route path="ERC721/Auction" element={<Auction721 />} />
             <Route path="ERC1155/Sale" element={<Sale1155 />} />
           </Route>
-
-          <Route
-            path="/profile/listed_holdings/:id"
-            element={<CancelListings />}
-          />
-          <Route path="/profile/holdings/:id" element={<Selling />} />
-          <Route path="/marketplace/ERC721/Sale/:id" element={<BuyNft721 />} />
-          <Route path="/marketplace/ERC721/Auction/:id" element={<Bidding />} />
 
           <Route path="/mint" element={<Mint />} />
           <Route path="*" element={<NotFound />} />

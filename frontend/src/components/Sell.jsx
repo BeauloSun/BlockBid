@@ -31,7 +31,7 @@ export default function Sell() {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:4988/getAccessibleProfileNft",
+          "http://localhost:4988/api/nfts/getAccessibleProfileNft",
           {
             tokenId: token_id,
             marketplace: false,
@@ -46,7 +46,7 @@ export default function Sell() {
       if (isValid) {
         try {
           const response = await axios.post(
-            "http://localhost:4988/getNftById",
+            "http://localhost:4988/api/nfts/getNftById",
             {
               tokenId: token_id,
             }
@@ -121,7 +121,7 @@ export default function Sell() {
           price: Number(price),
         };
         await axios.put(
-          "http://localhost:4988/putNftInMarketplace",
+          "http://localhost:4988/api/nfts/putNftInMarketplace",
           puttingMarketplaceBody
         );
 
@@ -190,7 +190,7 @@ export default function Sell() {
         };
 
         await axios.put(
-          "http://localhost:4988/putNftAuctionInMarketplace",
+          "http://localhost:4988/api/nfts/putNftAuctionInMarketplace",
           puttingAuctionMarketplaceBody
         );
 
@@ -228,7 +228,7 @@ export default function Sell() {
 
   return (
     <section
-      class="bg-[#1e1e1e] min-h-screen flex items-center justify-center"
+      className="bg-[#1e1e1e] min-h-screen flex items-center justify-center"
       style={{
         backgroundImage: `url(${bg})`,
         backgroundSize: "cover",
@@ -237,8 +237,8 @@ export default function Sell() {
       }}
     >
       {loadingController ? (
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="w-[150px] h-[150px]">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="w-[150px] h-[150px]">
             <DotLottiePlayer
               src="https://lottie.host/8a351e58-efa2-424e-a738-bf8a7ad5c16e/nyVDUynd67.lottie"
               autoplay
@@ -251,22 +251,24 @@ export default function Sell() {
         <span></span>
       )}
 
-      <div class="bg-slate-400 bg-opacity-50 flex flex-col rounded-2xl shadow-lg max-w-[60%] p-5 items-center">
-        <div class="w-full text-center">
-          <h2 class="text-white font-bold text-8xl pb-10">Sell your NFT</h2>
+      <div className="bg-slate-400 bg-opacity-50 flex flex-col rounded-2xl shadow-lg max-w-[60%] p-5 items-center">
+        <div className="w-full text-center">
+          <h2 className="text-white font-bold text-8xl pb-10">Sell your NFT</h2>
         </div>
-        <div class="flex w-full">
-          <div class="md:w-1/2 px-6 md:px-10">
-            <img alt="" class="rounded-2xl" src={data.img_src} />
+        <div className="flex w-full">
+          <div className="md:w-1/2 px-6 md:px-10">
+            <img alt="" className="rounded-2xl" src={data.img_src} />
           </div>
-          <div class="md:w-1/2 px-3 md:px-10">
-            <h2 class="font-bold text-8xl text-[#ffffff] font-shadows">
+          <div className="md:w-1/2 px-3 md:px-10">
+            <h2 className="font-bold text-8xl text-[#ffffff] font-shadows">
               {data.name}
             </h2>
-            <p class="text-3xl mt-4 pt-4 text-[#ffffff]">{data.description}</p>
+            <p className="text-3xl mt-4 pt-4 text-[#ffffff]">
+              {data.description}
+            </p>
 
-            <form action="" class="flex flex-col gap-4 mt-10">
-              <div class="flex items-center justify-left gap-2 pt-3">
+            <form action="" className="flex flex-col gap-4 mt-10">
+              <div className="flex items-center justify-left gap-2 pt-3">
                 <input
                   id="enableInput"
                   type="checkbox"
@@ -276,7 +278,7 @@ export default function Sell() {
                 />
                 <label
                   htmlFor="enableInput"
-                  class="font-bold text-xl text-white"
+                  className="font-bold text-xl text-white"
                 >
                   Selling for auction?
                 </label>
@@ -284,55 +286,57 @@ export default function Sell() {
 
               <label
                 for="Price"
-                class="block text-left text-2xl font-bold text-white"
+                className="block text-left text-2xl font-bold text-white"
               >
                 {priceMsg}
               </label>
-              <div class="flex justify-between items-center">
+              <div className="flex justify-between items-center">
                 <input
-                  class="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
+                  className="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
                   type="number"
                   name="Price"
                   placeholder="Enter price"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                 />
-                <div class="font-bold text-3xl text-white pr-10 mb-4">ETH</div>
+                <div className="font-bold text-3xl text-white pr-10 mb-4">
+                  ETH
+                </div>
               </div>
               <label
                 for="Time"
-                class="block text-left font-bold text-2xl text-white"
+                className="block text-left font-bold text-2xl text-white"
               >
                 Duration of the auction
               </label>
-              <div class="flex justify-between items-center gap-2">
+              <div className="flex justify-between items-center gap-2">
                 <input
-                  class={`p-2 rounded-xl border w-1/3 pl-2 text-xl ${timeSetterboxStyle} duration-300`}
+                  className={`p-2 rounded-xl border w-1/3 pl-2 text-xl ${timeSetterboxStyle} duration-300`}
                   type="number"
                   name="Day"
                   disabled={timeSetterbox}
                   value={days}
                   onChange={(e) => setDays(e.target.value)}
                 />
-                <div class="font-bold text-xl text-white">Day(s)</div>
+                <div className="font-bold text-xl text-white">Day(s)</div>
                 <input
-                  class={`p-2 rounded-xl border w-1/3 pl-2 text-xl ${timeSetterboxStyle} duration-300`}
+                  className={`p-2 rounded-xl border w-1/3 pl-2 text-xl ${timeSetterboxStyle} duration-300`}
                   type="number"
                   name="Hour"
                   disabled={timeSetterbox}
                   value={hours}
                   onChange={(e) => setHours(e.target.value)}
                 />
-                <div class="font-bold text-xl text-white">Hour(s)</div>
+                <div className="font-bold text-xl text-white">Hour(s)</div>
                 <input
-                  class={`p-2 rounded-xl border w-1/3 pl-2 text-xl ${timeSetterboxStyle} duration-300`}
+                  className={`p-2 rounded-xl border w-1/3 pl-2 text-xl ${timeSetterboxStyle} duration-300`}
                   type="number"
                   name="Minute"
                   disabled={timeSetterbox}
                   value={minutes}
                   onChange={(e) => setMinutes(e.target.value)}
                 />
-                <div class="font-bold text-xl text-white">Min(s)</div>
+                <div className="font-bold text-xl text-white">Min(s)</div>
               </div>
               <p className={messageClass}>{message}</p>
               {auctionBool ? (
@@ -344,13 +348,13 @@ export default function Sell() {
                   {buttonLoading ? (
                     <>
                       <svg
-                        class="mr-5 h-6 w-6 animate-spin text-white"
+                        className="mr-5 h-6 w-6 animate-spin text-white"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
                       >
                         <circle
-                          class="opacity-25"
+                          className="opacity-25"
                           cx="12"
                           cy="12"
                           r="10"
@@ -358,7 +362,7 @@ export default function Sell() {
                           stroke-width="4"
                         ></circle>
                         <path
-                          class="opacity-75"
+                          className="opacity-75"
                           fill="currentColor"
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         ></path>
@@ -378,13 +382,13 @@ export default function Sell() {
                   {buttonLoading ? (
                     <>
                       <svg
-                        class="mr-5 h-6 w-6 animate-spin text-white"
+                        className="mr-5 h-6 w-6 animate-spin text-white"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
                       >
                         <circle
-                          class="opacity-25"
+                          className="opacity-25"
                           cx="12"
                           cy="12"
                           r="10"
@@ -392,7 +396,7 @@ export default function Sell() {
                           stroke-width="4"
                         ></circle>
                         <path
-                          class="opacity-75"
+                          className="opacity-75"
                           fill="currentColor"
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         ></path>

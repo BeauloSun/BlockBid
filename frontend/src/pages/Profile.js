@@ -1,24 +1,15 @@
 import React, { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
-import { getContract } from "../utils/getNft721";
+import { Link, Outlet, useLocation } from "react-router-dom";
 
 export const Profile = () => {
-  const [activeTab, setActiveTab] = useState("wallet");
-
-  const getOwnerNfts = async () => {
-    const contract = await getContract();
-    const address = window.localStorage.getItem("currentAddr");
-    const tokens = await contract.methods.getOwnerNFTs(address).call();
-    const tokens_integers = [];
-    for (const bigint of tokens) {
-      tokens_integers.push(Number(bigint));
-    }
-    if (tokens_integers.length > 0) {
-      return tokens_integers;
-    } else {
-      console.error("no nft owned");
-    }
+  const location = useLocation();
+  const tabDefaultVal = location.pathname.split("/")[2];
+  const tabMapping = {
+    listed_holdings: "Listed Holdings",
+    holdings: "holdings",
+    wallet: "wallet",
   };
+  const [activeTab, setActiveTab] = useState(tabMapping[tabDefaultVal]);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -79,7 +70,9 @@ export const Profile = () => {
           </button>
         </Link>
       </div>
-      <Outlet />
+      <div className="min-h-[700px]">
+        <Outlet />
+      </div>
     </div>
   );
 };

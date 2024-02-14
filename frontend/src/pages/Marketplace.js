@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import bg from "../assets/marketplace_bg.jpg";
 import { Outlet } from "react-router-dom";
 
 export const Marketplace = () => {
-  const [activeTab, setActiveTab] = useState("ERC_721 - Sale");
   const [offsetY, setOffsetY] = useState(0);
   const handleScroll = () => setOffsetY(window.scrollY);
+  const location = useLocation();
+  const tabDefaultVal =
+    location.pathname.split("/")[2] + "/" + location.pathname.split("/")[3];
+  const tabMapping = {
+    "ERC721/Sale": "ERC_721 - Sale",
+    "ERC721/Auction": "ERC_721 - Auction",
+    "ERC1155/Sale": "ERC_1155 - Sale",
+  };
+
+  const [activeTab, setActiveTab] = useState(tabMapping[tabDefaultVal]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -78,7 +87,9 @@ export const Marketplace = () => {
             </button>
           </Link>
         </div>
-        <Outlet />
+        <div className={"min-h-[700px]"}>
+          <Outlet />
+        </div>
       </div>
     </div>
   );

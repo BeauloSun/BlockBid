@@ -40,7 +40,6 @@ router.post("/getListedOwnedNft", async (req, res) => {
     const nfts = await NftModel.find({
       token_id: { $in: tokenIds },
       on_sale: true,
-      on_auction: false,
     });
     res.json(nfts);
   } catch (err) {

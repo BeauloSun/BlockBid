@@ -5,7 +5,6 @@ import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
 import { getMarketContract } from "../utils/getBlockBid";
 import { getContract } from "../utils/getNft721";
-import Web3 from "web3";
 import axios from "axios";
 
 export default function CancelListing() {
@@ -23,7 +22,7 @@ export default function CancelListing() {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:4988/getAccessibleProfileNft",
+          "http://localhost:4988/api/nfts/getAccessibleProfileNft",
           {
             tokenId: token_id,
             marketplace: true,
@@ -38,7 +37,7 @@ export default function CancelListing() {
       if (isValid) {
         try {
           const response = await axios.post(
-            "http://localhost:4988/getNftById",
+            "http://localhost:4988/api/nfts/getNftById",
             {
               tokenId: token_id,
             }
@@ -87,7 +86,7 @@ export default function CancelListing() {
         nft_address: nftContract.options.address,
       };
       await axios.put(
-        "http://localhost:4988/cancelListing",
+        "http://localhost:4988/api/nfts/cancelListing",
         puttingProfileBody
       );
 
