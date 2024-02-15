@@ -293,6 +293,12 @@ router.get("/getNftImageHashes", async (req, res) => {
   res.json(users);
 });
 
+router.post("/checkIfHashExists", async (req, res) => {
+  const { hash } = req.body;
+  const exists = await NftModel.exists({ image_hash: hash });
+  res.json(exists);
+});
+
 router.post("/addNfts", async (req, res) => {
   const nft = req.body;
   const newNft = new NftModel(nft);

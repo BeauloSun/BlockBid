@@ -4,7 +4,7 @@ const Nft1155Model = require("../models/nfts1155");
 
 router.delete("/deleteAllNfts", async (req, res) => {
   try {
-    await NftModel.deleteMany({});
+    awaitNft1155Model.deleteMany({});
     res.json({ message: "All NFTs have been deleted." });
   } catch (err) {
     res.json(err);
@@ -14,7 +14,7 @@ router.delete("/deleteAllNfts", async (req, res) => {
 router.delete("/burnNft", async (req, res) => {
   const { token_id } = req.body;
   try {
-    const result = await NftModel.deleteOne({ token_id: token_id });
+    const result = await Nft1155Model.deleteOne({ token_id: token_id });
     if (result.deletedCount === 0) {
       return res.status(404).json({ message: "NFT not found." });
     }
@@ -25,7 +25,7 @@ router.delete("/burnNft", async (req, res) => {
 });
 
 router.get("/getNfts", (req, res) => {
-  NftModel.find({})
+  Nft1155Model.find({})
     .then(function (nfts) {
       res.json(nfts);
     })
@@ -35,23 +35,39 @@ router.get("/getNfts", (req, res) => {
 });
 
 router.post("/addNfts1155", async (req, res) => {
-  const nft1155 = req.body;
-  const newNft1155 = new Nft1155Model(nft1155);
-  await newNft1155.save();
-  res.json(nft1155);
-});
+  try {
+    const {
+      token_id,
+      nft_address,
+      name,
+      description,
+      total_quantity,
+      image_uri,
+      image_hash,
+      owners,
+    } = req.body;
+    console.log("owners in database", owners);
 
-// dummy data for Thunder
-// {
-//     "token_id": 1,
-//     "nft_address": "0xafder5aer132e1q5r6fgr1w2g3ssdf",
-//     "name": "dummy name 1",
-//     "description":"dummy description 1",
-//     "total_quantity": 8,
-//     "image_uri": "ipfs://dummy1.com",
-//     "image_hash": "whateverhashitis",
-//     "owner": {}
-// }
+    // Create and save the new NFT document
+    const newNft = new Nft1155Model({
+      token_id,
+      nft_address,
+      name,
+      description,
+      total_quantity,
+      image_uri,
+      image_hash,
+      owners,
+    });
+    console.log("till here");
+    await newNft.save();
+
+    res.json({ message: "NFT added successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 router.post("/getOneNft", async (req, res) => {
   const { token_id } = req.body;
@@ -87,6 +103,12 @@ router.post("/updateOwnerAndQuantity", async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
   }
+});
+
+router.post("/checkIfHashExists", async (req, res) => {
+  const { hash } = req.body;
+  const exists = await Nft1155Model.exists({ image_hash: hash });
+  res.json(exists);
 });
 
 // Example query for updating

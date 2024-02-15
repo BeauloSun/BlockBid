@@ -1,4 +1,4 @@
-import nftcontract from "../backend-constants/nft1155.json.json";
+import nftcontract from "../backend-constants/nft1155.json";
 import Web3 from "web3";
 
 export const getContract = async () => {

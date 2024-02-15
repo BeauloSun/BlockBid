@@ -3,7 +3,7 @@ import bg from "../assets/mint_bg_1155.jpg";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import { pinFileToIPFS, pinJsonToIPFS } from "../utils/pinata";
-import { getContract } from "../utils/getNft721";
+import { getContract } from "../utils/getNft1155";
 import axios from "axios";
 import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
@@ -54,18 +54,45 @@ export default function MintForm1155() {
       setMessageClass("font-bold text-lg text-red-600");
       return false;
     }
+
+    if (quantity <= 0) {
+      setMessage("Quantity cannot be 0");
+      setMessageClass("font-bold text-lg text-red-600");
+      return false;
+    }
+    if (quantity == 1) {
+      setMessage("Please mint a erc721 Token if you want a unique token");
+      setMessageClass("font-bold text-lg text-red-600");
+      return false;
+    }
     setMessage("");
 
     // checking if the image already exists in the data base
-    let hashDataList = [];
-    const hashDataFromDatabase = await axios.get(
-      "http://localhost:4988/api/nfts/getNftImageHashes"
-    );
-    for (let i = 0; i < hashDataFromDatabase.data.length; i++) {
-      hashDataList.push(hashDataFromDatabase.data[i].image_hash);
-    }
 
-    if (hashDataList.includes(currentImageHash)) {
+    const nft721Hashes = await axios.post(
+      "http://localhost:4988/api/nfts/checkIfHashExists",
+      {
+        hash: currentImageHash,
+      }
+    );
+    const nft1155Hashes = await axios.post(
+      "http://localhost:4988/api/nfts1155/checkIfHashExists",
+      {
+        hash: currentImageHash,
+      }
+    );
+    const nft1155MarketPlaceHases = await axios.post(
+      "http://localhost:4988/api/nfts1155market/checkIfHashExists",
+      {
+        hash: currentImageHash,
+      }
+    );
+
+    if (
+      nft721Hashes.data != null ||
+      nft1155Hashes.data != null ||
+      nft1155MarketPlaceHases.data != null
+    ) {
       setDuplicateNftImageMessage(
         "Image is already in the chain, use another one"
       );
@@ -75,6 +102,27 @@ export default function MintForm1155() {
     setDuplicateNftImageMessage("");
 
     return true;
+  };
+  const pinata_Image = async (file, name) => {
+    try {
+      const response = await pinFileToIPFS(file);
+      const pinataURL =
+        "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash;
+      return pinataURL;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const pinata_Json = async (name, description, imagehash) => {
+    const jsonBody = {
+      imageHash: imagehash,
+      name: name,
+      description: description,
+    };
+    const response = await pinJsonToIPFS(jsonBody);
+    const pinataURL =
+      "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash;
+    return pinataURL;
   };
 
   const addNft = async (
@@ -89,17 +137,18 @@ export default function MintForm1155() {
       nft_address: nftAddress,
       name,
       description,
+      total_quantity: quantity,
       image_uri: imageuri,
       image_hash: imagehash,
       price: 0,
-      owner: walletaddr,
-      on_auction: false,
-      on_sale: false,
-      bids: {},
+      owners: { [walletaddr]: Number(quantity) },
     };
 
     try {
-      await axios.post("http://localhost:4988/api/nfts/addNfts", nftData);
+      await axios.post(
+        "http://localhost:4988/api/nfts1155/addNfts1155",
+        nftData
+      );
       setName("");
       setDescription("");
       setImageFile(null);
@@ -110,29 +159,6 @@ export default function MintForm1155() {
       setMessage("Submission failed!");
       setMessageClass("font-bold text-lg text-red-600");
     }
-  };
-
-  const pinata_Image = async (file, name) => {
-    try {
-      const response = await pinFileToIPFS(file);
-      const pinataURL =
-        "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash;
-      return pinataURL;
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const pinata_Json = async (name, description, imagehash) => {
-    const jsonBody = {
-      imageHash: imagehash,
-      name: name,
-      description: description,
-    };
-    const response = await pinJsonToIPFS(jsonBody);
-    const pinataURL =
-      "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash;
-    return pinataURL;
   };
 
   const mintNFT = async (e) => {
@@ -155,11 +181,11 @@ export default function MintForm1155() {
             const imageuri = await pinata_Image(imageFile, name);
             const jsonhash = await pinata_Json(name, description, imageuri);
 
+            const token_id = await contract.methods.getTokenId().call();
             const address = window.localStorage.getItem("currentAddr");
 
-            const token_id = await contract.methods.getTokenId().call();
             await contract.methods
-              .mintNft(address, jsonhash)
+              .mint(address, quantity, jsonhash, [])
               .send({ from: address });
 
             addNft(

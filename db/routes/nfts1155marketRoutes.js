@@ -4,7 +4,7 @@ const Nft1155marketplaceModel = require("../models/nfts1155Market");
 
 router.delete("/deleteAllNfts", async (req, res) => {
   try {
-    await NftModel.deleteMany({});
+    await Nft1155marketplaceModel.deleteMany({});
     res.json({ message: "All NFTs have been deleted." });
   } catch (err) {
     res.json(err);
@@ -14,7 +14,9 @@ router.delete("/deleteAllNfts", async (req, res) => {
 router.delete("/removeNft", async (req, res) => {
   const { token_id } = req.body;
   try {
-    const result = await NftModel.deleteOne({ token_id: token_id });
+    const result = await Nft1155marketplaceModel.deleteOne({
+      token_id: token_id,
+    });
     if (result.deletedCount === 0) {
       return res.status(404).json({ message: "NFT not found." });
     }
@@ -27,7 +29,7 @@ router.delete("/removeNft", async (req, res) => {
 });
 
 router.get("/getNftsOnSale", (req, res) => {
-  NftModel.find({})
+  Nft1155marketplaceModel.find({})
     .then(function (nfts) {
       res.json(nfts);
     })
@@ -95,6 +97,12 @@ router.post("/updateBuyerAndQuantity", async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
   }
+});
+
+router.post("/checkIfHashExists", async (req, res) => {
+  const { hash } = req.body;
+  const exists = await Nft1155marketplaceModel.exists({ image_hash: hash });
+  res.json(exists);
 });
 
 module.exports = router;

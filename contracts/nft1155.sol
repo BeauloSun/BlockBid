@@ -8,11 +8,11 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 contract nft1155 is ERC1155{
     using Strings for uint256;
     
-    uint256 private _tokenIds;
+    uint256 private _tokenId;
     mapping (uint256 => string) private _tokenUris;
 
     constructor() ERC1155("") {
-        _tokenIds = 1;
+        _tokenId = 1;
     }
 
     function setURI(uint256 tokenId, string memory newuri) internal {
@@ -24,9 +24,9 @@ contract nft1155 is ERC1155{
     }
 
     function mint(address account, uint256 amount, string memory tokenURI, bytes memory data) public{
-        _mint(account, _tokenIds, amount, data);
-        setURI(_tokenIds, tokenURI);
-        _tokenIds = _tokenIds + 1;
+        _mint(account, _tokenId, amount, data);
+        setURI(_tokenId, tokenURI);
+        _tokenId = _tokenId + 1;
     }
 
     function burn(address account, uint256 id, uint256 amount) public {
@@ -37,19 +37,24 @@ contract nft1155 is ERC1155{
 
      function getOwnerNFTs(address owner) public view returns (uint256[] memory) {
         uint256 count = 0;
-        for (uint256 i = 1; i < _tokenIds; i++) {
+        for (uint256 i = 1; i < _tokenId; i++) {
             if (balanceOf(owner , i) > 0) {
                     count++;
             }
         }
         uint256[] memory ownerNFTs = new uint256[](count);
         uint256 index = 0;
-        for (uint256 i = 1; i < _tokenIds; i++) {
+        for (uint256 i = 1; i < _tokenId; i++) {
             if (balanceOf(owner , i) > 0) {
                 ownerNFTs[index] = i;
                 index++;
             }
         }
         return ownerNFTs;
+    }
+
+
+    function getTokenId() public view returns(uint256){
+        return _tokenId;
     }
 }

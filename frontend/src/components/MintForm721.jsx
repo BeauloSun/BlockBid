@@ -56,15 +56,15 @@ export default function MintForm721() {
     setMessage("");
 
     // checking if the image already exists in the data base
-    let hashDataList = [];
-    const hashDataFromDatabase = await axios.get(
-      "http://localhost:4988/api/nfts/getNftImageHashes"
-    );
-    for (let i = 0; i < hashDataFromDatabase.data.length; i++) {
-      hashDataList.push(hashDataFromDatabase.data[i].image_hash);
-    }
 
-    if (hashDataList.includes(currentImageHash)) {
+    const ImageExists = await axios.post(
+      "http://localhost:4988/api/nfts/checkIfHashExists",
+      {
+        hash: currentImageHash,
+      }
+    );
+
+    if (ImageExists.data != null) {
       setDuplicateNftImageMessage(
         "Image is already in the chain, use another one"
       );
