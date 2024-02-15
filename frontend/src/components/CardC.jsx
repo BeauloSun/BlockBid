@@ -45,7 +45,7 @@ const CardC = ({
       clearTimeout(timer);
       clearTimeout(hoverTimer);
     };
-  }, []);
+  }, [owned]);
 
   return (
     <div

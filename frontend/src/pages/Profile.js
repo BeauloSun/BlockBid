@@ -70,7 +70,7 @@ export const Profile = () => {
           </button>
         </Link>
       </div>
-      <div className="min-h-[700px]">
+      <div className="min-h-[700px] mb-10">
         <Outlet />
       </div>
     </div>

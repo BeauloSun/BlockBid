@@ -107,17 +107,7 @@ export const Holdings = () => {
     } catch (error) {
       console.error(error);
     }
-  }, [
-    setName,
-    setDescription,
-    setPrice,
-    setImages,
-    setTokenIds,
-    setName1155,
-    setDescription,
-    setPrice1155,
-    setTokenIds1155,
-  ]);
+  }, []);
 
   const accountChangeHandler = (account) => {
     window.localStorage.setItem("currentAddr", account);
@@ -157,7 +147,7 @@ export const Holdings = () => {
         <div className="text-[#b3b3b3] text-4xl mt-20 flex justify-center">
           Loading...
         </div>
-      ) : (tokenIds.length > 0) | (tokenIds1155 > 0) ? (
+      ) : (tokenIds.length > 0) | (tokenIds1155.length > 0) ? (
         <>
           <div
             className="grid grid-flow-row-dense gap-1 mt-20 mx-[17%]"
