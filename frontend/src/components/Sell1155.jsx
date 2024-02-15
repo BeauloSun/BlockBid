@@ -7,20 +7,15 @@ import { getMarketContract } from "../utils/getBlockBid";
 import { getContract } from "../utils/getNft721";
 import Web3 from "web3";
 import axios from "axios";
+import img_tmp1 from "../assets/nft1.jpg";
 
 export default function Sell1155() {
   const { id } = useParams();
   const token_id = Number(id);
   const [loadingController, setloadingController] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
-  const [timeSetterbox, setTimeSetterbox] = useState(true);
   const [price, setPrice] = useState(null);
   const [priceMsg, setPriceMsg] = useState("Set Your Price");
-  const [days, setDays] = useState(null);
-  const [hours, setHours] = useState(null);
-  const [minutes, setMinutes] = useState(null);
-  const [timeSetterboxStyle, setTimeSetterboxStyle] = useState("bg-gray-500");
-  const [auctionBool, setAuctionBool] = useState(false);
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
   const [data, setData] = useState({});
@@ -29,42 +24,48 @@ export default function Sell1155() {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await axios.post(
-          "http://localhost:4988/api/nfts/getAccessibleProfileNft",
-          {
-            tokenId: token_id,
-            marketplace: false,
-            walletaddress: window.localStorage.getItem("currentAddr"),
-          }
-        );
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        isValid = response.data;
-      } catch (err) {
-        console.error(err);
-      }
-      if (isValid) {
-        try {
-          const response = await axios.post(
-            "http://localhost:4988/api/nfts/getNftById",
-            {
-              tokenId: token_id,
-            }
-          );
-          if (response.data && response.data.length > 0) {
-            const res = response.data[0];
-            setData({
-              img_src: res.image_uri,
-              name: res.name,
-              description: res.description,
-            });
-          }
-        } catch (err) {
-          console.error(err);
-        }
-      } else {
-        navigate("/NotFound");
-      }
+      // try {
+      //   const response = await axios.post(
+      //     "http://localhost:4988/api/nfts/getAccessibleProfileNft",
+      //     {
+      //       tokenId: token_id,
+      //       marketplace: false,
+      //       walletaddress: window.localStorage.getItem("currentAddr"),
+      //     }
+      //   );
+      //   // eslint-disable-next-line react-hooks/exhaustive-deps
+      //   isValid = response.data;
+      // } catch (err) {
+      //   console.error(err);
+      // }
+      // if (isValid) {
+      //   try {
+      //     const response = await axios.post(
+      //       "http://localhost:4988/api/nfts/getNftById",
+      //       {
+      //         tokenId: token_id,
+      //       }
+      //     );
+      //     if (response.data && response.data.length > 0) {
+      //       const res = response.data[0];
+      //       setData({
+      //         img_src: res.image_uri,
+      //         name: res.name,
+      //         description: res.description,
+      //       });
+      //     }
+      //   } catch (err) {
+      //     console.error(err);
+      //   }
+      // } else {
+      //   navigate("/NotFound");
+      // }
+
+      setData({
+        img_src: img_tmp1,
+        name: "dummy name 1",
+        description: "dummy description 1",
+      });
     };
 
     fetchData();
@@ -145,87 +146,6 @@ export default function Sell1155() {
     }
   };
 
-  const auctionHandler = async (e) => {
-    e.preventDefault();
-
-    setbuttonLoading(true);
-    if (await formValid()) {
-      setloadingController(true);
-      try {
-        //get the nft contract
-        const nftContract = await getContract();
-
-        // get the market place contract
-        const marketPlace = await getMarketContract();
-
-        // sell add the nft to the market place
-        const address = window.localStorage.getItem("currentAddr");
-
-        await nftContract.methods
-          .approve(marketPlace.options.address, token_id)
-          .send({ from: address });
-
-        const weiprice = Number(Web3.utils.toWei(price, "ether"));
-        const duration = days * 24 * 3600 + hours * 3600 + minutes * 60;
-
-        await marketPlace.methods
-          .auctionNft721(
-            nftContract.options.address,
-            Number(token_id),
-            weiprice,
-            duration
-          )
-          .send({ from: address });
-
-        const time = await marketPlace.methods
-          .getAuctionEndTime(Number(token_id))
-          .call();
-
-        const puttingAuctionMarketplaceBody = {
-          token_id: token_id,
-          nft_address: nftContract.options.address,
-          owner: address,
-          price: Number(price),
-          time: Number(time),
-        };
-
-        await axios.put(
-          "http://localhost:4988/api/nfts/putNftAuctionInMarketplace",
-          puttingAuctionMarketplaceBody
-        );
-
-        setMessage("Sell successful!");
-        setMessageClass("font-bold text-xl text-[#48f9ff]");
-        setPrice("");
-        setloadingController(false);
-        setTimeout(() => {
-          setbuttonLoading(false);
-          navigate("/marketplace/ERC721/Auction");
-        }, 800);
-      } catch (error) {
-        console.error(error);
-        setMessage("Sell failed!");
-        setMessageClass("font-bold text-lg text-red-600");
-        setloadingController(false);
-        setTimeout(() => {
-          setbuttonLoading(false);
-        }, 500);
-      }
-    }
-  };
-
-  const auctionTick = () => {
-    setTimeSetterbox(!timeSetterbox);
-    setAuctionBool(!auctionBool);
-    if (timeSetterboxStyle === "bg-gray-500") {
-      setTimeSetterboxStyle("");
-      setPriceMsg("Set your starting price:");
-    } else {
-      setTimeSetterboxStyle("bg-gray-500");
-      setPriceMsg("Set your price:");
-    }
-  };
-
   return (
     <section
       className="bg-[#1e1e1e] min-h-screen flex items-center justify-center"
@@ -268,34 +188,37 @@ export default function Sell1155() {
             </p>
 
             <form action="" className="flex flex-col gap-4 mt-10">
-              <div className="flex items-center justify-left gap-2 pt-3">
-                <input
-                  id="enableInput"
-                  type="checkbox"
-                  value=""
-                  onClick={auctionTick}
-                  class="w-6 h-6 text-yellow-400 bg-white border-green-600 rounded focus:ring-blue-400 focus:ring-2"
-                />
-                <label
-                  htmlFor="enableInput"
-                  className="font-bold text-xl text-white"
-                >
-                  Selling for auction?
-                </label>
-              </div>
-
               <label
                 for="Price"
                 className="block text-left text-2xl font-bold text-white"
               >
-                {priceMsg}
+                Set Your Quantity
+              </label>
+              <div className="flex justify-between items-center">
+                <input
+                  className="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
+                  type="number"
+                  name="Quantity"
+                  placeholder="Enter quantity"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                />
+                <div className="font-bold text-3xl text-white pr-10 mb-4">
+                  Tokens
+                </div>
+              </div>
+              <label
+                for="Price"
+                className="block text-left text-2xl font-bold text-white"
+              >
+                Set Your Price Per Token
               </label>
               <div className="flex justify-between items-center">
                 <input
                   className="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
                   type="number"
                   name="Price"
-                  placeholder="Enter price"
+                  placeholder="Enter price per token"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                 />
@@ -303,111 +226,42 @@ export default function Sell1155() {
                   ETH
                 </div>
               </div>
-              <label
-                for="Time"
-                className="block text-left font-bold text-2xl text-white"
-              >
-                Duration of the auction
-              </label>
-              <div className="flex justify-between items-center gap-2">
-                <input
-                  className={`p-2 rounded-xl border w-1/3 pl-2 text-xl ${timeSetterboxStyle} duration-300`}
-                  type="number"
-                  name="Day"
-                  disabled={timeSetterbox}
-                  value={days}
-                  onChange={(e) => setDays(e.target.value)}
-                />
-                <div className="font-bold text-xl text-white">Day(s)</div>
-                <input
-                  className={`p-2 rounded-xl border w-1/3 pl-2 text-xl ${timeSetterboxStyle} duration-300`}
-                  type="number"
-                  name="Hour"
-                  disabled={timeSetterbox}
-                  value={hours}
-                  onChange={(e) => setHours(e.target.value)}
-                />
-                <div className="font-bold text-xl text-white">Hour(s)</div>
-                <input
-                  className={`p-2 rounded-xl border w-1/3 pl-2 text-xl ${timeSetterboxStyle} duration-300`}
-                  type="number"
-                  name="Minute"
-                  disabled={timeSetterbox}
-                  value={minutes}
-                  onChange={(e) => setMinutes(e.target.value)}
-                />
-                <div className="font-bold text-xl text-white">Min(s)</div>
-              </div>
+
               <p className={messageClass}>{message}</p>
-              {auctionBool ? (
-                <button
-                  type="submit"
-                  className="bg-slate-800 flex justify-center items-center w-full rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
-                  onClick={auctionHandler}
-                >
-                  {buttonLoading ? (
-                    <>
-                      <svg
-                        className="mr-5 h-6 w-6 animate-spin text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      <span> Processing... </span>
-                    </>
-                  ) : (
-                    <span>Auction !</span>
-                  )}
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  className="bg-slate-800 flex justify-center items-center w-full rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
-                  onClick={sellHandler}
-                >
-                  {buttonLoading ? (
-                    <>
-                      <svg
-                        className="mr-5 h-6 w-6 animate-spin text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      <span> Processing... </span>
-                    </>
-                  ) : (
-                    <span>Sell !</span>
-                  )}
-                </button>
-              )}
+
+              <button
+                type="submit"
+                className="bg-slate-800 flex justify-center items-center w-full rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
+                onClick={sellHandler}
+              >
+                {buttonLoading ? (
+                  <>
+                    <svg
+                      className="mr-5 h-6 w-6 animate-spin text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    <span> Processing... </span>
+                  </>
+                ) : (
+                  <span>Sell !</span>
+                )}
+              </button>
             </form>
           </div>
         </div>
