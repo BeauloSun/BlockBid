@@ -16,7 +16,6 @@ export const Holdings = () => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 300);
-
     return () => clearTimeout(timer);
   }, []);
 
