@@ -1,26 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import CardC from "../components/CardC";
+import { Link, useLocation } from "react-router-dom";
 import bg from "../assets/marketplace_bg.jpg";
-import axios from "axios";
-
-import { getMarketContract } from "../utils/getBlockBid";
+import { Outlet } from "react-router-dom";
 
 export const Marketplace = () => {
-  const [activeTab, setActiveTab] = useState("ERC_721");
-  const [images, setImages] = useState([]);
-  const [images721, setImages721] = useState([]);
-  const [images1155, setImages1155] = useState([]);
   const [offsetY, setOffsetY] = useState(0);
   const handleScroll = () => setOffsetY(window.scrollY);
-  const [name, setName] = useState([]);
-  const [description, setDescription] = useState([]);
-  const [price, setPrice] = useState([]);
-  const [tokenIDs_721, setTokenIDs_721] = useState([]);
+  const location = useLocation();
+  const tabDefaultVal =
+    location.pathname.split("/")[2] + "/" + location.pathname.split("/")[3];
+  const tabMapping = {
+    "ERC721/Sale": "ERC_721 - Sale",
+    "ERC721/Auction": "ERC_721 - Auction",
+    "ERC1155/Sale": "ERC_1155 - Sale",
+  };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const [activeTab, setActiveTab] = useState(tabMapping[tabDefaultVal]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -28,51 +23,14 @@ export const Marketplace = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const marketplace_contract = await getMarketContract();
-      const listedTokens = await marketplace_contract.methods
-        .getListedTokens()
-        .call();
-      const numbered_listedTokens = [];
-      for (const bigint of listedTokens) {
-        numbered_listedTokens.push(Number(bigint));
-      }
-      const gettingOnSaleBody = { tokenIds: numbered_listedTokens };
-      const response = await axios.post(
-        "http://localhost:4988/getNftsOnSale",
-        gettingOnSaleBody
-      );
-
-      const names721 = response.data.map((item) => item.name);
-      const descriptions721 = response.data.map((item) => item.description);
-      const prices721 = response.data.map((item) => item.price);
-      const images721 = response.data.map((item) => item.image_uri);
-      const tokenIDs721 = response.data.map((item) => item.token_id);
-      setName(names721);
-      setDescription(descriptions721);
-      setPrice(prices721);
-      setImages721(images721);
-      setTokenIDs_721(tokenIDs721);
-      setImages(images721);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const handleTabClick = (tab) => {
     setActiveTab(tab);
-    if (tab === "ERC_721") {
-      setImages(images721);
-    } else if (tab === "ERC_1155") {
-      setImages(images1155);
-    }
   };
 
   return (
     <div>
       <div
-        className="relative text-[#47ffe6] h-[500px]"
+        className="relative text-[#ebff9c] h-[500px]"
         style={{
           backgroundImage: `url(${bg})`,
           backgroundSize: "cover",
@@ -93,47 +51,44 @@ export const Marketplace = () => {
           <Link to="/marketplace/ERC721/Sale">
             <button
               onClick={() => handleTabClick("ERC_721 - Sale")}
-              className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
+              className={`px-4 py-2 rounded-xl transition-all duration-200 transform hover:scale-110 ${
                 activeTab === "ERC_721 - Sale"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-300 text-white bg-opacity-50"
+                  ? "bg-[#47ff9d] text-black font-bold"
+                  : "bg-gray-300 text-white bg-opacity-50 font-bold"
               }`}
             >
               Sale (ERC-721)
             </button>
           </Link>
 
-          <button
-            onClick={() => handleTabClick("ERC_721 - Auction")}
-            className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
-              activeTab === "ERC_721 - Auction"
-                ? "bg-blue-500 text-white"
-                : "bg-gray-300 text-white bg-opacity-50"
-            }`}
-          >
-            Auction (ERC-721)
-          </button>
+          <Link to="/marketplace/ERC721/Auction">
+            <button
+              onClick={() => handleTabClick("ERC_721 - Auction")}
+              className={`px-4 py-2 rounded-xl transition-all duration-200 transform hover:scale-110 ${
+                activeTab === "ERC_721 - Auction"
+                  ? "bg-[#47ff9d] text-black font-bold"
+                  : "bg-gray-300 text-white bg-opacity-50 font-bold"
+              }`}
+            >
+              Auction (ERC-721)
+            </button>
+          </Link>
 
-          <button
-            onClick={() => handleTabClick("ERC_1155 - Sale")}
-            className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
-              activeTab === "ERC_1155 - Sale"
-                ? "bg-blue-500 text-white"
-                : "bg-gray-300 text-white bg-opacity-50"
-            }`}
-          >
-            Sale (ERC-1155)
-          </button>
-          <button
-            onClick={() => handleTabClick("ERC_1155 - Auction")}
-            className={`px-4 py-2 rounded-xl transition-all duration-500 transform hover:scale-110 ${
-              activeTab === "ERC_1155 - Auction"
-                ? "bg-blue-500 text-white"
-                : "bg-gray-300 text-white bg-opacity-50"
-            }`}
-          >
-            Auction (ERC-1155)
-          </button>
+          <Link to="/marketplace/ERC1155/Sale">
+            <button
+              onClick={() => handleTabClick("ERC_1155 - Sale")}
+              className={`px-4 py-2 rounded-xl transition-all duration-200 transform hover:scale-110 ${
+                activeTab === "ERC_1155 - Sale"
+                  ? "bg-[#47ff9d] text-black font-bold"
+                  : "bg-gray-300 text-white bg-opacity-50 font-bold"
+              }`}
+            >
+              Sale (ERC-1155)
+            </button>
+          </Link>
+        </div>
+        <div className={"min-h-[700px]"}>
+          <Outlet />
         </div>
       </div>
     </div>

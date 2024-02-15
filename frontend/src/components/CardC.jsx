@@ -2,16 +2,27 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
   Typography,
-  Button,
 } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
 
-const CardC = ({ img_src, name, description, price, market }) => {
+const CardC = ({
+  img_src,
+  name,
+  description,
+  price,
+  onSale = false,
+  onAuction = false,
+}) => {
+  let cardColour = "bg-purple-300";
+  if (onSale && !onAuction) {
+    cardColour = "bg-blue-300";
+  } else if (onSale && onAuction) {
+    cardColour = "bg-yellow-300";
+  }
+
   return (
     <div className="w-[350px]">
-      <Card className="bg-purple-300">
+      <Card className={cardColour}>
         <CardHeader shadow={true} floated={false} className="h-96">
           <img
             src={img_src}
@@ -21,20 +32,19 @@ const CardC = ({ img_src, name, description, price, market }) => {
         </CardHeader>
         <CardBody>
           <div className="mb-2 px-5 mt-2 flex items-center justify-between">
-            <Typography color="blue-gray" className="font-medium">
+            <Typography color="blue-gray" className="text-2xl font-bold">
               {name}
             </Typography>
           </div>
           <div className="mb-2 px-5 mt-2 flex items-center justify-between">
-            <Typography color="blue-gray" className="font-medium">
-              {market ? "" : "Price Bought: "}
-              {price} ETH
+            <Typography color="blue-gray" className="text-xl">
+              Current Market Price: {price}ETH
             </Typography>
           </div>
           <Typography
             variant="small"
             color="gray"
-            className="font-normal opacity-75 px-5"
+            className="text-xl opacity-75 px-5"
           >
             {description}
           </Typography>

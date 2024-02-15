@@ -5,21 +5,12 @@ import axios from "axios";
 
 import { getMarketContract } from "../utils/getBlockBid";
 
-export const Auction721 = () => {
+export const Sale1155 = () => {
   const [images, setImages] = useState([]);
   const [name, setName] = useState([]);
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
   const [tokenIDs_721, setTokenIDs_721] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     fetchData();
@@ -29,7 +20,7 @@ export const Auction721 = () => {
     try {
       const marketplace_contract = await getMarketContract();
       const listedTokens = await marketplace_contract.methods
-        .getListedAuctionTokens721()
+        .getListedTokens()
         .call();
       const numbered_listedTokens = [];
       for (const bigint of listedTokens) {
@@ -37,7 +28,7 @@ export const Auction721 = () => {
       }
       const gettingOnSaleBody = { tokenIds: numbered_listedTokens };
       const response = await axios.post(
-        "http://localhost:4988/api/nfts/getNftsOnAuction",
+        "http://localhost:4988/api/nfts1155market/getNftsOnSale",
         gettingOnSaleBody
       );
 
@@ -58,42 +49,32 @@ export const Auction721 = () => {
 
   return (
     <div>
-      {isLoading ? (
-        <div className="text-[#b3b3b3] text-4xl mt-20 flex justify-center">
-          Loading...
-        </div>
-      ) : tokenIDs_721.length > 0 ? (
-        <div
-          className="grid grid-flow-row-dense gap-1 mx-[17%]"
-          style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
-          }}
-        >
-          {images.map((img_src, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center py-4 hover:scale-105 duration-300"
+      <div
+        className="grid grid-flow-row-dense gap-1 mx-[17%]"
+        style={{
+          gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
+        }}
+      >
+        {images.map((img_src, index) => (
+          <div
+            key={index}
+            className="flex flex-col items-center py-4 hover:scale-105 duration-300"
+          >
+            <Link
+              to={`/marketplace/ERC721/Sale/${tokenIDs_721[index]}`}
+              key={tokenIDs_721[index]}
             >
-              <Link
-                to={`/marketplace/ERC721/Auction/${tokenIDs_721[index]}`}
-                key={tokenIDs_721[index]}
-              >
-                <CardC
-                  img_src={img_src}
-                  name={name[index]}
-                  description={description[index]}
-                  price={price[index]}
-                  market={true}
-                />
-              </Link>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="text-[#b3b3b3] text-4xl mt-20 flex justify-center">
-          No ongoing auction! Come back later or start your own!
-        </div>
-      )}
+              <CardC
+                img_src={img_src}
+                name={name[index]}
+                description={description[index]}
+                price={price[index]}
+                market={true}
+              />
+            </Link>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

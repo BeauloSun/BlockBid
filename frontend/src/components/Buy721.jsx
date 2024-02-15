@@ -26,7 +26,7 @@ export default function Buy721() {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:4988/getAccessibleSaleNft",
+          "http://localhost:4988/api/nfts/getAccessibleSaleNft",
           {
             token_id: token_id,
           }
@@ -40,7 +40,7 @@ export default function Buy721() {
       if (isValid.length !== 0) {
         try {
           const response = await axios.post(
-            "http://localhost:4988/getNftById",
+            "http://localhost:4988/api/nfts/getNftById",
             {
               tokenId: token_id,
             }
@@ -100,7 +100,7 @@ export default function Buy721() {
         price: Number(data.price),
       };
       await axios.put(
-        "http://localhost:4988/putNftInProfile",
+        "http://localhost:4988/api/nfts/putNftInProfile",
         puttingProfileBody
       );
       setMessage("Buy out successful!");
@@ -141,7 +141,7 @@ export default function Buy721() {
       ) : (
         <span></span>
       )}
-      <div class="bg-slate-400 flex flex-col rounded-2xl shadow-lg py-10 max-w-[1100px] p-5 items-center bg-opacity-50">
+      <div class="bg-slate-400 flex flex-col rounded-2xl h-[100%] shadow-lg py-10 max-w-[1100px] p-5 items-center bg-opacity-50">
         <div class="w-full text-center">
           <h2 class="text-white font-bold text-8xl pb-10">Buy Nft</h2>
         </div>
@@ -162,7 +162,7 @@ export default function Buy721() {
 
             <button
               type="submit"
-              className="bg-slate-800 flex justify-center items-center w-full rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
+              className="bg-slate-800 flex justify-center items-center w-full mt-[55%] rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
               onClick={buyNft}
             >
               {buttonLoading ? (

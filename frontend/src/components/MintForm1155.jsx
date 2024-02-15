@@ -1,5 +1,5 @@
-import nft_mint from "../assets/minting_nft.png";
-import bg from "../assets/mint_bg.jpg";
+import nft_mint from "../assets/minting_nft_1155.jpg";
+import bg from "../assets/mint_bg_1155.jpg";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import { pinFileToIPFS, pinJsonToIPFS } from "../utils/pinata";
@@ -9,12 +9,13 @@ import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
 import { getImageHash } from "../utils/imageHash";
 
-export default function Example() {
+export default function MintForm1155() {
   // all the states
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [quantity, setQuantity] = useState("");
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
   const [duplicateNftImageMessage, setDuplicateNftImageMessage] = useState("");
@@ -58,7 +59,7 @@ export default function Example() {
     // checking if the image already exists in the data base
     let hashDataList = [];
     const hashDataFromDatabase = await axios.get(
-      "http://localhost:4988/getNftImageHashes"
+      "http://localhost:4988/api/nfts/getNftImageHashes"
     );
     for (let i = 0; i < hashDataFromDatabase.data.length; i++) {
       hashDataList.push(hashDataFromDatabase.data[i].image_hash);
@@ -98,7 +99,7 @@ export default function Example() {
     };
 
     try {
-      await axios.post("http://localhost:4988/addNfts", nftData);
+      await axios.post("http://localhost:4988/api/nfts/addNfts", nftData);
       setName("");
       setDescription("");
       setImageFile(null);
@@ -197,8 +198,8 @@ export default function Example() {
         }}
       >
         {pageLoading ? (
-          <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="w-[150px] h-[150px]">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="w-[150px] h-[150px]">
               <DotLottiePlayer
                 src="https://lottie.host/8a351e58-efa2-424e-a738-bf8a7ad5c16e/nyVDUynd67.lottie"
                 autoplay
@@ -210,7 +211,7 @@ export default function Example() {
         ) : (
           <span></span>
         )}
-        <div className="bg-slate-400 bg-opacity-50 flex rounded-2xl shadow-lg max-w-[1100px] p-5 items-center">
+        <div className="bg-slate-400 bg-opacity-60 flex rounded-2xl shadow-lg max-w-[1100px] p-5 items-center">
           <div className="md:w-1/2 px-6 md:px-10">
             <h2 className="font-bold text-8xl text-[#ffffff] font-shadows">
               Minting
@@ -240,6 +241,18 @@ export default function Example() {
                   placeholder="Description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
+              <div className="relative">
+                <input
+                  className={`p-2 rounded-xl border w-full${
+                    descriptionError ? "border-red-500" : ""
+                  } focus:outline-[#35fefe]`}
+                  type="quantity"
+                  name="quantity"
+                  placeholder="Quantity"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
                 />
               </div>
 
@@ -308,13 +321,13 @@ export default function Example() {
                 {buttonLoading ? (
                   <>
                     <svg
-                      class="mr-5 h-6 w-6 animate-spin text-white"
+                      className="mr-5 h-6 w-6 animate-spin text-white"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
                       <circle
-                        class="opacity-25"
+                        className="opacity-25"
                         cx="12"
                         cy="12"
                         r="10"
@@ -322,7 +335,7 @@ export default function Example() {
                         stroke-width="4"
                       ></circle>
                       <path
-                        class="opacity-75"
+                        className="opacity-75"
                         fill="currentColor"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>

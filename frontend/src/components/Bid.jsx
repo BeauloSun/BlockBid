@@ -32,7 +32,7 @@ export default function Bid() {
     const fetchData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:4988/getAccessibleAuctionNft",
+          "http://localhost:4988/api/nfts/getAccessibleAuctionNft",
           {
             token_id: token_id,
           }
@@ -46,7 +46,7 @@ export default function Bid() {
       if (isValid.length !== 0) {
         try {
           const response = await axios.post(
-            "http://localhost:4988/getNftById",
+            "http://localhost:4988/api/nfts/getNftById",
             {
               tokenId: token_id,
             }
@@ -71,9 +71,12 @@ export default function Bid() {
           }
 
           try {
-            const bids = await axios.post("http://localhost:4988/getBids", {
-              token_id: token_id,
-            });
+            const bids = await axios.post(
+              "http://localhost:4988/api/nfts/getBids",
+              {
+                token_id: token_id,
+              }
+            );
             // sort the bids for display
             const obj = bids.data;
             let sortedKeys = Object.keys(obj).sort((a, b) => obj[b] - obj[a]);
@@ -84,7 +87,7 @@ export default function Bid() {
             setBidHistory(sortedBids);
 
             const highest_bids = await axios.post(
-              "http://localhost:4988/getHighestBid",
+              "http://localhost:4988/api/nfts/getHighestBid",
               {
                 token_id: token_id,
               }
@@ -162,7 +165,7 @@ export default function Bid() {
             .send({ from: address });
 
           const highest_bid = await axios.post(
-            "http://localhost:4988/getHighestBid",
+            "http://localhost:4988/api/nfts/getHighestBid",
             {
               token_id: Number(token_id),
             }
@@ -178,7 +181,10 @@ export default function Bid() {
             owner: highest_bidder,
           };
 
-          await axios.post("http://localhost:4988/endAuction", auctionEndBody);
+          await axios.post(
+            "http://localhost:4988/api/nfts/endAuction",
+            auctionEndBody
+          );
 
           setTimeout(() => {
             navigate("/NotFound");
@@ -245,7 +251,10 @@ export default function Bid() {
           bidder: address,
           price: Number(bid),
         };
-        await axios.put("http://localhost:4988/recordBid", recordBidBody);
+        await axios.put(
+          "http://localhost:4988/api/nfts/recordBid",
+          recordBidBody
+        );
 
         setMessage("Bid successful!");
         setMessageClass("font-bold text-xl text-[#48f9ff]");

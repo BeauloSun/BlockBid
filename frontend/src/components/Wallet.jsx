@@ -1,15 +1,15 @@
 import metamask from "../assets/metamask_icon.png";
+import wallet_bg from "../assets/wallet_bg.jpg";
 
 import React, { useState, useEffect } from "react";
 import { getMarketContract } from "../utils/getBlockBid";
-import { getContract } from "../utils/getNft721";
 
 export default function Wallet() {
-  const bg =
-    "https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/card-visa.jpg";
+  const bg = wallet_bg;
 
   const [data, setData] = useState({
     address: "",
+    balance: null,
     isConnected: false,
   });
 
@@ -69,7 +69,6 @@ export default function Wallet() {
 
     const funds = await contract.methods.getUserFunds(address).call();
     setUserFund(Number(funds));
-    console.log(funds);
   };
 
   const disconnectWallet = () => {
@@ -95,21 +94,21 @@ export default function Wallet() {
 
   return (
     <div>
-      <div class="flex justify-center max-w-[1250px] mx-auto">
-        <div class="flex mx-auto px-4 mb-6 break-words bg-transparent border-0 border-transparent border-solid shadow-xl rounded-2xl bg-clip-border">
+      <div className="flex justify-center max-w-[1250px] mx-auto">
+        <div className="flex mx-auto px-4 mb-6 break-words bg-transparent border-0 border-transparent border-solid shadow-xl rounded-2xl bg-clip-border">
           <div
-            class="relative overflow-hidden rounded-2xl"
+            className="relative overflow-hidden rounded-2xl"
             style={{ backgroundImage: `url(${bg})` }}
           >
-            <span class="absolute top-0 left-0 w-full h-full bg-center bg-cover bg-gradient-to-tl from-zinc-800 to-zinc-700 opacity-70"></span>
-            <div class="relative z-10 p-4">
-              <div class="flex justify-between items-center">
-                <p class="pb-2 mt-3 mb-3 text-white text-4xl font-bold ">
+            <span className="absolute top-0 left-0 w-full h-full bg-center bg-cover bg-gradient-to-tl from-zinc-800 to-zinc-700 opacity-70"></span>
+            <div className="relative z-10 p-4">
+              <div className="flex justify-between items-center">
+                <p className="pb-2 mt-3 mb-3 text-white text-4xl font-bold ">
                   Wallet Address:
                 </p>
                 <button
                   onClick={btnHandler}
-                  class="flex items-center rounded-full py-2 px-4 bg-blue-500 hover:bg-gradient-to-r hover:scale-105 duration-300 from-blue-500 to-green-500 text-white font-bold"
+                  className="flex items-center rounded-full py-2 px-4 bg-blue-500 hover:bg-gradient-to-r hover:scale-105 duration-300 from-blue-500 to-green-500 text-white font-bold"
                 >
                   <span>
                     {data.isConnected ? "Disconnect Wallet" : "Connect Wallet"}
@@ -120,7 +119,7 @@ export default function Wallet() {
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    class="w-6 h-6 ml-4"
+                    className="w-6 h-6 ml-4"
                   >
                     <path
                       strokeLinecap="round"
@@ -131,20 +130,20 @@ export default function Wallet() {
                 </button>
               </div>
 
-              <div class="pb-2 mb-5 text-green-300 text-3xl font-bold ">
+              <div className="pb-2 mb-5 text-green-300 text-3xl font-bold ">
                 {data.isConnected ? data.address : "Wallet not connected"}
               </div>
-              <div class="flex items-center">
+              <div className="flex items-center">
                 <div>
-                  <p class="pb-2 mt-3 mb-3 text-white text-4xl font-bold ">
+                  <p className="pb-2 mt-3 mb-3 text-white text-4xl font-bold ">
                     Wallet Provider:
                   </p>
-                  <p class="pb-2 mb-5 text-green-300 text-3xl font-bold ">
+                  <p className="pb-2 mb-5 text-green-300 text-3xl font-bold ">
                     Metamask
                   </p>
                 </div>
-                <div class="flex items-end justify-end w-1/5 ml-auto">
-                  <img class="w-3/5 mt-2" src={metamask} alt="logo" />
+                <div className="flex items-end justify-end w-1/5 ml-auto">
+                  <img className="w-3/5 mt-2" src={metamask} alt="logo" />
                 </div>
               </div>
             </div>
@@ -152,11 +151,11 @@ export default function Wallet() {
         </div>
       </div>
 
-      <div class="flex justify-center">
-        <div class="flex max-w-[1200px] w-full mx-auto px-4 mb-6 break-words bg-transparent border-0 border-transparent border-solid shadow-xl rounded-2xl bg-clip-border">
-          <div class="flex justify-center w-full">
-            <div class="w-2/3 h-[500px] mr-5 relative flex flex-col min-w-0 break-words bg-slate-400 border-0 shadow-xl rounded-2xl bg-clip-border flex-none">
-              <h3 class="mb-0 text-white pl-5 pt-5 font-bold text-3xl">
+      <div className="flex justify-center">
+        <div className="flex max-w-[1200px] w-full mx-auto px-4 mb-6 break-words bg-transparent border-0 border-transparent border-solid shadow-xl rounded-2xl bg-clip-border">
+          <div className="flex justify-center w-full">
+            <div className="w-2/3 h-[500px] mr-5 relative flex flex-col min-w-0 break-words bg-slate-400 border-0 shadow-xl rounded-2xl bg-clip-border flex-none">
+              <h3 className="mb-0 text-white pl-5 pt-5 font-bold text-3xl">
                 {userFund}
               </h3>
               <button
@@ -166,8 +165,8 @@ export default function Wallet() {
                 Retrieve Funds
               </button>
             </div>
-            <div class="w-1/3 h-[500px] ml-5 relative flex flex-col min-w-0 break-words bg-slate-400 border-0 shadow-xl rounded-2xl bg-clip-border flex-none">
-              <h3 class="mb-0 text-white pl-5 pt-5 font-bold text-3xl">
+            <div className="w-1/3 h-[500px] ml-5 relative flex flex-col min-w-0 break-words bg-slate-400 border-0 shadow-xl rounded-2xl bg-clip-border flex-none">
+              <h3 className="mb-0 text-white pl-5 pt-5 font-bold text-3xl">
                 Your Transactions
               </h3>
             </div>
