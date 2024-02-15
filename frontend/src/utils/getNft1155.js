@@ -1,7 +1,7 @@
 import nftcontract from "../backend-constants/nft1155.json";
 import Web3 from "web3";
 
-export const getContract = async () => {
+export const getContract1155 = async () => {
   return new Promise(async (resolve, reject) => {
     const contractAddress = nftcontract.address;
     const contractAbi = nftcontract.abi;

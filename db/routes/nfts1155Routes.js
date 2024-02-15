@@ -111,13 +111,15 @@ router.post("/checkIfHashExists", async (req, res) => {
   res.json(exists);
 });
 
-// Example query for updating
-// {
-//     "token_id":2,
-//     "owner_data":{
-//       "address":"someoneelse",
-//       "quantity":10
-//     }
-//   }
-
+router.post("/getOwnedNft", async (req, res) => {
+  const tokenIds = req.body.tokenIds;
+  try {
+    const nfts = await Nft1155Model.find({
+      token_id: { $in: tokenIds },
+    });
+    res.json(nfts);
+  } catch (err) {
+    res.json(err);
+  }
+});
 module.exports = router;

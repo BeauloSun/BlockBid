@@ -3,7 +3,7 @@ import bg from "../assets/mint_bg_1155.jpg";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import { pinFileToIPFS, pinJsonToIPFS } from "../utils/pinata";
-import { getContract } from "../utils/getNft1155";
+import { getContract1155 } from "../utils/getNft1155";
 import axios from "axios";
 import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
@@ -174,7 +174,7 @@ export default function MintForm1155() {
     if (await formValid(currentImageHash)) {
       try {
         setpageLoading(true);
-        const contract = await getContract();
+        const contract = await getContract1155();
         if (contract !== null) {
           if (window.localStorage.getItem("currentAddr") !== null) {
             // get the image and json hashes
