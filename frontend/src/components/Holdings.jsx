@@ -201,7 +201,7 @@ export const Holdings = () => {
             className="flex flex-col items-center py-4 hover:scale-105 duration-300"
           >
             <Link
-              to={`/profile/holdings/${tokenIds1155[index]}`}
+              to={`/profile/holdings/1155/${tokenIds1155[index]}`}
               key={tokenIds1155[index]}
             >
               <CardC
@@ -210,7 +210,7 @@ export const Holdings = () => {
                 description={description1155[index]}
                 price={price1155[index]}
                 is1155={true}
-                owned={amountOwned[index] / totalAmount[index]}
+                owned={(amountOwned[index] / totalAmount[index]) * 100}
               />
             </Link>
           </div>
