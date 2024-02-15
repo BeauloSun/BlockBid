@@ -15,12 +15,13 @@ import { Auction721 } from "./components/Auction721";
 import { Sale1155 } from "./components/Sale1155";
 import { Bidding } from "./pages/Bidding";
 import { Selling } from "./pages/Selling";
+import { Selling1155 } from "./pages/Selling1155";
 import { Holdings } from "./components/Holdings";
 import Wallet from "./components/Wallet";
 import { ListedHoldings } from "./components/ListedHoldings";
 import { CancelListings } from "./pages/CancelListings";
 import { BuyNft721 } from "./pages/BuyNft721";
-import { BuyNft721 } from "./pages/BuyNft721";
+import { Splitting } from "./pages/Splitting_learning";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -56,7 +57,8 @@ function App() {
             path="/profile/listed_holdings/:id"
             element={<CancelListings />}
           />
-          <Route path="/profile/holdings/:id" element={<Selling />} />
+          <Route path="/profile/holdings/721/:id" element={<Selling />} />
+          <Route path="/profile/holdings/1155/:id" element={<Selling1155 />} />
           <Route path="/marketplace/ERC721/Sale/:id" element={<BuyNft721 />} />
           <Route path="/marketplace/ERC721/Auction/:id" element={<Bidding />} />
 
@@ -71,6 +73,8 @@ function App() {
             <Route path="ERC721/Auction" element={<Auction721 />} />
             <Route path="ERC1155/Sale" element={<Sale1155 />} />
           </Route>
+
+          <Route path="/haha" element={<Splitting />} />
 
           <Route path="/mint" element={<Mint />} />
           <Route path="/mint/721" element={<Mint721 />} />
