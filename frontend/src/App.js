@@ -20,6 +20,7 @@ import Wallet from "./components/Wallet";
 import { ListedHoldings } from "./components/ListedHoldings";
 import { CancelListings } from "./pages/CancelListings";
 import { BuyNft721 } from "./pages/BuyNft721";
+import { BuyNft721 } from "./pages/BuyNft721";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
