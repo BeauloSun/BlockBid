@@ -28,7 +28,7 @@ export const Sale1155 = () => {
       }
       const gettingOnSaleBody = { tokenIds: numbered_listedTokens };
       const response = await axios.post(
-        "http://localhost:4988/getNftsOnSale",
+        "http://localhost:4988/api/nfts1155market/getNftsOnSale",
         gettingOnSaleBody
       );
 

@@ -106,11 +106,11 @@ export const ListedHoldings = () => {
         <div>
           <div className="flex justify-center bg-slate-400 space-x-6 py-3 mx-auto mt-15 max-w-[600px] rounded-3xl bg-opacity-50">
             <div className="flex items-center">
-              <div className="w-10 h-6 bg-blue-500 mr-2 rounded-xl"></div>
+              <div className="w-10 h-6 bg-blue-300 mr-2 rounded-xl"></div>
               <span className="font-semibold text-white text-lg">On Sale</span>
             </div>
             <div className="flex items-center">
-              <div className="w-10 h-6 bg-yellow-500 mr-2 rounded-xl"></div>
+              <div className="w-10 h-6 bg-yellow-300 mr-2 rounded-xl"></div>
               <span className="font-semibold text-white text-lg">
                 On Auction
               </span>
@@ -128,7 +128,11 @@ export const ListedHoldings = () => {
                 className="flex flex-col items-center py-4 hover:scale-105 duration-300"
               >
                 <Link
-                  to={`/profile/listed_holdings/${tokenIds[index]}`}
+                  to={
+                    onAuction[index]
+                      ? `/marketplace/ERC721/Auction/${tokenIds[index]}`
+                      : `/profile/listed_holdings/${tokenIds[index]}`
+                  }
                   key={tokenIds[index]}
                 >
                   <CardC

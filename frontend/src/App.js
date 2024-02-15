@@ -5,6 +5,8 @@ import { Footer } from "./components/Footer";
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
 import { Mint } from "./pages/Mint";
+import { Mint721 } from "./pages/Mint721";
+import { Mint1155 } from "./pages/Mint1155";
 import { Profile } from "./pages/Profile";
 import { NotFound } from "./pages/NotFound";
 import { Marketplace } from "./pages/Marketplace";
@@ -70,6 +72,8 @@ function App() {
           </Route>
 
           <Route path="/mint" element={<Mint />} />
+          <Route path="/mint/721" element={<Mint721 />} />
+          <Route path="/mint/1155" element={<Mint1155 />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />

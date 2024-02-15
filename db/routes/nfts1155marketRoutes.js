@@ -26,7 +26,7 @@ router.delete("/removeNft", async (req, res) => {
   }
 });
 
-router.get("/getNfts", (req, res) => {
+router.get("/getNftsOnSale", (req, res) => {
   NftModel.find({})
     .then(function (nfts) {
       res.json(nfts);

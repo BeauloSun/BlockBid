@@ -1,5 +1,5 @@
-import nft_mint from "../assets/minting_nft.png";
-import bg from "../assets/mint_bg.jpg";
+import nft_mint from "../assets/minting_nft_1155.jpg";
+import bg from "../assets/mint_bg_1155.jpg";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import { pinFileToIPFS, pinJsonToIPFS } from "../utils/pinata";
@@ -9,12 +9,13 @@ import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
 import { getImageHash } from "../utils/imageHash";
 
-export default function Example() {
+export default function MintForm1155() {
   // all the states
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [quantity, setQuantity] = useState("");
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
   const [duplicateNftImageMessage, setDuplicateNftImageMessage] = useState("");
@@ -210,7 +211,7 @@ export default function Example() {
         ) : (
           <span></span>
         )}
-        <div className="bg-slate-400 bg-opacity-50 flex rounded-2xl shadow-lg max-w-[1100px] p-5 items-center">
+        <div className="bg-slate-400 bg-opacity-60 flex rounded-2xl shadow-lg max-w-[1100px] p-5 items-center">
           <div className="md:w-1/2 px-6 md:px-10">
             <h2 className="font-bold text-8xl text-[#ffffff] font-shadows">
               Minting
@@ -240,6 +241,18 @@ export default function Example() {
                   placeholder="Description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
+              <div className="relative">
+                <input
+                  className={`p-2 rounded-xl border w-full${
+                    descriptionError ? "border-red-500" : ""
+                  } focus:outline-[#35fefe]`}
+                  type="quantity"
+                  name="quantity"
+                  placeholder="Quantity"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
                 />
               </div>
 

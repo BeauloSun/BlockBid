@@ -153,7 +153,7 @@ export default function CancelListing() {
               <div className={messageClass}>{message}</div>
               <button
                 type="submit"
-                className="bg-slate-800 flex justify-center items-center w-full rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
+                className="bg-slate-800 flex justify-center items-center w-full mt-[30%] rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
                 onClick={buttonHandler}
               >
                 {buttonLoading ? (
