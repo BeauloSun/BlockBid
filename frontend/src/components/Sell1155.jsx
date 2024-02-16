@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import bg from "../assets/sell_bg.jpg";
 import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
-import { getMarketContract } from "../utils/getBlockBid";
-import { getContract } from "../utils/getNft721";
+import { getMarketContract1155 } from "../utils/getBlockBid1155";
+import { getContract1155 } from "../utils/getNft1155";
 import Web3 from "web3";
 import axios from "axios";
 import img_tmp1 from "../assets/nft1.jpg";
@@ -16,6 +16,7 @@ export default function Sell1155() {
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [price, setPrice] = useState(null);
   const [priceMsg, setPriceMsg] = useState("Set Your Price");
+  const [quantity, setQuantity] = useState(null);
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
   const [data, setData] = useState({});
@@ -24,48 +25,33 @@ export default function Sell1155() {
 
   useEffect(() => {
     const fetchData = async () => {
-      // try {
-      //   const response = await axios.post(
-      //     "http://localhost:4988/api/nfts/getAccessibleProfileNft",
-      //     {
-      //       tokenId: token_id,
-      //       marketplace: false,
-      //       walletaddress: window.localStorage.getItem("currentAddr"),
-      //     }
-      //   );
-      //   // eslint-disable-next-line react-hooks/exhaustive-deps
-      //   isValid = response.data;
-      // } catch (err) {
-      //   console.error(err);
-      // }
-      // if (isValid) {
-      //   try {
-      //     const response = await axios.post(
-      //       "http://localhost:4988/api/nfts/getNftById",
-      //       {
-      //         tokenId: token_id,
-      //       }
-      //     );
-      //     if (response.data && response.data.length > 0) {
-      //       const res = response.data[0];
-      //       setData({
-      //         img_src: res.image_uri,
-      //         name: res.name,
-      //         description: res.description,
-      //       });
-      //     }
-      //   } catch (err) {
-      //     console.error(err);
-      //   }
-      // } else {
-      //   navigate("/NotFound");
-      // }
-
-      setData({
-        img_src: img_tmp1,
-        name: "dummy name 1",
-        description: "dummy description 1",
-      });
+      let isValid = false;
+      let response = null;
+      try {
+        response = await axios.post(
+          "http://localhost:4988/api/nfts1155/getANft",
+          {
+            tokenId: token_id,
+            ownerAddress: window.localStorage.getItem("currentAddr"),
+          }
+        );
+        if (response.data) {
+          isValid = true;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+      if (isValid) {
+        const res = response.data;
+        setData({
+          img_src: res.image_uri,
+          name: res.name,
+          description: res.description,
+          image_hash: res.image_hash,
+        });
+      } else {
+        navigate("/NotFound");
+      }
     };
 
     fetchData();
@@ -84,6 +70,12 @@ export default function Sell1155() {
       return false;
     }
 
+    if (!quantity || quantity <= 0) {
+      setMessage("Quantity needs to be greater than 0");
+      setMessageClass("font-bold text-xl text-red-600");
+      return false;
+    }
+
     setMessage("");
     setMessageClass("");
     return true;
@@ -97,34 +89,51 @@ export default function Sell1155() {
       setloadingController(true);
       try {
         //get the nft contract
-        const nftContract = await getContract();
+        const nftContract = await getContract1155();
 
         // get the market place contract
-        const marketPlace = await getMarketContract();
+        const marketPlace = await getMarketContract1155();
 
         // sell add the nft to the market place
         const address = window.localStorage.getItem("currentAddr");
 
         await nftContract.methods
-          .approve(marketPlace.options.address, token_id)
+          .setApprovalForAll(marketPlace.options.address, true)
           .send({ from: address });
 
         const weiprice = Number(Web3.utils.toWei(price, "ether"));
 
-        await marketPlace.methods
-          .sellNft721(nftContract.options.address, Number(token_id), weiprice)
+        const txnDetails = await marketPlace.methods
+          .SellNft1155(
+            nftContract.options.address,
+            Number(token_id),
+            weiprice,
+            quantity
+          )
           .send({ from: address });
+
+        const listingId = Number(txnDetails.events.ListedNft1155.data);
+
+        console.log("Listing ID ", listingId);
 
         const puttingMarketplaceBody = {
           token_id: token_id,
+          listing_id: listingId,
           nft_address: nftContract.options.address,
+          name: data.name,
+          description: data.description,
+          available_quantity: quantity,
+          image_uri: data.img_src,
+          image_hash: data.image_hash,
+          price: weiprice,
           owner: address,
-          price: Number(price),
+          buyers: {},
         };
-        await axios.put(
-          "http://localhost:4988/api/nfts/putNftInMarketplace",
+        const res = await axios.post(
+          "http://localhost:4988/api/nfts1155market/addNfts1155",
           puttingMarketplaceBody
         );
+        console.log(res);
 
         setMessage("Sell successful!");
         setMessageClass("font-bold text-xl text-[#48f9ff]");
@@ -132,7 +141,7 @@ export default function Sell1155() {
         setloadingController(false);
         setTimeout(() => {
           setbuttonLoading(false);
-          navigate("/marketplace/ERC721/Sale");
+          // navigate("/marketplace/ERC721/Sale");
         }, 1500);
       } catch (error) {
         console.error(error);
@@ -200,8 +209,8 @@ export default function Sell1155() {
                   type="number"
                   name="Quantity"
                   placeholder="Enter quantity"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
                 />
                 <div className="font-bold text-3xl text-white pr-10 mb-4">
                   Tokens

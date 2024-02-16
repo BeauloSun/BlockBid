@@ -28,7 +28,7 @@ router.delete("/removeNft", async (req, res) => {
   }
 });
 
-router.get("/getNftsOnSale", (req, res) => {
+router.post("/getNftsOnSale", (req, res) => {
   Nft1155marketplaceModel.find({})
     .then(function (nfts) {
       res.json(nfts);
@@ -54,10 +54,35 @@ router.post("/getOneNft", async (req, res) => {
 });
 
 router.post("/addNfts1155", async (req, res) => {
-  const nft1155 = req.body;
-  const newNft1155 = new Nft1155marketplaceModel(nft1155);
+  const {
+    token_id,
+    listing_id,
+    nft_address,
+    name,
+    description,
+    available_quantity,
+    image_uri,
+    image_hash,
+    price,
+    owner,
+    buyers,
+  } = req.body;
+
+  const newNft1155 = new Nft1155marketplaceModel({
+    token_id,
+    listing_id,
+    nft_address,
+    name,
+    description,
+    available_quantity,
+    image_uri,
+    image_hash,
+    price,
+    owner,
+    buyers,
+  });
   await newNft1155.save();
-  res.json(nft1155);
+  res.json("nft added successfully");
 });
 
 // {

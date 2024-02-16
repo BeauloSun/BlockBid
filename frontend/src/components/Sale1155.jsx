@@ -10,7 +10,8 @@ export const Sale1155 = () => {
   const [name, setName] = useState([]);
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
-  const [tokenIDs_721, setTokenIDs_721] = useState([]);
+  const [tokenIDs, setTokenIDs] = useState([]);
+  const [listingIds, setListingIds] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -18,30 +19,22 @@ export const Sale1155 = () => {
 
   const fetchData = async () => {
     try {
-      const marketplace_contract = await getMarketContract();
-      const listedTokens = await marketplace_contract.methods
-        .getListedTokens()
-        .call();
-      const numbered_listedTokens = [];
-      for (const bigint of listedTokens) {
-        numbered_listedTokens.push(Number(bigint));
-      }
-      const gettingOnSaleBody = { tokenIds: numbered_listedTokens };
       const response = await axios.post(
-        "http://localhost:4988/api/nfts1155market/getNftsOnSale",
-        gettingOnSaleBody
+        "http://localhost:4988/api/nfts1155market/getNftsOnSale"
       );
 
-      const names721 = response.data.map((item) => item.name);
-      const descriptions721 = response.data.map((item) => item.description);
-      const prices721 = response.data.map((item) => item.price);
-      const images721 = response.data.map((item) => item.image_uri);
-      const tokenIDs721 = response.data.map((item) => item.token_id);
-      setName(names721);
-      setDescription(descriptions721);
-      setPrice(prices721);
-      setTokenIDs_721(tokenIDs721);
-      setImages(images721);
+      const names = response.data.map((item) => item.name);
+      const descriptions = response.data.map((item) => item.description);
+      const prices = response.data.map((item) => item.price);
+      const images = response.data.map((item) => item.image_uri);
+      const tokenIDs = response.data.map((item) => item.token_id);
+      const listingIds = response.data.map((item) => item.listing_id);
+      setName(names);
+      setDescription(descriptions);
+      setPrice(prices);
+      setTokenIDs(tokenIDs);
+      setImages(images);
+      setListingIds(listingIds);
     } catch (error) {
       console.error(error);
     }
@@ -61,8 +54,8 @@ export const Sale1155 = () => {
             className="flex flex-col items-center py-4 hover:scale-105 duration-300"
           >
             <Link
-              to={`/marketplace/ERC721/Sale/${tokenIDs_721[index]}`}
-              key={tokenIDs_721[index]}
+              to={`/marketplace/ERC1155/Sale/${tokenIDs[index]}/${listingIds[index]}`}
+              key={tokenIDs[index]}
             >
               <CardC
                 img_src={img_src}
