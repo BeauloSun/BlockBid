@@ -1,12 +1,10 @@
 import metamask from "../assets/metamask_icon.png";
 import wallet_bg from "../assets/wallet_bg.jpg";
-
+import retrieve_fund_bg from "../assets/retrieve_fund_bg.jpg";
 import React, { useState, useEffect } from "react";
 import { getMarketContract } from "../utils/getBlockBid";
 
 export default function Wallet() {
-  const bg = wallet_bg;
-
   const [data, setData] = useState({
     address: "",
     balance: null,
@@ -98,7 +96,7 @@ export default function Wallet() {
         <div className="flex mx-auto px-4 mb-6 break-words bg-transparent border-0 border-transparent border-solid shadow-xl rounded-2xl bg-clip-border">
           <div
             className="relative overflow-hidden rounded-2xl"
-            style={{ backgroundImage: `url(${bg})` }}
+            style={{ backgroundImage: `url(${wallet_bg})` }}
           >
             <span className="absolute top-0 left-0 w-full h-full bg-center bg-cover bg-gradient-to-tl from-zinc-800 to-zinc-700 opacity-70"></span>
             <div className="relative z-10 p-4">
@@ -152,23 +150,45 @@ export default function Wallet() {
       </div>
 
       <div className="flex justify-center">
-        <div className="flex max-w-[1200px] w-full mx-auto px-4 mb-6 break-words bg-transparent border-0 border-transparent border-solid shadow-xl rounded-2xl bg-clip-border">
+        <div className="flex max-w-[1250px] w-full mx-auto px-4 mb-6 break-words bg-transparent border-0 border-transparent border-solid shadow-xl rounded-2xl bg-clip-border">
           <div className="flex justify-center w-full">
-            <div className="w-2/3 h-[500px] mr-5 relative flex flex-col min-w-0 break-words bg-slate-400 border-0 shadow-xl rounded-2xl bg-clip-border flex-none">
-              <h3 className="mb-0 text-white pl-5 pt-5 font-bold text-3xl">
-                {userFund}
+            <div
+              style={{
+                backgroundImage: `url(${retrieve_fund_bg})`,
+                backgroundSize: "cover",
+                backgroundPositionY: "-100px",
+              }}
+              className="justify-center min-h-[300px] relative flex pb-5 px-20 flex-col min-w-0 w-full break-words bg-slate-400 border-0 shadow-xl rounded-2xl bg-clip-border flex-none"
+            >
+              <span className="absolute top-0 left-0 w-full h-full bg-center bg-cover rounded-2xl bg-gradient-to-tl from-zinc-800 to-zinc-700 opacity-60 z-0"></span>
+              <h3 className="mb-0 text-white text-center pl-5 pt-5 font-bold text-3xl z-10">
+                Your current pending fund stored in contract:
               </h3>
-              <button
-                onClick={returnUserFunds}
-                class="flex items-center rounded-full py-2 px-4 bg-blue-500 hover:bg-gradient-to-r hover:scale-105 duration-300 from-blue-500 to-green-500 text-white font-bold"
-              >
-                Retrieve Funds
-              </button>
-            </div>
-            <div className="w-1/3 h-[500px] ml-5 relative flex flex-col min-w-0 break-words bg-slate-400 border-0 shadow-xl rounded-2xl bg-clip-border flex-none">
-              <h3 className="mb-0 text-white pl-5 pt-5 font-bold text-3xl">
-                Your Transactions
+              <h3 className="mb-5 text-white text-center pl-5 pt-5 font-bold text-3xl z-10">
+                {userFund} ETH
               </h3>
+              <div className="flex justify-center">
+                <button
+                  onClick={returnUserFunds}
+                  className="flex items-center ml-5 justify-center max-w-[190px] text-md rounded-full py-1 px-4 bg-blue-500 hover:bg-gradient-to-r hover:scale-105 duration-300 from-blue-500 to-green-500 text-white font-bold z-10"
+                >
+                  Retrieve Funds
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    className="w-8 h-8 ml-3"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m9 12.75 3 3m0 0 3-3m-3 3v-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
