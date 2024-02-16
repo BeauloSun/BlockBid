@@ -104,15 +104,23 @@ export const ListedHoldings = () => {
         </div>
       ) : tokenIds.length > 0 ? (
         <div>
-          <div className="flex justify-center bg-slate-400 space-x-6 py-3 mx-auto mt-15 max-w-[600px] rounded-3xl bg-opacity-50">
+          <div className="flex justify-center bg-slate-400 space-x-6 py-3 mx-auto mt-15 max-w-[800px] rounded-3xl bg-opacity-50">
             <div className="flex items-center">
               <div className="w-10 h-6 bg-blue-300 mr-2 rounded-xl"></div>
-              <span className="font-semibold text-white text-lg">On Sale</span>
+              <span className="font-semibold text-white text-lg">
+                On Sale ERC721
+              </span>
             </div>
             <div className="flex items-center">
               <div className="w-10 h-6 bg-yellow-300 mr-2 rounded-xl"></div>
               <span className="font-semibold text-white text-lg">
-                On Auction
+                On Auction ERC721
+              </span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-10 h-6 bg-green-300 mr-2 rounded-xl"></div>
+              <span className="font-semibold text-white text-lg">
+                On Sale ERC1155
               </span>
             </div>
           </div>

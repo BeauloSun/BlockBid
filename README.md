@@ -1,10 +1,28 @@
-# Sample Hardhat Project
+# This weekend todo:
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+1. Profile page listed holdings for 1155
+2. Contract validation for selling more than you have
+3. Sell1155 page handling contract error for selling more than you have (setMessage)
+4. Page for all listing for one token (backend)
+5. Page for particular listing (backend)
+6. SQL to react (backend)
 
-Try running some of the following tasks:
+---
 
-To install all the dependencies
+7. Page for all listing for one token (frontend)
+8. Page for particular listing (frontend)
+9. Sell1155 page viewing other owners
+10. Improve mint selection page layout + add explanation to what is what
+11. Graph frontend display
+
+# Next week todo:
+
+1. Fractionalization (button in sell page 721->1155)
+2. Analytics (Line graph for
+   721: Price/Time
+   1155: Price/Time
+   )
+3. \*Fractionalization (button in sell page 1155->721)
 
 ```shell
 yarn install

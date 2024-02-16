@@ -149,6 +149,16 @@ export const Holdings = () => {
         </div>
       ) : (tokenIds.length > 0) | (tokenIds1155.length > 0) ? (
         <>
+          <div className="flex justify-center bg-slate-400 space-x-6 py-3 mx-auto mt-15 max-w-[600px] rounded-3xl bg-opacity-50">
+            <div className="flex items-center">
+              <div className="w-10 h-6 bg-purple-300 mr-2 rounded-xl"></div>
+              <span className="font-semibold text-white text-lg">ERC 721</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-10 h-6 bg-slate-300 mr-2 rounded-xl"></div>
+              <span className="font-semibold text-white text-lg">ERC 1155</span>
+            </div>
+          </div>
           <div className="flex justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-5 mx-[5%]">
               {images.map((img_src, index) => (
@@ -170,13 +180,6 @@ export const Holdings = () => {
                   </Link>
                 </div>
               ))}
-            </div>
-            <div
-              className="grid grid-flow-row-dense gap-1 mt-20 mx-[17%]"
-              style={{
-                gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
-              }}
-            >
               {images1155.map((img_src, index) => (
                 <div
                   key={index}
