@@ -171,7 +171,7 @@ export const Holdings = () => {
                 className="flex flex-col items-center py-4 hover:scale-105 duration-300"
               >
                 <Link
-                  to={`/profile/holdings/${tokenIds[index]}`}
+                  to={`/profile/holdings/721/${tokenIds[index]}`}
                   key={tokenIds[index]}
                 >
                   <CardC
