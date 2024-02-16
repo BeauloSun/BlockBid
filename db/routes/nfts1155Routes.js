@@ -24,6 +24,28 @@ router.delete("/burnNft", async (req, res) => {
   }
 });
 
+router.post("/getANft", async (req, res) => {
+  const { tokenId, ownerAddress } = req.body;
+  try {
+    const nft = await Nft1155Model.findOne({ token_id: tokenId });
+    if (!nft) {
+      return res.status(404).json({ message: "NFT not found" });
+    }
+
+    const ownerCount = nft.owners.get(ownerAddress);
+    if (!ownerCount) {
+      return res
+        .status(404)
+        .json({ message: "Address is not an owner of this NFT" });
+    }
+
+    res.json(nft); // Include ownerCount in response
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 router.get("/getNfts", (req, res) => {
   Nft1155Model.find({})
     .then(function (nfts) {
@@ -59,7 +81,6 @@ router.post("/addNfts1155", async (req, res) => {
       image_hash,
       owners,
     });
-    console.log("till here");
     await newNft.save();
 
     res.json({ message: "NFT added successfully" });

@@ -7,7 +7,9 @@ import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 error SenderIsNotTheOwner();
+
 contract BlockBid1155 is ReentrancyGuard{
+    event ListedNft1155(uint256 sellingId);
 
     uint256 sellingId;
 
@@ -34,7 +36,7 @@ contract BlockBid1155 is ReentrancyGuard{
         _;
     }
 
-    function SellNft1155(address _nft , uint256 tokenId , uint256 price , uint256 amount) public  Owner1155(_nft , tokenId , msg.sender , amount)returns(uint256){
+    function SellNft1155(address _nft , uint256 tokenId , uint256 price , uint256 amount) public  Owner1155(_nft , tokenId , msg.sender , amount){
 
         require(amount >0 ,  "Amount of tokens should be greater than O");
         require(IERC1155(_nft).isApprovedForAll(msg.sender , address(this)));
@@ -44,7 +46,7 @@ contract BlockBid1155 is ReentrancyGuard{
 
         nft1155Listing[sellingId] = token1155(tokenId , payable(msg.sender) , price, amount ,buyers ,amount ,false,sellingId);
         nft1155ListedTokens.push(sellingId);
-        return sellingId;
+        emit ListedNft1155(sellingId);
     }
 
 

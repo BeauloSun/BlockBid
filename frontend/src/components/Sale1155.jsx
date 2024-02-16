@@ -10,7 +10,8 @@ export const Sale1155 = () => {
   const [name, setName] = useState([]);
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
-  const [tokenIDs_1155, setTokenIDs_1155] = useState([]);
+  const [tokenIDs, setTokenIDs] = useState([]);
+  const [listingIds, setListingIds] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -31,30 +32,22 @@ export const Sale1155 = () => {
 
   const fetchData = async () => {
     try {
-      const marketplace_contract = await getMarketContract();
-      const listedTokens = await marketplace_contract.methods
-        .getListedTokens()
-        .call();
-      const numbered_listedTokens = [];
-      for (const bigint of listedTokens) {
-        numbered_listedTokens.push(Number(bigint));
-      }
-      const gettingOnSaleBody = { tokenIds: numbered_listedTokens };
       const response = await axios.post(
-        "http://localhost:4988/api/nfts1155market/getNftsOnSale",
-        gettingOnSaleBody
+        "http://localhost:4988/api/nfts1155market/getNftsOnSale"
       );
 
-      const names1155 = response.data.map((item) => item.name);
-      const descriptions1155 = response.data.map((item) => item.description);
-      const prices1155 = response.data.map((item) => item.price);
-      const images1155 = response.data.map((item) => item.image_uri);
-      const tokenIDs1155 = response.data.map((item) => item.token_id);
-      setName(names1155);
-      setDescription(descriptions1155);
-      setPrice(prices1155);
-      setTokenIDs_1155(tokenIDs1155);
-      setImages(images1155);
+      const names = response.data.map((item) => item.name);
+      const descriptions = response.data.map((item) => item.description);
+      const prices = response.data.map((item) => item.price);
+      const images = response.data.map((item) => item.image_uri);
+      const tokenIDs = response.data.map((item) => item.token_id);
+      const listingIds = response.data.map((item) => item.listing_id);
+      setName(names);
+      setDescription(descriptions);
+      setPrice(prices);
+      setTokenIDs(tokenIDs);
+      setImages(images);
+      setListingIds(listingIds);
     } catch (error) {
       console.error(error);
     }
@@ -66,7 +59,7 @@ export const Sale1155 = () => {
         <div className="text-[#b3b3b3] text-4xl mt-20 flex justify-center">
           Loading...
         </div>
-      ) : tokenIDs_1155.length > 0 ? (
+      ) : tokenIDs.length > 0 ? (
         <div className="flex justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-5 mx-[5%]">
             {images.map((img_src, index) => (
@@ -75,8 +68,8 @@ export const Sale1155 = () => {
                 className="flex flex-col items-center py-4 hover:scale-105 duration-300"
               >
                 <Link
-                  to={`/marketplace/ERC721/Sale/${tokenIDs_1155[index]}`}
-                  key={tokenIDs_1155[index]}
+                  to={`/marketplace/ERC1155/Sale/${tokenIDs[index]}/${listingIds[index]}`}
+                  key={tokenIDs[index]}
                 >
                   <CardC
                     img_src={img_src}
