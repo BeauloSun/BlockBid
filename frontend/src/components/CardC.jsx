@@ -49,12 +49,12 @@ const CardC = ({
 
   return (
     <div
-      className="w-[350px]"
+      className="w-[300px]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <Card className={cardColour}>
-        <CardHeader shadow={true} floated={false} className="h-96">
+        <CardHeader shadow={true} floated={false} className="h-70">
           <img
             src={img_src}
             alt=""

@@ -63,31 +63,28 @@ export const Sale721 = () => {
           Loading...
         </div>
       ) : tokenIDs_721.length > 0 ? (
-        <div
-          className="grid grid-flow-row-dense gap-1 mx-[17%]"
-          style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
-          }}
-        >
-          {images.map((img_src, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center py-4 hover:scale-105 duration-300"
-            >
-              <Link
-                to={`/marketplace/ERC721/Sale/${tokenIDs_721[index]}`}
-                key={tokenIDs_721[index]}
+        <div className="flex justify-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-5 mx-[5%]">
+            {images.map((img_src, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center py-4 hover:scale-105 duration-300"
               >
-                <CardC
-                  img_src={img_src}
-                  name={name[index]}
-                  description={description[index]}
-                  price={price[index]}
-                  market={true}
-                />
-              </Link>
-            </div>
-          ))}
+                <Link
+                  to={`/marketplace/ERC721/Sale/${tokenIDs_721[index]}`}
+                  key={tokenIDs_721[index]}
+                >
+                  <CardC
+                    img_src={img_src}
+                    name={name[index]}
+                    description={description[index]}
+                    price={price[index]}
+                    market={true}
+                  />
+                </Link>
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
         <div className="text-[#b3b3b3] text-4xl mt-20 flex justify-center">

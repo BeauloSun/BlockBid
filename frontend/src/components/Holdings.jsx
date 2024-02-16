@@ -149,58 +149,55 @@ export const Holdings = () => {
         </div>
       ) : (tokenIds.length > 0) | (tokenIds1155.length > 0) ? (
         <>
-          <div
-            className="grid grid-flow-row-dense gap-1 mt-20 mx-[17%]"
-            style={{
-              gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
-            }}
-          >
-            {images.map((img_src, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center py-4 hover:scale-105 duration-300"
-              >
-                <Link
-                  to={`/profile/holdings/721/${tokenIds[index]}`}
-                  key={tokenIds[index]}
+          <div className="flex justify-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-5 mx-[5%]">
+              {images.map((img_src, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col items-center py-4 hover:scale-105 duration-300"
                 >
-                  <CardC
-                    img_src={img_src}
-                    name={name[index]}
-                    description={description[index]}
-                    price={price[index]}
-                    market={false}
-                  />
-                </Link>
-              </div>
-            ))}
-          </div>
-          <div
-            className="grid grid-flow-row-dense gap-1 mt-20 mx-[17%]"
-            style={{
-              gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
-            }}
-          >
-            {images1155.map((img_src, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center py-4 hover:scale-105 duration-300"
-              >
-                <Link
-                  to={`/profile/holdings/1155/${tokenIds1155[index]}`}
-                  key={tokenIds1155[index]}
+                  <Link
+                    to={`/profile/holdings/721/${tokenIds[index]}`}
+                    key={tokenIds[index]}
+                  >
+                    <CardC
+                      img_src={img_src}
+                      name={name[index]}
+                      description={description[index]}
+                      price={price[index]}
+                      market={false}
+                    />
+                  </Link>
+                </div>
+              ))}
+            </div>
+            <div
+              className="grid grid-flow-row-dense gap-1 mt-20 mx-[17%]"
+              style={{
+                gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
+              }}
+            >
+              {images1155.map((img_src, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col items-center py-4 hover:scale-105 duration-300"
                 >
-                  <CardC
-                    img_src={img_src}
-                    name={name1155[index]}
-                    description={description1155[index]}
-                    price={price1155[index]}
-                    is1155={true}
-                    owned={(amountOwned[index] / totalAmount[index]) * 100}
-                  />
-                </Link>
-              </div>
-            ))}
+                  <Link
+                    to={`/profile/holdings/1155/${tokenIds1155[index]}`}
+                    key={tokenIds1155[index]}
+                  >
+                    <CardC
+                      img_src={img_src}
+                      name={name1155[index]}
+                      description={description1155[index]}
+                      price={price1155[index]}
+                      is1155={true}
+                      owned={(amountOwned[index] / totalAmount[index]) * 100}
+                    />
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
         </>
       ) : (

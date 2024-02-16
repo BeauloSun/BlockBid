@@ -116,36 +116,33 @@ export const ListedHoldings = () => {
               </span>
             </div>
           </div>
-          <div
-            className="grid grid-flow-row-dense gap-1 mt-5 mx-[17%]"
-            style={{
-              gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
-            }}
-          >
-            {images.map((img_src, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center py-4 hover:scale-105 duration-300"
-              >
-                <Link
-                  to={
-                    onAuction[index]
-                      ? `/marketplace/ERC721/Auction/${tokenIds[index]}`
-                      : `/profile/listed_holdings/${tokenIds[index]}`
-                  }
-                  key={tokenIds[index]}
+          <div className="flex justify-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-5 mx-[5%]">
+              {images.map((img_src, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col items-center py-4 hover:scale-105 duration-300"
                 >
-                  <CardC
-                    img_src={img_src}
-                    name={name[index]}
-                    description={description[index]}
-                    price={price[index]}
-                    onSale={onSale[index]}
-                    onAuction={onAuction[index]}
-                  />
-                </Link>
-              </div>
-            ))}
+                  <Link
+                    to={
+                      onAuction[index]
+                        ? `/marketplace/ERC721/Auction/${tokenIds[index]}`
+                        : `/profile/listed_holdings/${tokenIds[index]}`
+                    }
+                    key={tokenIds[index]}
+                  >
+                    <CardC
+                      img_src={img_src}
+                      name={name[index]}
+                      description={description[index]}
+                      price={price[index]}
+                      onSale={onSale[index]}
+                      onAuction={onAuction[index]}
+                    />
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       ) : (
