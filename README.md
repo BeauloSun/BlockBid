@@ -1,6 +1,6 @@
 # This weekend todo:
 
-1. Profile page listed holdings for 1155 √
+[x] 1. Profile page listed holdings for 1155 ü
 2. Contract validation for selling more than you have √
 3. Sell1155 page handling contract error for selling more than you have (setMessage) √
 4. Page for all listing for one token (backend) 
