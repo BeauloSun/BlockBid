@@ -11,10 +11,8 @@ router.delete("/deleteAllNfts", async (req, res) => {
   }
 });
 
-router.delete("/CancelListing", async (req, res) => {
-  console.log("---------------------------------");
-  console.log(req.body);
-  const { listing_id } = req.body;
+router.delete("/CancelListing/:listing_id", async (req, res) => {
+  const { listing_id } = req.params;
   try {
     const result = await Nft1155marketplaceModel.deleteOne({
       listing_id: listing_id,

@@ -30,7 +30,6 @@ export default function CancelListing() {
             address: window.localStorage.getItem("currentAddr"),
           }
         );
-        console.log(response);
         if (response.data) {
           isValid = true;
         }
@@ -73,8 +72,7 @@ export default function CancelListing() {
         .send({ from: address });
 
       await axios.delete(
-        "http://localhost:4988/api/nfts1155market/CancelListing",
-        { listing_id: token_id }
+        `http://localhost:4988/api/nfts1155market/CancelListing/${token_id}`
       );
 
       setMessage("Cancel Successful");

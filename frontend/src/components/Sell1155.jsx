@@ -114,8 +114,6 @@ export default function Sell1155() {
 
         const listingId = Number(txnDetails.events.ListedNft1155.data);
 
-        console.log("Listing ID ", listingId);
-
         const puttingMarketplaceBody = {
           token_id: token_id,
           listing_id: listingId,
