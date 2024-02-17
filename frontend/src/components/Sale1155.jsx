@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import CardC from "../components/CardC";
 import axios from "axios";
 
-import { getMarketContract } from "../utils/getBlockBid";
-
 export const Sale1155 = () => {
   const [images, setImages] = useState([]);
   const [name, setName] = useState([]);
@@ -12,6 +10,7 @@ export const Sale1155 = () => {
   const [price, setPrice] = useState([]);
   const [tokenIDs, setTokenIDs] = useState([]);
   const [listingIds, setListingIds] = useState([]);
+  const [percentageQuantities, setPercentageQuantities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -37,6 +36,28 @@ export const Sale1155 = () => {
       const prices = response.data.map((item) => item.price);
       const images = response.data.map((item) => item.image_uri);
       const tokenIDs = response.data.map((item) => item.token_id);
+      const available_quantities = response.data.map(
+        (item) => item.available_quantity
+      );
+      const quantityResponse = await axios.post(
+        "http://localhost:4988/api/nfts1155/getTotalQuantity",
+        {
+          tokenIds: tokenIDs,
+        }
+      );
+      const total_quantities = quantityResponse.data.quantity;
+      let percentage_quantities = available_quantities.map(
+        (available_quantity, index) => {
+          let total_quantity = total_quantities[index];
+          if (total_quantity === 0) {
+            return 0;
+          } else {
+            let percentage = (available_quantity / total_quantity) * 100;
+            return Number(percentage.toFixed(2));
+          }
+        }
+      );
+
       const listingIds = response.data.map((item) => item.listing_id);
       setName(names);
       setDescription(descriptions);
@@ -44,6 +65,7 @@ export const Sale1155 = () => {
       setTokenIDs(tokenIDs);
       setImages(images);
       setListingIds(listingIds);
+      setPercentageQuantities(percentage_quantities);
     } catch (error) {
       console.error(error);
     }
@@ -72,7 +94,9 @@ export const Sale1155 = () => {
                     name={name[index]}
                     description={description[index]}
                     price={price[index]}
-                    market={true}
+                    is1155={true}
+                    onSale={true}
+                    owned={percentageQuantities[index]}
                   />
                 </Link>
               </div>

@@ -188,6 +188,7 @@ export const ListedHoldings = () => {
                       description={description1155[index]}
                       price={price1155[index]}
                       is1155={true}
+                      onSale={true}
                       owned={100}
                     />
                   </Link>

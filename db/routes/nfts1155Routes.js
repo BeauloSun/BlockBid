@@ -142,4 +142,18 @@ router.post("/getOwnedNft", async (req, res) => {
     res.json(err);
   }
 });
+
+router.post("/getTotalQuantity", async (req, res) => {
+  const tokenIds = req.body.tokenIds;
+  try {
+    const nfts = await Nft1155Model.find({
+      token_id: { $in: tokenIds },
+    });
+    const quantities = nfts.map((item) => item.total_quantity);
+    res.json({ quantity: quantities });
+  } catch (err) {
+    res.json(err);
+  }
+});
+
 module.exports = router;

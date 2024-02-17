@@ -79,7 +79,7 @@ export const Sale721 = () => {
                     name={name[index]}
                     description={description[index]}
                     price={price[index]}
-                    market={true}
+                    onSale={true}
                   />
                 </Link>
               </div>

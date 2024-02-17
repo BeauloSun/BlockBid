@@ -15,13 +15,11 @@ export default function Sell1155() {
   const [loadingController, setloadingController] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [price, setPrice] = useState(null);
-  const [priceMsg, setPriceMsg] = useState("Set Your Price");
   const [quantity, setQuantity] = useState(null);
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
   const [data, setData] = useState({});
   const navigate = useNavigate();
-  var isValid = false;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +46,9 @@ export default function Sell1155() {
           name: res.name,
           description: res.description,
           image_hash: res.image_hash,
+          owned_quantity:
+            res.owners[window.localStorage.getItem("currentAddr")],
+          total_quantity: res.total_quantity,
         });
       } else {
         navigate("/NotFound");
@@ -193,6 +194,9 @@ export default function Sell1155() {
             </h2>
             <p className="text-3xl mt-4 pt-4 text-[#ffffff]">
               {data.description}
+            </p>
+            <p className="text-3xl mt-4 pt-4 text-[#ffffff]">
+              You have: {data.owned_quantity} / {data.total_quantity} tokens
             </p>
 
             <form action="" className="flex flex-col gap-4 mt-10">

@@ -79,7 +79,8 @@ export const Auction721 = () => {
                     name={name[index]}
                     description={description[index]}
                     price={price[index]}
-                    market={true}
+                    onAuction={true}
+                    onSale={true}
                   />
                 </Link>
               </div>
