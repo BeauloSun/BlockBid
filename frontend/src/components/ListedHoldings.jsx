@@ -173,13 +173,6 @@ export const ListedHoldings = () => {
                   </Link>
                 </div>
               ))}
-            </div>
-            <div
-              className="grid grid-flow-row-dense gap-1 mt-20 mx-[17%]"
-              style={{
-                gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
-              }}
-            >
               {images1155.map((img_src, index) => (
                 <div
                   key={index}
