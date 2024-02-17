@@ -68,7 +68,6 @@ router.post("/addNfts1155", async (req, res) => {
       image_hash,
       owners,
     } = req.body;
-    console.log("owners in database", owners);
 
     // Create and save the new NFT document
     const newNft = new Nft1155Model({

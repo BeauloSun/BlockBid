@@ -64,7 +64,7 @@ router.post("/addNfts1155", async (req, res) => {
     image_uri,
     image_hash,
     price,
-    owner,
+    seller,
     buyers,
   } = req.body;
 
@@ -78,26 +78,19 @@ router.post("/addNfts1155", async (req, res) => {
     image_uri,
     image_hash,
     price,
-    owner,
+    seller,
     buyers,
   });
   await newNft1155.save();
   res.json("nft added successfully");
 });
 
-// {
-//     "token_id": 2,
-//     "listing_id": 2,
-//     "nft_address": "0xadfghsfghreyuuyurtyer3ssdf",
-//     "name": "dummy name 2",
-//     "description":"dummy description 2",
-//     "available_quantity": 15,
-//     "image_uri": "ipfs://dummy1.com",
-//     "image_hash": "whateverhashitis",
-//     "price": 2.63,
-//     "seller": "0xahfjkgrtguqwqmopop",
-//     "buyers":{}
-// }
+router.post("/getNftOwnedByUser", async (req, res) => {
+  const { user } = req.body;
+
+  const Nfts = await Nft1155marketplaceModel.find({ seller: user });
+  res.json(Nfts);
+});
 
 router.post("/updateBuyerAndQuantity", async (req, res) => {
   const { token_id, buyer_data } = req.body;

@@ -20,6 +20,7 @@ import { Holdings } from "./components/Holdings";
 import Wallet from "./components/Wallet";
 import { ListedHoldings } from "./components/ListedHoldings";
 import { CancelListings } from "./pages/CancelListings";
+import { CancelListing1155 } from "./pages/CancelListing1155";
 import { BuyNft721 } from "./pages/BuyNft721";
 import { Splitting } from "./pages/Splitting_learning";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -56,6 +57,10 @@ function App() {
           <Route
             path="/profile/listed_holdings/:id"
             element={<CancelListings />}
+          />
+          <Route
+            path="/profile/listed_holdings/1155/:id"
+            element={<CancelListing1155 />}
           />
           <Route path="/profile/holdings/721/:id" element={<Selling />} />
           <Route path="/profile/holdings/1155/:id" element={<Selling1155 />} />

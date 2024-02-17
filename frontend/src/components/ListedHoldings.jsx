@@ -14,6 +14,12 @@ export const ListedHoldings = () => {
   const [onAuction, setOnAuction] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [images1155, setImages1155] = useState([]);
+  const [name1155, setName1155] = useState([]);
+  const [tokenIds1155, setTokenIds1155] = useState([]);
+  const [description1155, setDescription1155] = useState([]);
+  const [price1155, setPrice1155] = useState([]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -59,6 +65,23 @@ export const ListedHoldings = () => {
       setTokenIds(tokenids);
       setOnSale(onSales);
       setOnAuction(onAuctions);
+
+      const response1155 = await axios.post(
+        "http://localhost:4988/api/nfts1155market/getNftOwnedByUser",
+        { user: window.localStorage.getItem("currentAddr") }
+      );
+
+      const name1155 = response1155.data.map((item) => item.name);
+      const description1155 = response1155.data.map((item) => item.description);
+      const price1155 = response1155.data.map((item) => item.description);
+      const images1155 = response1155.data.map((item) => item.image_uri);
+      const tokenIds1155 = response1155.data.map((item) => item.token_id);
+
+      setName1155(name1155);
+      setDescription1155(description1155);
+      setPrice1155(price1155);
+      setImages1155(images1155);
+      setTokenIds1155(tokenIds1155);
     } catch (error) {
       console.error(error);
     }
@@ -102,7 +125,7 @@ export const ListedHoldings = () => {
         <div className="text-[#b3b3b3] text-4xl mt-20 flex justify-center">
           Loading...
         </div>
-      ) : tokenIds.length > 0 ? (
+      ) : (tokenIds.length > 0) | (tokenIds1155.length > 0) ? (
         <div>
           <div className="flex justify-center bg-slate-400 space-x-6 py-3 mx-auto mt-15 max-w-[600px] rounded-3xl bg-opacity-50">
             <div className="flex items-center">
@@ -138,6 +161,33 @@ export const ListedHoldings = () => {
                       price={price[index]}
                       onSale={onSale[index]}
                       onAuction={onAuction[index]}
+                    />
+                  </Link>
+                </div>
+              ))}
+            </div>
+            <div
+              className="grid grid-flow-row-dense gap-1 mt-20 mx-[17%]"
+              style={{
+                gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
+              }}
+            >
+              {images1155.map((img_src, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col items-center py-4 hover:scale-105 duration-300"
+                >
+                  <Link
+                    to={`/profile/listed_holdings/1155/${tokenIds1155[index]}`}
+                    key={tokenIds1155[index]}
+                  >
+                    <CardC
+                      img_src={img_src}
+                      name={name1155[index]}
+                      description={description1155[index]}
+                      price={price1155[index]}
+                      is1155={true}
+                      owned={100}
                     />
                   </Link>
                 </div>
