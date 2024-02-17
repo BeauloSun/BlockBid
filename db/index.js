@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const nftRoutes = require("./routes/nftsRoutes");
 const nfts1155Routes = require("./routes/nfts1155Routes");
-const nfts1155MarketRoutes = require("./routes/nfts1155MarketRoutes");
+const nfts1155MarketRoutes = require("./routes/nfts1155marketRoutes");
 
 const app = express();
 app.use(cors());

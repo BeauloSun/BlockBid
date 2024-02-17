@@ -20,50 +20,34 @@ export default function CancelListing() {
 
   useEffect(() => {
     const fetchData = async () => {
-      //   try {
-      //     const response = await axios.post(
-      //       "http://localhost:4988/api/nfts/getAccessibleProfileNft",
-      //       {
-      //         tokenId: token_id,
-      //         marketplace: true,
-      //         walletaddress: window.localStorage.getItem("currentAddr"),
-      //       }
-      //     );
-      //     // eslint-disable-next-line react-hooks/exhaustive-deps
-      //     isValid = response.data;
-      //   } catch (err) {
-      //     console.error(err);
-      //   }
-      //   if (isValid) {
-      //     try {
-      //       const response = await axios.post(
-      //         "http://localhost:4988/api/nfts/getNftById",
-      //         {
-      //           tokenId: token_id,
-      //         }
-      //       );
-      //       if (response.data && response.data.length > 0) {
-      //         const res = response.data[0];
-      //         setData({
-      //           img_src: res.image_uri,
-      //           name: res.name,
-      //           price: res.price,
-      //           description: res.description,
-      //         });
-      //       }
-      //     } catch (err) {
-      //       console.error(err);
-      //     }
-      //   } else {
-      //     navigate("/NotFound");
-      //   }
-
-      setData({
-        img_src: "img",
-        name: "img",
-        price: "img",
-        description: "img",
-      });
+      let isValid = false;
+      let response = null;
+      try {
+        response = await axios.post(
+          "http://localhost:4988/api/nfts1155market/getOneNft",
+          {
+            listing_id: token_id,
+            address: window.localStorage.getItem("currentAddr"),
+          }
+        );
+        console.log(response);
+        if (response.data) {
+          isValid = true;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+      if (isValid) {
+        const res = response.data;
+        setData({
+          img_src: res.image_uri,
+          name: res.name,
+          price: res.price,
+          description: res.description,
+        });
+      } else {
+        navigate("/NotFound");
+      }
     };
 
     fetchData();
@@ -85,16 +69,12 @@ export default function CancelListing() {
       const address = window.localStorage.getItem("currentAddr");
 
       await marketPlace.methods
-        .cancelListing721(nftContract.options.address, Number(token_id))
+        .deleteListing(Number(token_id))
         .send({ from: address });
 
-      const puttingProfileBody = {
-        token_id: token_id,
-        nft_address: nftContract.options.address,
-      };
-      await axios.put(
-        "http://localhost:4988/api/nfts/cancelListing",
-        puttingProfileBody
+      await axios.delete(
+        "http://localhost:4988/api/nfts1155market/CancelListing",
+        { listing_id: token_id }
       );
 
       setMessage("Cancel Successful");

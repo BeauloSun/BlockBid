@@ -75,7 +75,7 @@ export const ListedHoldings = () => {
       const description1155 = response1155.data.map((item) => item.description);
       const price1155 = response1155.data.map((item) => item.description);
       const images1155 = response1155.data.map((item) => item.image_uri);
-      const tokenIds1155 = response1155.data.map((item) => item.token_id);
+      const tokenIds1155 = response1155.data.map((item) => item.listing_id);
 
       setName1155(name1155);
       setDescription1155(description1155);

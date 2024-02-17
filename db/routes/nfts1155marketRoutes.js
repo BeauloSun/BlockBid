@@ -11,11 +11,13 @@ router.delete("/deleteAllNfts", async (req, res) => {
   }
 });
 
-router.delete("/removeNft", async (req, res) => {
-  const { token_id } = req.body;
+router.delete("/CancelListing", async (req, res) => {
+  console.log("---------------------------------");
+  console.log(req.body);
+  const { listing_id } = req.body;
   try {
     const result = await Nft1155marketplaceModel.deleteOne({
-      token_id: token_id,
+      listing_id: listing_id,
     });
     if (result.deletedCount === 0) {
       return res.status(404).json({ message: "NFT not found." });
@@ -39,10 +41,11 @@ router.post("/getNftsOnSale", (req, res) => {
 });
 
 router.post("/getOneNft", async (req, res) => {
-  const { token_id } = req.body;
+  const { listing_id, address } = req.body;
   try {
     const nft1155 = await Nft1155marketplaceModel.findOne({
-      token_id: token_id,
+      listing_id: listing_id,
+      seller: address,
     });
     if (!nft1155) {
       return res.status(404).json({ message: "NFT don't exist." });
