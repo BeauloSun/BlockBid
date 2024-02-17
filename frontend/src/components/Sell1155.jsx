@@ -114,8 +114,6 @@ export default function Sell1155() {
 
         const listingId = Number(txnDetails.events.ListedNft1155.data);
 
-        console.log("Listing ID ", listingId);
-
         const puttingMarketplaceBody = {
           token_id: token_id,
           listing_id: listingId,
@@ -126,14 +124,13 @@ export default function Sell1155() {
           image_uri: data.img_src,
           image_hash: data.image_hash,
           price: weiprice,
-          owner: address,
+          seller: address,
           buyers: {},
         };
         const res = await axios.post(
           "http://localhost:4988/api/nfts1155market/addNfts1155",
           puttingMarketplaceBody
         );
-        console.log(res);
 
         setMessage("Sell successful!");
         setMessageClass("font-bold text-xl text-[#48f9ff]");
@@ -145,7 +142,9 @@ export default function Sell1155() {
         }, 1500);
       } catch (error) {
         console.error(error);
-        setMessage("Sell failed!");
+        setMessage(
+          "Sell failed!, You can not sell a token more than once or the database has some error"
+        );
         setMessageClass("font-bold text-lg text-red-600");
         setloadingController(false);
         setTimeout(() => {

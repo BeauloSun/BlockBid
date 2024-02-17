@@ -40,6 +40,16 @@ contract BlockBid1155 is ReentrancyGuard{
 
         require(amount >0 ,  "Amount of tokens should be greater than O");
         require(IERC1155(_nft).isApprovedForAll(msg.sender , address(this)));
+        require(amount <= IERC1155(_nft).balanceOf(msg.sender , tokenId) , "Cannot sell more than you own");
+
+        bool TokenListed = false;
+
+        for(uint256 i =1 ; i <= sellingId ; i++ ){
+            if (nft1155Listing[i].seller == msg.sender && nft1155Listing[i].tokenId == tokenId){
+                TokenListed = true;
+            }
+        }
+        require(TokenListed != true , "You already have a listing in the market place");
 
         sellingId += 1;
         address[] memory buyers;
