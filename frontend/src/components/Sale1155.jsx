@@ -26,10 +26,6 @@ export const Sale1155 = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     try {
       const response = await axios.post(

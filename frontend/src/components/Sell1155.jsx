@@ -123,7 +123,7 @@ export default function Sell1155() {
           available_quantity: quantity,
           image_uri: data.img_src,
           image_hash: data.image_hash,
-          price: weiprice,
+          price: price,
           seller: address,
           buyers: {},
         };
@@ -143,7 +143,7 @@ export default function Sell1155() {
       } catch (error) {
         console.error(error);
         setMessage(
-          "Sell failed!, You can not sell a token more than once or the database has some error"
+          "Sell failed! You cannot sell more token than you own, or you need to cancel your current listing on this token to post a new one."
         );
         setMessageClass("font-bold text-lg text-red-600");
         setloadingController(false);
