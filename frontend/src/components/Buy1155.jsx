@@ -1,7 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import bg from "../assets/bid_bg.jpg";
 import { HiOutlineArrowCircleRight } from "react-icons/hi";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 export default function Buy1155() {
+  const { tokenid, id } = useParams();
+  const tokenId = Number(tokenid);
+  const lisitngId = Number(id);
+  console.log(lisitngId);
+
+  useEffect(() => {
+    fetchData();
+  }, [lisitngId, tokenId]);
+
+  const fetchData = async () => {};
+
   return (
     <div>
       <div

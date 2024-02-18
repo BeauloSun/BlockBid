@@ -38,12 +38,39 @@ router.post("/getNftsOnSale", (req, res) => {
     });
 });
 
+router.post("/getNftsOnSaleByTokenId", (req, res) => {
+  const { tokenId } = req.body;
+  Nft1155marketplaceModel.find({ token_id: tokenId })
+    .then(function (nfts) {
+      res.json(nfts);
+    })
+    .catch(function (err) {
+      res.json(err);
+    });
+});
+
 router.post("/getOneNft", async (req, res) => {
   const { listing_id, address } = req.body;
   try {
     const nft1155 = await Nft1155marketplaceModel.findOne({
       listing_id: listing_id,
       seller: address,
+    });
+    if (!nft1155) {
+      return res.status(404).json({ message: "NFT don't exist." });
+    }
+    res.json(nft1155);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+router.post("/getOneNftByTokenIdAndListingId", async (req, res) => {
+  const { tokenId, listingId } = req.body;
+  try {
+    const nft1155 = await Nft1155marketplaceModel.findOne({
+      listing_id: listingId,
+      token_id: tokenId,
     });
     if (!nft1155) {
       return res.status(404).json({ message: "NFT don't exist." });
