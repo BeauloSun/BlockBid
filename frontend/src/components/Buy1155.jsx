@@ -3,17 +3,126 @@ import bg from "../assets/bid_bg.jpg";
 import { HiOutlineArrowCircleRight } from "react-icons/hi";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { getMarketContract1155 } from "../utils/getBlockBid1155";
+import { getContract1155 } from "../utils/getNft1155";
+import Web3 from "web3";
+
 export default function Buy1155() {
   const { tokenid, id } = useParams();
   const tokenId = Number(tokenid);
-  const lisitngId = Number(id);
-  console.log(lisitngId);
+  const listingId = Number(id);
+  const [buyData, setBuyData] = useState({});
+  const [ownersData, setOnwersData] = useState([]);
+  const [quantity, setQuantity] = useState([]);
 
   useEffect(() => {
     fetchData();
-  }, [lisitngId, tokenId]);
+  }, [listingId, tokenId]);
 
-  const fetchData = async () => {};
+  const fetchData = async () => {
+    try {
+      const marketResponse = await axios.post(
+        "http://localhost:4988/api/nfts1155market/getOneNftByTokenIdAndListingId",
+        {
+          tokenId: tokenId,
+          listingId: listingId,
+        }
+      );
+      if (marketResponse.data) {
+        setBuyData({
+          image: marketResponse.data.image_uri,
+          name: marketResponse.data.name,
+          description: marketResponse.data.description,
+          quantity: marketResponse.data.available_quantity,
+          price: marketResponse.data.price,
+          seller: marketResponse.data.seller,
+        });
+      }
+
+      const nftResponse = await axios.post(
+        "http://localhost:4988/api/nfts1155/getOneNft",
+        {
+          token_id: tokenId,
+        }
+      );
+
+      if (nftResponse.data) {
+        const res = nftResponse.data.owners;
+        setOnwersData(res);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const checkUserNotOwner = (address) => {
+    if (buyData.seller == address) {
+      return false;
+    }
+    return true;
+  };
+
+  const changeNft1155Database = async (buyerAddress) => {
+    try {
+      await axios.post(
+        "http://localhost:4988/api/nfts1155/updateOwnerAndQuantity",
+        {
+          token_id: tokenId,
+          quantity: quantity,
+          address: buyerAddress,
+          seller_address: buyData.seller,
+        }
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const changeNft1155MarketDatabase = async (address) => {
+    try {
+      await axios.post("http://localhost:4988/api/nfts1155market/buyNFT", {
+        buyerAddress: address,
+        quantity: quantity,
+        listingId: listingId,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const BuyNft = async (e) => {
+    e.preventDefault();
+    let txn = null;
+    try {
+      //get the nft contract
+      const nftContract = await getContract1155();
+
+      // get the market place contract
+      const marketPlace = await getMarketContract1155();
+
+      // sell add the nft to the market place
+      const address = window.localStorage.getItem("currentAddr");
+      const weiprice = Number(
+        Web3.utils.toWei(buyData.price * quantity, "ether")
+      );
+
+      if (checkUserNotOwner(address)) {
+        console.log(quantity, listingId);
+        txn = await marketPlace.methods
+          .BuyNft1155(nftContract.options.address, quantity, listingId)
+          .send({ from: address, value: weiprice });
+
+        if (txn) {
+          changeNft1155Database(address);
+          changeNft1155MarketDatabase(address);
+        }
+        // updating the databases
+      }
+    } catch (error) {
+      console.log("This is transaction", txn);
+      console.error(error);
+    }
+  };
 
   return (
     <div>
@@ -32,7 +141,7 @@ export default function Buy1155() {
               <div className="grid gird-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-6 h-max">
                 <div className="overflow-hidden rounded-xl">
                   <img
-                    src="https://i.imgur.com/zryxaH8.jpg" //IMAGE PLACEHOLDER
+                    src={buyData.image} //IMAGE PLACEHOLDER
                     alt=""
                     className="w-full"
                   />
@@ -41,19 +150,19 @@ export default function Buy1155() {
                 <div className="flex flex-col justify-between pl-10">
                   <div>
                     <h1 className="text-5xl text-white my-5 font-semibold ">
-                      NFT NAME PLACEHOLDER
+                      Name: {buyData.name}
                     </h1>
                     <p className="my-3 text-slate-400 text-3xl leading-6 text-justify sm:text-left sm:mt-4">
-                      DESCRIPTION PLACEHOLDER
+                      Description: {buyData.description}
                     </p>
 
                     <div className="my-5">
                       <span className="text-xl text-red-500 font-semibold sm:text-2xl">
-                        Available tokens: NUMBER OF TOTAL TOKEN ON SALE
+                        Quantity: {buyData.quantity}
                       </span>
                       <br></br>
                       <span className="text-xl text-red-500 font-semibold sm:text-2xl">
-                        Price: PRICE PLACE HOLDER ETH / Token
+                        Price: {buyData.price}/ token
                       </span>
                     </div>
                   </div>
@@ -67,11 +176,13 @@ export default function Buy1155() {
                         type="number"
                         placeholder="Enter the quantity"
                         required
+                        onChange={(e) => setQuantity(e.target.value)}
                       />
                     </div>
 
                     <div className="w-full text-left my-4">
                       <button
+                        onClick={BuyNft}
                         className="flex justify-center text-2xl items-center gap-2 w-full py-3 px-4 bg-blue-400 text-white font-bold rounded-lg ease-in-out duration-300 shadow-slate-600 hover:scale-105  lg:m-0 md:px-6"
                         title="Confirm Order"
                       >
@@ -94,14 +205,15 @@ export default function Buy1155() {
             <span className="text-white text-2xl font-bold">Owner Address</span>
             <span className="text-white text-2xl font-bold">Quantity</span>
           </div>
-          <div className="bg-[#a2a2a2] py-4 px-10 mb-4 flex justify-between w-[100%] bg-opacity-50 rounded-2xl">
-            <span className="text-white text-2xl font-bold">
-              OWNER ADDRESS PLACEHOLDER
-            </span>
-            <span className="text-white text-2xl font-bold">
-              OWNER QUANTITY PLACEHOLDER
-            </span>
-          </div>
+          {Object.entries(ownersData).map(([address, quantity], index) => (
+            <div
+              key={index}
+              className="bg-[#a2a2a2] py-4 px-10 mb-4 flex justify-between w-[100%] bg-opacity-50 rounded-2xl"
+            >
+              <span className="text-white text-2xl font-bold">{address}</span>
+              <span className="text-white text-2xl font-bold">{quantity}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

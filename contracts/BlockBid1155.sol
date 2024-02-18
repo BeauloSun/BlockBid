@@ -14,7 +14,6 @@ contract BlockBid1155 is ReentrancyGuard{
     uint256 sellingId;
 
     mapping (uint256 => token1155) nft1155Listing;
-    uint256[] nft1155ListedTokens;
 
 
     struct token1155{
@@ -55,7 +54,6 @@ contract BlockBid1155 is ReentrancyGuard{
         address[] memory buyers;
 
         nft1155Listing[sellingId] = token1155(tokenId , payable(msg.sender) , price, amount ,buyers ,amount ,false,sellingId);
-        nft1155ListedTokens.push(sellingId);
         emit ListedNft1155(sellingId);
     }
 
@@ -67,7 +65,6 @@ contract BlockBid1155 is ReentrancyGuard{
         require(msg.sender != listing.seller, "Owner can not be a buyer");
         require(amount >0 , "Buyer can not buy 0 tokens");
         require(amount <= listing.tokensAvailable , "The number of tokens available are less than the amount specified");
-
         uint256 endPrice = amount*listing.price;
         require(msg.value >= endPrice, "unsufficient funds to buy tokens");
 
@@ -84,30 +81,22 @@ contract BlockBid1155 is ReentrancyGuard{
         IERC1155(_nft).safeTransferFrom( nft1155Listing[listedId].seller, msg.sender, nft1155Listing[listedId].tokenId,amount,"");
 
         if(nft1155Listing[listedId].complete == true){
-            deleteListing(listedId);
+            deleteListingFromBuying(listedId);
         }
     }
 
-
+    function deleteListingFromBuying(uint256 listedId) public {
+        require(nft1155Listing[listedId].tokenId != 0 , "token is not listed");
+        delete(nft1155Listing[listedId]);
+        }
 
     function deleteListing(uint256 listedId) public {
         require(nft1155Listing[listedId].tokenId != 0 , "token is not listed");
         require(nft1155Listing[listedId].seller == msg.sender  , "User is not the owner");
-
         delete(nft1155Listing[listedId]);
 
-        uint i = 0;
-        while(nft1155ListedTokens[i] != listedId){
-            i ++;
-        } 
-        if (i<nft1155ListedTokens.length){
-            for (uint j = i ; j < nft1155ListedTokens.length-1 ; j++){
-                nft1155ListedTokens[j]= nft1155ListedTokens[j+1];
-            }
-            nft1155ListedTokens.pop();
-        }
-
     }
+
 
 
 

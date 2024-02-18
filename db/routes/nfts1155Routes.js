@@ -103,25 +103,57 @@ router.post("/getOneNft", async (req, res) => {
 });
 
 router.post("/updateOwnerAndQuantity", async (req, res) => {
-  const { token_id, owner_data } = req.body;
+  const { token_id, quantity, address, seller_address } = req.body;
+
+  // Ensure quantity is provided and is a number
+  if (quantity === undefined || isNaN(quantity)) {
+    return res.status(400).json({ message: "Invalid quantity." });
+  }
+
   try {
     const nft1155 = await Nft1155Model.findOne({ token_id: token_id });
+
     if (!nft1155) {
       return res.status(404).json({ message: "NFT not found." });
     }
-    if (nft1155.owners.has(owner_data.address) == true) {
-      nft1155.owners.set(
-        owner_data.address,
-        nft1155.owners.get(owner_data.address) + owner_data.quantity
-      );
-    } else {
-      nft1155.owners.set(owner_data.address, owner_data.quantity);
+
+    // Validate seller quantity deduction
+    if (
+      nft1155.owners.has(seller_address) &&
+      nft1155.owners.get(seller_address) < Number(quantity)
+    ) {
+      return res.status(400).json({ message: "Insufficient seller quantity." });
     }
+
+    // Create or update owner entry
+    let newQuantity = nft1155.owners.has(address)
+      ? nft1155.owners.get(address) + Number(quantity)
+      : quantity;
+
+    // Check for NaN before setting the quantity
+    if (isNaN(newQuantity)) {
+      return res.status(400).json({ message: "Invalid quantity calculation." });
+    }
+
+    nft1155.owners.set(address, newQuantity);
+
+    let sellerNewQuantity = nft1155.owners.get(seller_address) - quantity;
+
+    if (isNaN(sellerNewQuantity)) {
+      return res
+        .status(400)
+        .json({ message: "Invalid seller quantity calculation." });
+    }
+
+    nft1155.owners.set(seller_address, sellerNewQuantity);
     nft1155.markModified("owners");
     await nft1155.save();
     res.json(nft1155);
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err); // Log error for debugging and monitoring
+    res
+      .status(500)
+      .json({ message: "An error occurred. Please try again later." });
   }
 });
 
