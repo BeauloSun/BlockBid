@@ -86,7 +86,7 @@ export const Holdings = () => {
 
       const name1155 = response1155.data.map((item) => item.name);
       const description1155 = response1155.data.map((item) => item.description);
-      const price1155 = response1155.data.map((item) => item.description);
+      const price1155 = response1155.data.map((item) => item.price);
       const images1155 = response1155.data.map((item) => item.image_uri);
       const tokenIds1155 = response1155.data.map((item) => item.token_id);
       const totalAmount = response1155.data.map((item) => item.total_quantity);
@@ -174,7 +174,8 @@ export const Holdings = () => {
                       img_src={img_src}
                       name={name[index]}
                       description={description[index]}
-                      price={price[index]}
+                      price={""}
+                      //price[index]}
                       market={false}
                     />
                   </Link>

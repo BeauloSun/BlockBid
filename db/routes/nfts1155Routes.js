@@ -156,4 +156,17 @@ router.post("/getTotalQuantity", async (req, res) => {
   }
 });
 
+router.post("/getOwners", async (req, res) => {
+  const tokenId = req.body.tokenId;
+  try {
+    const nft1155 = await Nft1155Model.findOne({
+      token_id: tokenId,
+    });
+    const ownerpair = nft1155.owners;
+    res.json(ownerpair);
+  } catch (err) {
+    res.json(err);
+  }
+});
+
 module.exports = router;

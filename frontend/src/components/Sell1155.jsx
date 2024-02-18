@@ -7,7 +7,6 @@ import { getMarketContract1155 } from "../utils/getBlockBid1155";
 import { getContract1155 } from "../utils/getNft1155";
 import Web3 from "web3";
 import axios from "axios";
-import img_tmp1 from "../assets/nft1.jpg";
 
 export default function Sell1155() {
   const { id } = useParams();
@@ -16,6 +15,7 @@ export default function Sell1155() {
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [price, setPrice] = useState(null);
   const [quantity, setQuantity] = useState(null);
+  const [owners, setOwners] = useState({});
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
   const [data, setData] = useState({});
@@ -50,13 +50,20 @@ export default function Sell1155() {
             res.owners[window.localStorage.getItem("currentAddr")],
           total_quantity: res.total_quantity,
         });
+        let responseOwners = await axios.post(
+          "http://localhost:4988/api/nfts1155/getOwners",
+          {
+            tokenId: token_id,
+          }
+        );
+        setOwners(responseOwners.data);
       } else {
         navigate("/NotFound");
       }
     };
 
     fetchData();
-  }, [id, token_id]);
+  }, [navigate, token_id]);
 
   const formValid = async () => {
     if (!price) {
@@ -156,8 +163,8 @@ export default function Sell1155() {
   };
 
   return (
-    <section
-      className="bg-[#1e1e1e] min-h-screen flex items-center justify-center"
+    <div
+      className="py-[5%]"
       style={{
         backgroundImage: `url(${bg})`,
         backgroundSize: "cover",
@@ -180,104 +187,130 @@ export default function Sell1155() {
         <span></span>
       )}
 
-      <div className="bg-slate-400 bg-opacity-50 flex flex-col rounded-2xl shadow-lg max-w-[60%] p-5 items-center">
+      <div className="flex justify-center p-4 mb-4 max-w-7xl bg-slate-400 m-auto bg-opacity-50 rounded-3xl">
         <div className="w-full text-center">
-          <h2 className="text-white font-bold text-8xl pb-10">Sell your NFT</h2>
+          <h2 className="text-white font-bold text-8xl pb-4">Sell your NFT</h2>
         </div>
-        <div className="flex w-full">
-          <div className="md:w-1/2 px-6 md:px-10">
-            <img alt="" className="rounded-2xl" src={data.img_src} />
-          </div>
-          <div className="md:w-1/2 px-3 md:px-10">
-            <h2 className="font-bold text-8xl text-[#ffffff] font-shadows">
-              {data.name}
-            </h2>
-            <p className="text-3xl mt-4 pt-4 text-[#ffffff]">
-              {data.description}
-            </p>
-            <p className="text-3xl mt-4 pt-4 text-[#ffffff]">
-              You have: {data.owned_quantity} / {data.total_quantity} tokens
-            </p>
+      </div>
 
-            <form action="" className="flex flex-col gap-4 mt-10">
-              <label
-                for="Price"
-                className="block text-left text-2xl font-bold text-white"
-              >
-                Set Your Quantity
-              </label>
-              <div className="flex justify-between items-center">
-                <input
-                  className="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
-                  type="number"
-                  name="Quantity"
-                  placeholder="Enter quantity"
-                  value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
-                />
-                <div className="font-bold text-3xl text-white pr-10 mb-4">
-                  Tokens
-                </div>
+      <div className="flex justify-center p-4 max-w-7xl bg-slate-400 m-auto bg-opacity-50 rounded-3xl">
+        <div className="my-6 sm:my-10">
+          <div>
+            <div className="grid gird-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-6 h-max">
+              <div className="overflow-hidden rounded-xl">
+                <img src={data.img_src} alt="" className="w-full" />
+                <div className="bg-yellow-300"></div>
               </div>
-              <label
-                for="Price"
-                className="block text-left text-2xl font-bold text-white"
-              >
-                Set Your Price Per Token
-              </label>
-              <div className="flex justify-between items-center">
-                <input
-                  className="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
-                  type="number"
-                  name="Price"
-                  placeholder="Enter price per token"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                />
-                <div className="font-bold text-3xl text-white pr-10 mb-4">
-                  ETH
+              <div className="flex flex-col justify-between pl-5">
+                <div>
+                  <h1 className="text-5xl text-white my-5 font-semibold ">
+                    {data.name}
+                  </h1>
+                  <p className="my-3 text-slate-400 text-3xl leading-6 text-justify sm:text-left sm:mt-4">
+                    {data.description}
+                  </p>
                 </div>
-              </div>
+                <div className=" ">
+                  <div className="text-left flex flex-col gap-2 w-full">
+                    <div className="my-5">
+                      <span className="text-xl text-red-500 font-semibold sm:text-2xl">
+                        You have: {data.owned_quantity} / {data.total_quantity}{" "}
+                        tokens
+                      </span>
+                    </div>
+                    <label className="text-white text-xl font-semibold">
+                      Set Your Quantity
+                    </label>
+                    <div className="flex justify-between items-center">
+                      <input
+                        className="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
+                        type="number"
+                        name="Quantity"
+                        placeholder="Enter quantity"
+                        value={quantity}
+                        onChange={(e) => setQuantity(e.target.value)}
+                      />
+                      <div className="font-bold text-3xl text-white pr-10 mb-4">
+                        Tokens
+                      </div>
+                    </div>
+                  </div>
+                  <label className="text-white text-xl font-semibold">
+                    Set The Price Per Token
+                  </label>
+                  <div className="flex justify-between items-center">
+                    <input
+                      className="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
+                      type="number"
+                      name="Price"
+                      placeholder="Enter price per token"
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                    />
+                    <div className="font-bold text-3xl text-white pr-10 mb-4">
+                      ETH / Token
+                    </div>
+                  </div>
+                  <p className={messageClass}>{message}</p>
 
-              <p className={messageClass}>{message}</p>
-
-              <button
-                type="submit"
-                className="bg-slate-800 flex justify-center items-center w-full rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
-                onClick={sellHandler}
-              >
-                {buttonLoading ? (
-                  <>
-                    <svg
-                      className="mr-5 h-6 w-6 animate-spin text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
+                  <div className="w-full text-left my-4 mr-4">
+                    <button
+                      className="flex justify-center text-2xl items-center gap-2 w-full py-3 px-4 bg-blue-400 text-white font-bold rounded-xl ease-in-out duration-300 shadow-slate-600 hover:scale-105  lg:m-0 md:px-6"
+                      type="submit"
+                      onClick={sellHandler}
                     >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        stroke-width="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    <span> Processing... </span>
-                  </>
-                ) : (
-                  <span>Sell !</span>
-                )}
-              </button>
-            </form>
+                      {buttonLoading ? (
+                        <>
+                          <svg
+                            className="mr-5 h-6 w-6 animate-spin text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              stroke-width="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          <span> Processing... </span>
+                        </>
+                      ) : (
+                        <span>Sell !</span>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </section>
+
+      <div className="flex flex-col items-center justify-center p-4 max-w-7xl bg-slate-400 m-auto mt-5 bg-opacity-50 rounded-3xl">
+        <h1 className="text-5xl text-white my-5 font-semibold ">Owners List</h1>
+        <div className="px-8 pb-1 border-b-2 border-white mb-4 flex justify-between w-[100%] bg-opacity-0 ">
+          <span className="text-white text-2xl font-bold">Owner Address</span>
+          <span className="text-white text-2xl font-bold">Quantity</span>
+        </div>
+        {Object.entries(owners).map(([address, quantity]) => (
+          <div
+            className="bg-[#a2a2a2] py-4 px-10 mb-4 flex justify-between w-[100%] bg-opacity-50 rounded-2xl"
+            key={address}
+          >
+            <span className="text-white text-2xl font-bold">{address}</span>
+            <span className="text-white text-2xl font-bold">{quantity}</span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

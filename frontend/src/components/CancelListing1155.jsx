@@ -94,8 +94,8 @@ export default function CancelListing() {
   };
 
   return (
-    <section
-      class="bg-[#1e1e1e] min-h-screen flex items-center justify-center"
+    <div
+      className="py-[5%]"
       style={{
         backgroundImage: `url(${bg})`,
         backgroundSize: "cover",
@@ -117,62 +117,76 @@ export default function CancelListing() {
       ) : (
         <span></span>
       )}
-      <div class="bg-slate-400 bg-opacity-50 flex flex-col rounded-2xl shadow-lg max-w-[60%] p-5 items-center">
-        <div class="w-full text-center">
-          <h2 class="text-white font-bold text-8xl pb-10">
+
+      <div className="flex justify-center p-4 max-w-7xl bg-slate-400 m-auto bg-opacity-50 rounded-3xl">
+        <div className="w-full text-center">
+          <h2 className="text-white font-bold text-8xl pb-10">
             Manage Your Listing
           </h2>
         </div>
-        <div class="flex w-full">
-          <div class="md:w-1/2 px-6 md:px-10">
-            <img alt="" class="rounded-2xl" src={data.img_src} />
-          </div>
-          <div class="md:w-1/2 px-3 md:px-10">
-            <h2 class="font-bold text-8xl text-[#ffffff] font-shadows">
-              {data.name}
-            </h2>
-            <p class="text-3xl mt-4 pt-4 text-[#ffffff]">{data.description}</p>
-            <p class="text-3xl mt-4 pt-4 text-[#ffffff]">{data.price} ETH</p>
+      </div>
 
-            <form action="" class="flex flex-col gap-4 mt-10">
-              <div className={messageClass}>{message}</div>
-              <button
-                type="submit"
-                className="bg-slate-800 flex justify-center items-center w-full mt-[30%] rounded-xl text-3xl font-bold text-white px-4 py-2 hover:scale-105 duration-300"
-                onClick={buttonHandler}
-              >
-                {buttonLoading ? (
-                  <>
-                    <svg
-                      class="mr-5 h-6 w-6 animate-spin text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        class="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        stroke-width="4"
-                      ></circle>
-                      <path
-                        class="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    <span> Processing... </span>
-                  </>
-                ) : (
-                  <span>Cancel Listing !</span>
-                )}
-              </button>
-            </form>
+      <div className="flex justify-center p-4 mt-5 max-w-7xl bg-slate-400 m-auto bg-opacity-50 rounded-3xl">
+        <div className="my-6 sm:my-10">
+          <div>
+            <div className="grid gird-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-6 h-max">
+              <div className="overflow-hidden rounded-xl">
+                <img src={data.img_src} alt="" className="w-full" />
+              </div>
+              <div className="flex flex-col justify-between pl-5">
+                <div>
+                  <h1 className="text-5xl text-white my-5 font-semibold ">
+                    {data.name}
+                  </h1>
+                  <p className="my-3 text-slate-400 text-3xl leading-6 text-justify sm:text-left sm:mt-4">
+                    Description: {data.description}
+                  </p>
+                  <p class="text-3xl mt-4 pt-4 text-red-500 font-bold">
+                    Price {data.price} ETH
+                  </p>
+                </div>
+
+                <form action="" class="flex flex-col gap-4 mt-10">
+                  <div className={messageClass}>{message}</div>
+                  <button
+                    className="flex justify-center text-2xl items-center gap-2 w-full py-3 px-4 bg-blue-400 text-white font-bold rounded-xl ease-in-out duration-300 shadow-slate-600 hover:scale-105  lg:m-0 md:px-6"
+                    type="submit"
+                    onClick={buttonHandler}
+                  >
+                    {buttonLoading ? (
+                      <>
+                        <svg
+                          class="mr-5 h-6 w-6 animate-spin text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        <span> Processing... </span>
+                      </>
+                    ) : (
+                      <span>Cancel Listing !</span>
+                    )}
+                  </button>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
