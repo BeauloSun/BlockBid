@@ -16,12 +16,14 @@ import { Sale1155 } from "./components/Sale1155";
 import { Bidding } from "./pages/Bidding";
 import { Selling } from "./pages/Selling";
 import { Selling1155 } from "./pages/Selling1155";
+import { Selling1155List } from "./pages/Selling1155List";
 import { Holdings } from "./components/Holdings";
 import Wallet from "./components/Wallet";
 import { ListedHoldings } from "./components/ListedHoldings";
 import { CancelListings } from "./pages/CancelListings";
 import { CancelListing1155 } from "./pages/CancelListing1155";
 import { BuyNft721 } from "./pages/BuyNft721";
+import { BuyNft1155 } from "./pages/BuyNft1155";
 import { Splitting } from "./pages/Splitting_learning";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -66,6 +68,14 @@ function App() {
           <Route path="/profile/holdings/1155/:id" element={<Selling1155 />} />
           <Route path="/marketplace/ERC721/Sale/:id" element={<BuyNft721 />} />
           <Route path="/marketplace/ERC721/Auction/:id" element={<Bidding />} />
+          <Route
+            path="/marketplace/ERC1155/Sale/:tokenid"
+            element={<Selling1155List />}
+          />
+          <Route
+            path="/marketplace/ERC1155/Sale/:tokenid/:id"
+            element={<BuyNft1155 />}
+          />
 
           <Route path="/profile" element={<Profile />}>
             <Route path="listed_holdings" element={<ListedHoldings />} />

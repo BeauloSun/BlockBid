@@ -86,7 +86,7 @@ export const Sale1155 = () => {
                 className="flex flex-col items-center py-4 hover:scale-105 duration-300"
               >
                 <Link
-                  to={`/marketplace/ERC1155/Sale/${tokenIDs[index]}/${listingIds[index]}`}
+                  to={`/marketplace/ERC1155/Sale/${tokenIDs[index]}`}
                   key={tokenIDs[index]}
                 >
                   <CardC
