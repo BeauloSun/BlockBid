@@ -49,11 +49,11 @@ const CardC = ({
 
   return (
     <div
-      className="w-[300px]"
+      className="w-[300px] h-[500px]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Card className={cardColour}>
+      <Card className={`${cardColour} w-[300px] h-[500px]`}>
         <CardHeader shadow={true} floated={false} className="h-70">
           <img
             src={img_src}
@@ -78,8 +78,8 @@ const CardC = ({
             <></>
           )}
         </CardHeader>
-        <CardBody>
-          <div className="mb-2 px-5 mt-2 flex items-center justify-between">
+        <CardBody className="mt-auto">
+          <div className="mb-2 px-5 mt-auto flex items-center justify-between">
             <Typography color="blue-gray" className="text-2xl font-bold">
               {name}
             </Typography>

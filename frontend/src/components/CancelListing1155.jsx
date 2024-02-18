@@ -9,7 +9,7 @@ import axios from "axios";
 
 export default function CancelListing() {
   const { id } = useParams();
-  const token_id = Number(id);
+  const listing_id = Number(id);
   const [loadingController, setloadingController] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -26,7 +26,7 @@ export default function CancelListing() {
         response = await axios.post(
           "http://localhost:4988/api/nfts1155market/getOneNft",
           {
-            listing_id: token_id,
+            listing_id: listing_id,
             address: window.localStorage.getItem("currentAddr"),
           }
         );
@@ -38,11 +38,19 @@ export default function CancelListing() {
       }
       if (isValid) {
         const res = response.data;
+        let responseTotalQuantity = await axios.post(
+          "http://localhost:4988/api/nfts1155/getTotalQuantity",
+          {
+            tokenIds: [res.token_id],
+          }
+        );
         setData({
           img_src: res.image_uri,
           name: res.name,
           price: res.price,
           description: res.description,
+          available: res.available_quantity,
+          total: responseTotalQuantity.data.quantity[0],
         });
       } else {
         navigate("/NotFound");
@@ -50,7 +58,7 @@ export default function CancelListing() {
     };
 
     fetchData();
-  }, [id, token_id]);
+  }, [listing_id, navigate]);
 
   const buttonHandler = async (e) => {
     e.preventDefault();
@@ -68,11 +76,11 @@ export default function CancelListing() {
       const address = window.localStorage.getItem("currentAddr");
 
       await marketPlace.methods
-        .deleteListing(Number(token_id))
+        .deleteListing(Number(listing_id))
         .send({ from: address });
 
       await axios.delete(
-        `http://localhost:4988/api/nfts1155market/CancelListing/${token_id}`
+        `http://localhost:4988/api/nfts1155market/CancelListing/${listing_id}`
       );
 
       setMessage("Cancel Successful");
@@ -120,7 +128,7 @@ export default function CancelListing() {
 
       <div className="flex justify-center p-4 max-w-7xl bg-slate-400 m-auto bg-opacity-50 rounded-3xl">
         <div className="w-full text-center">
-          <h2 className="text-white font-bold text-8xl pb-10">
+          <h2 className="text-white font-bold text-8xl pb-5">
             Manage Your Listing
           </h2>
         </div>
@@ -142,7 +150,10 @@ export default function CancelListing() {
                     Description: {data.description}
                   </p>
                   <p class="text-3xl mt-4 pt-4 text-red-500 font-bold">
-                    Price {data.price} ETH
+                    Quantity: {data.available} / {data.total}
+                  </p>
+                  <p class="text-3xl mt-4 pt-4 text-red-500 font-bold">
+                    Price: {data.price} ETH
                   </p>
                 </div>
 
