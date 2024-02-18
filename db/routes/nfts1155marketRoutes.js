@@ -120,28 +120,39 @@ router.post("/getNftOwnedByUser", async (req, res) => {
   res.json(Nfts);
 });
 
-router.post("/updateBuyerAndQuantity", async (req, res) => {
-  const { token_id, buyer_data } = req.body;
+router.post("/buyNFT", async (req, res) => {
+  const { buyerAddress, quantity, listingId } = req.body;
+
   try {
-    const nft1155 = await Nft1155marketplaceModel.findOne({
-      token_id: token_id,
+    const nft = await Nft1155marketplaceModel.findOne({
+      listing_id: listingId,
     });
-    if (!nft1155) {
-      return res.status(404).json({ message: "NFT not found." });
+
+    if (!nft) {
+      return res.status(404).json({ message: "NFT not found" });
     }
-    if (nft1155.buyers.has(buyer_data.address) == true) {
-      nft1155.buyers.set(
-        buyer_data.address,
-        nft1155.buyers.get(buyer_data.address) + buyer_data.quantity
-      );
+
+    if (nft.available_quantity < Number(quantity)) {
+      return res.status(400).json({ message: "Not enough NFTs available" });
+    }
+
+    // Update the buyers map and available quantity
+    nft.buyers.set(
+      buyerAddress,
+      (nft.buyers.get(buyerAddress) || 0) + Number(quantity)
+    );
+    nft.available_quantity -= Number(quantity);
+
+    if (nft.available_quantity === 0) {
+      await Nft1155marketplaceModel.deleteOne({ listing_id: listingId });
     } else {
-      nft1155.buyers.set(buyer_data.address, buyer_data.quantity);
+      await nft.save();
     }
-    nft1155.markModified("buyers");
-    await nft1155.save();
-    res.json(nft1155);
+
+    res.status(200).json({ message: "Purchase successful" });
   } catch (err) {
-    res.status(500).json(err);
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

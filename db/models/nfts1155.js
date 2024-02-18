@@ -24,7 +24,6 @@ const Nf1155Schema = new mongoose.Schema({
   },
   owners: {
     type: Map,
-    from: String,
     of: Number,
     default: {},
   },

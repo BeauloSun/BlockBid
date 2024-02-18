@@ -33,8 +33,6 @@ export default function TokenSellerList() {
         setQuantity(quantity);
         setPrice(price);
         setListingIds(listingIds);
-
-        console.log(listingIds);
       } else {
         navigate("/NotFound");
       }
