@@ -19,6 +19,8 @@ export const ListedHoldings = () => {
   const [tokenIds1155, setTokenIds1155] = useState([]);
   const [description1155, setDescription1155] = useState([]);
   const [price1155, setPrice1155] = useState([]);
+  const [totalAmount, setTotalAmount] = useState([]);
+  const [amountOnSale, setAmountOnSale] = useState([]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -66,22 +68,39 @@ export const ListedHoldings = () => {
       setOnSale(onSales);
       setOnAuction(onAuctions);
 
+      const address = window.localStorage.getItem("currentAddr");
+
       const response1155 = await axios.post(
         "http://localhost:4988/api/nfts1155market/getNftOwnedByUser",
-        { user: window.localStorage.getItem("currentAddr") }
+        { user: address }
       );
 
       const name1155 = response1155.data.map((item) => item.name);
       const description1155 = response1155.data.map((item) => item.description);
       const price1155 = response1155.data.map((item) => item.description);
       const images1155 = response1155.data.map((item) => item.image_uri);
-      const tokenIds1155 = response1155.data.map((item) => item.listing_id);
+      const listingIds1155 = response1155.data.map((item) => item.listing_id);
+      const amountOnsale = response1155.data.map(
+        (item) => item.available_quantity
+      );
+      const tokenIds1155 = response1155.data.map((item) => item.token_id);
+      const response1155Total = await axios.post(
+        "http://localhost:4988/api/nfts1155/getOwnedNft",
+        {
+          tokenIds: tokenIds1155,
+        }
+      );
+      const totalAmount = response1155Total.data.map(
+        (item) => item.total_quantity
+      );
 
       setName1155(name1155);
       setDescription1155(description1155);
       setPrice1155(price1155);
       setImages1155(images1155);
-      setTokenIds1155(tokenIds1155);
+      setTokenIds1155(listingIds1155);
+      setTotalAmount(totalAmount);
+      setAmountOnSale(amountOnsale);
     } catch (error) {
       console.error(error);
     }
@@ -189,7 +208,7 @@ export const ListedHoldings = () => {
                       price={price1155[index]}
                       is1155={true}
                       onSale={true}
-                      owned={100}
+                      owned={(amountOnSale[index] / totalAmount[index]) * 100}
                     />
                   </Link>
                 </div>

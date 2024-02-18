@@ -46,6 +46,7 @@ export const Sale1155 = () => {
         }
       );
       const total_quantities = quantityResponse.data.quantity;
+      console.log(available_quantities, total_quantities);
       let percentage_quantities = available_quantities.map(
         (available_quantity, index) => {
           let total_quantity = total_quantities[index];
