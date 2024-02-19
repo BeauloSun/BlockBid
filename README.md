@@ -12,7 +12,7 @@
 7. Page for all listing for one token (frontend) ✅
 8. Page for particular listing (frontend) ✅
 9. Sell1155 page viewing other owners ✅
-10. Improve mint selection page layout + add explanation to what is what
+10. Improve mint selection page layout + add explanation to what is what ✅
 11. Graph frontend display
 
 # Next week todo:
