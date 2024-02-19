@@ -6,6 +6,7 @@ import axios from "axios";
 export default function TokenSellerList() {
   const { tokenid } = useParams();
   const tokenId = Number(tokenid);
+  const [isHovered, setIsHovered] = useState(false);
   const [seller, setSeller] = useState([]);
   const [quantity, setQuantity] = useState([]);
   const [price, setPrice] = useState([]);
@@ -55,42 +56,46 @@ export default function TokenSellerList() {
         <div className="flex flex-col items-center w-full">
           <div className="flex justify-center w-2/3 bg-slate-600 bg-opacity-80 mx-auto rounded-3xl mb-5 py-3">
             <h1 className="text-white text-4xl font-bold">
-              Seller list for Token ID_PLACEHOLDER
+              Seller list for Token
             </h1>
           </div>
           {listingIds.length <= 0 ? (
             <h1>No data</h1>
           ) : (
             <div className="flex justify-center w-2/3 bg-slate-600 bg-opacity-80 mx-auto rounded-3xl">
-              <ul class="divide-y divide-gray-100 w-full mx-[5%]">
+              <ul className="divide-y divide-gray-100 w-full mx-[5%]">
                 {listingIds.map((item, index) => (
-                  <li class="flex justify-between  py-5">
-                    <Link
-                      to={`/marketplace/ERC1155/Sale/${tokenId}/${listingIds[index]}`}
-                      key={listingIds[index]}
-                    >
-                      <div key={index} class="flex min-w-0 gap-x-4">
-                        <img
-                          class="h-12 w-12 flex-none rounded-full bg-gray-50"
-                          src="https://picsum.photos/50"
-                          alt=""
-                        />
-                        <div class="min-w-0 mr-[30%]">
-                          <p class="text-xl font-bold leading-6 text-white">
-                            {seller[index]}
-                          </p>
-                        </div>
+                  <Link
+                    to={`/marketplace/ERC1155/Sale/${tokenId}/${listingIds[index]}`}
+                    key={listingIds[index]}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                  >
+                    <li className="flex flex-wrap justify-between  py-4">
+                      <img
+                        class="h-12 w-12 flex-none rounded-full bg-gray-50"
+                        src="https://picsum.photos/50"
+                        alt=""
+                      />
+                      <div className="flex min-w-0 pt-3 gap-x-4">
+                        <p
+                          className={`text-xl font-bold leading-6 ${
+                            isHovered ? "text-yellow-400" : "text-white"
+                          } `}
+                        >
+                          {seller[index]}
+                        </p>
                       </div>
                       <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
                         <p class="text-xl font-bold leading-6 text-white">
-                          {quantity[index]}
+                          {quantity[index]} Tokens
                         </p>
                         <p class="text-lg font-semibold leading-6 text-blue-300">
-                          {price[index]} / 1
+                          {price[index]} ETH / Token
                         </p>
                       </div>
-                    </Link>
-                  </li>
+                    </li>
+                  </Link>
                 ))}
               </ul>
             </div>
