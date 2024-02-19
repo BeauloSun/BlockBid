@@ -29,7 +29,7 @@ export const Mint = () => {
 
   return (
     <div
-      className={`h-screen flex flex-col justify-center items-center transition-all duration-200 ease-in-out`}
+      className={`h-screen flex flex-col items-center transition-all duration-200 pt-16 ease-in-out`}
       style={{
         backgroundImage: `url(${bg})`,
         backgroundSize: "cover",
@@ -45,13 +45,21 @@ export const Mint = () => {
       >
         {isLoading && <Spinner className="h-40 w-40" />}
       </div>
-      <div className="justify-center mb-64 text-6xl font-sans font-extrabold text-yellow-300">
+      <div className="justify-center mb-[5%] text-6xl font-sans font-extrabold text-yellow-300">
         <h1>CHOOSE YOUR TOKEN TYPE</h1>
       </div>
-      <div className="flex justify-around w-full px-10">
+      <div className="flex justify-around w-full mx-10 mb-10">
+        <p className="max-w-[200px] text-center text-2xl text-white font-bold">
+          Single Token for trading&auction!
+        </p>
+        <p className="max-w-[200px] text-center text-2xl text-white font-bold">
+          Allows shared ownership!
+        </p>
+      </div>
+      <div className="flex justify-around w-full mx-10">
         <Link
           to="/mint/721"
-          className={`w-[30rem] h-[30rem] flex hover:scale-110 transition-all duration-200 items-center justify-center bg-white rounded-xl shadow-lg cursor-pointer`}
+          className={`w-[24rem] h-[24rem] flex hover:scale-110 transition-all duration-200 items-center justify-center bg-white rounded-xl shadow-lg cursor-pointer`}
           style={{
             backgroundImage: `url(${button_721_bg})`,
             backgroundSize: "cover",
@@ -64,7 +72,7 @@ export const Mint = () => {
         ></Link>
         <Link
           to="/mint/1155"
-          className={`w-[30rem] h-[30rem] flex hover:scale-110 transition-all duration-200 items-center justify-center bg-white rounded-xl shadow-lg cursor-pointer `}
+          className={`w-[24rem] h-[24rem] flex hover:scale-110 transition-all duration-200 items-center justify-center bg-white rounded-xl shadow-lg cursor-pointer `}
           style={{
             backgroundImage: `url(${button_1155_bg})`,
             backgroundSize: "cover",
