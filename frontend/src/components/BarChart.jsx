@@ -7,101 +7,98 @@ import {
 import Chart from "react-apexcharts";
 import { Square3Stack3DIcon } from "@heroicons/react/24/outline";
 
-// If you're using Next.js please use the dynamic import for react-apexcharts and remove the import from the top for the react-apexcharts
-// import dynamic from "next/dynamic";
-// const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
-
-const chartConfig = {
-  type: "bar",
-  height: 240,
-  series: [
-    {
-      name: "Sales",
-      data: [50, 40, 300, 320, 500, 350, 200, 230, 500],
-    },
-  ],
-  options: {
-    chart: {
-      toolbar: {
-        show: false,
+export default function BarChart() {
+  const chartConfig = {
+    type: "bar",
+    height: 240,
+    series: [
+      {
+        name: "Sales",
+        data: [50, 40, 300, 320, 500, 350, 200, 230, 500],
       },
-    },
-    title: {
-      show: "",
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    colors: ["#020617"],
-    plotOptions: {
-      bar: {
-        columnWidth: "40%",
-        borderRadius: 2,
-      },
-    },
-    xaxis: {
-      axisTicks: {
-        show: false,
-      },
-      axisBorder: {
-        show: false,
-      },
-      labels: {
-        style: {
-          colors: "#616161",
-          fontSize: "12px",
-          fontFamily: "inherit",
-          fontWeight: 400,
+    ],
+    options: {
+      chart: {
+        toolbar: {
+          show: false,
         },
       },
-      categories: [
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ],
-    },
-    yaxis: {
-      labels: {
-        style: {
-          colors: "#616161",
-          fontSize: "12px",
-          fontFamily: "inherit",
-          fontWeight: 400,
+      title: {
+        show: "",
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      colors: ["#FF00DC"], // line colour
+      plotOptions: {
+        bar: {
+          columnWidth: "40%",
+          borderRadius: 2,
         },
       },
-    },
-    grid: {
-      show: true,
-      borderColor: "#dddddd",
-      strokeDashArray: 5,
       xaxis: {
-        lines: {
-          show: true,
+        axisTicks: {
+          show: false,
+        },
+        axisBorder: {
+          show: false,
+        },
+        labels: {
+          // x-axis labels
+          style: {
+            colors: "#00FFBE",
+            fontSize: "15px",
+            fontFamily: "inherit",
+            fontWeight: 400,
+          },
+        },
+        categories: [
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ],
+      },
+      yaxis: {
+        // y-axis labels
+        labels: {
+          style: {
+            colors: "#00FFBE",
+            fontSize: "15px",
+            fontFamily: "inherit",
+            fontWeight: 400,
+          },
         },
       },
-      padding: {
-        top: 5,
-        right: 20,
+      grid: {
+        show: true,
+        borderColor: "#00CEFF",
+        strokeDashArray: 5,
+        xaxis: {
+          lines: {
+            show: true,
+          },
+        },
+        padding: {
+          top: 5,
+          right: 20,
+        },
+      },
+      fill: {
+        opacity: 0.8,
+      },
+      tooltip: {
+        theme: "dark",
       },
     },
-    fill: {
-      opacity: 0.8,
-    },
-    tooltip: {
-      theme: "dark",
-    },
-  },
-};
-
-export default function Example() {
+  };
   return (
-    <Card>
+    <Card className="bg-slate-700">
       <CardHeader
         floated={false}
         shadow={false}
@@ -111,17 +108,16 @@ export default function Example() {
         <div className="w-max rounded-lg bg-gray-900 p-5 text-white">
           <Square3Stack3DIcon className="h-6 w-6" />
         </div>
-        <div>
-          <Typography variant="h6" color="blue-gray">
-            Bar Chart
+        <div className="">
+          <Typography variant="h6" color="white" className="text-2xl">
+            Trade Frequency
           </Typography>
           <Typography
             variant="small"
             color="gray"
-            className="max-w-sm font-normal"
+            className="max-w-sm font-normal text-slate-300 text-xl min-w-[420px]"
           >
-            Visualize your data in a simple way using the
-            @material-tailwind/react chart plugin.
+            The number of contract transaction at BlockBid
           </Typography>
         </div>
       </CardHeader>

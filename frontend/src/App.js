@@ -25,6 +25,7 @@ import { CancelListing1155 } from "./pages/CancelListing1155";
 import { BuyNft721 } from "./pages/BuyNft721";
 import { BuyNft1155 } from "./pages/BuyNft1155";
 import { Splitting } from "./pages/Splitting_learning";
+import { Analytics } from "./pages/Analytics";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -90,6 +91,8 @@ function App() {
           </Route>
 
           <Route path="/haha" element={<Splitting />} />
+
+          <Route path="/analytics" element={<Analytics />} />
 
           <Route path="/mint" element={<Mint />} />
           <Route path="/mint/721" element={<Mint721 />} />
