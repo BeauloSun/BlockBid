@@ -14,33 +14,36 @@ export default function TokenSellerList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchData();
-  }, [tokenid, tokenId]);
+    window.scrollTo(0, 0);
+  }, []);
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.post(
-        "http://localhost:4988/api/nfts1155market/getNftsOnSaleByTokenId",
-        { tokenId: tokenId }
-      );
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post(
+          "http://localhost:4988/api/nfts1155market/getNftsOnSaleByTokenId",
+          { tokenId: tokenId }
+        );
 
-      if (response.data) {
-        const seller = response.data.map((item) => item.seller);
-        const quantity = response.data.map((item) => item.available_quantity);
-        const price = response.data.map((item) => item.price);
-        const listingIds = response.data.map((item) => item.listing_id);
+        if (response.data) {
+          const seller = response.data.map((item) => item.seller);
+          const quantity = response.data.map((item) => item.available_quantity);
+          const price = response.data.map((item) => item.price);
+          const listingIds = response.data.map((item) => item.listing_id);
 
-        setSeller(seller);
-        setQuantity(quantity);
-        setPrice(price);
-        setListingIds(listingIds);
-      } else {
-        navigate("/NotFound");
+          setSeller(seller);
+          setQuantity(quantity);
+          setPrice(price);
+          setListingIds(listingIds);
+        } else {
+          navigate("/NotFound");
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    };
+    fetchData();
+  }, [navigate, tokenId]);
   return (
     <div>
       <div
