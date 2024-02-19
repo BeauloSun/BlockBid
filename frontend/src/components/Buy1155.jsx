@@ -162,7 +162,7 @@ export default function Buy1155() {
                       </span>
                       <br></br>
                       <span className="text-xl text-red-500 font-semibold sm:text-2xl">
-                        Price: {buyData.price}/ token
+                        Price: {buyData.price} ETH / token
                       </span>
                     </div>
                   </div>

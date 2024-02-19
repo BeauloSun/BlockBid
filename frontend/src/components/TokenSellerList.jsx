@@ -6,7 +6,7 @@ import axios from "axios";
 export default function TokenSellerList() {
   const { tokenid } = useParams();
   const tokenId = Number(tokenid);
-  const [isHovered, setIsHovered] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState(false);
   const [seller, setSeller] = useState([]);
   const [quantity, setQuantity] = useState([]);
   const [price, setPrice] = useState([]);
@@ -68,33 +68,44 @@ export default function TokenSellerList() {
                   <Link
                     to={`/marketplace/ERC1155/Sale/${tokenId}/${listingIds[index]}`}
                     key={listingIds[index]}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(null)}
                   >
-                    <li className="flex flex-wrap justify-between  py-4">
-                      <img
-                        class="h-12 w-12 flex-none rounded-full bg-gray-50"
-                        src="https://picsum.photos/50"
-                        alt=""
-                      />
-                      <div className="flex min-w-0 pt-3 gap-x-4">
+                    <li className={`flex justify-between py-4 mx-[5%]`}>
+                      <div className="flex flex-wrap min-w-0 pt-3 gap-x-4">
+                        <img
+                          className={`h-12 w-12 flex-none rounded-full bg-gray-50 ${
+                            hoveredIndex === index
+                              ? "scale-105 duration-300"
+                              : ""
+                          }`}
+                          src="https://picsum.photos/50"
+                          alt=""
+                        />
                         <p
-                          className={`text-xl font-bold leading-6 ${
-                            isHovered ? "text-yellow-400" : "text-white"
+                          className={`text-xl font-bold pt-3 leading-6 ${
+                            hoveredIndex === index
+                              ? "text-yellow-400 scale-105 duration-300"
+                              : "text-white"
                           } `}
                         >
                           {seller[index]}
                         </p>
                       </div>
-                      <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-                        <p class="text-xl font-bold leading-6 text-white">
+                      <div
+                        className={`hidden shrink-0 pt-3 sm:flex sm:flex-col sm:items-end ${
+                          hoveredIndex === index ? "scale-110 duration-300" : ""
+                        } `}
+                      >
+                        <p className="text-xl font-bold leading-6 text-white">
                           {quantity[index]} Tokens
                         </p>
-                        <p class="text-lg font-semibold leading-6 text-blue-300">
+                        <p className="text-lg font-semibold leading-6 text-blue-300">
                           {price[index]} ETH / Token
                         </p>
                       </div>
                     </li>
+                    <div className="h-1 bg-slate-200"></div>
                   </Link>
                 ))}
               </ul>
