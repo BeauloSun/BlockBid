@@ -3,6 +3,8 @@ const bodyParser = require("body-parser");
 const app = express();
 const nft721 = require("./tables/nft721");
 const nft721history = require("./tables/nft721history");
+const nft1155 = require("./tables/nft1155");
+const nft1155history = require("./tables/nft1155history");
 
 const sqlite = require("sqlite3").verbose();
 const db = new sqlite.Database(
@@ -17,13 +19,6 @@ const db = new sqlite.Database(
   }
 );
 
-// db.run(`DROP TABLE IF EXISTS nft721`);
-//db.run(`CREATE TABLE nft721(tokenId INTEGER PRIMARY KEY , name VARCHAR(25))`);
-
-// db.run(
-//   `CREATE TABLE nft721history(ID INTEGER PRIMARY KEY, tokenId  , price FLOAT , date DATE , FOREIGN KEY (tokenId) REFERENCES nft721(tokenId))`
-// );
-
 app.use(bodyParser.json());
 
 app.listen(3000, () => {
@@ -32,3 +27,5 @@ app.listen(3000, () => {
 
 app.use("/nft721", nft721);
 app.use("/nft721history", nft721history);
+app.use("/nft1155", nft1155);
+app.use("/nft1155history", nft1155history);
