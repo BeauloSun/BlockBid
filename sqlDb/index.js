@@ -21,8 +21,8 @@ const db = new sqlite.Database(
 
 app.use(bodyParser.json());
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+app.listen(3666, () => {
+  console.log("Server is running on port 3666");
 });
 
 app.use("/nft721", nft721);

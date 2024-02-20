@@ -40,19 +40,19 @@ export const Navbar = () => {
 
       <ul className="hidden navbar:flex justify-self-end text-xl">
         <Link
-          className="p-4 transition-all duration-500 ease-in-out font-bold hover:text-[#46ff65]"
+          className="p-4 transition-all duration-300 ease-in-out font-bold hover:text-[#46ff65] hover:bg-slate-800 rounded-xl"
           to="/marketplace/ERC721/Sale"
         >
           Marketplace
         </Link>
         <Link
-          className="p-4 transition-all duration-500 ease-in-out font-bold hover:text-[#46ff65]"
+          className="p-4 transition-all duration-300 ease-in-out font-bold hover:text-[#46ff65] hover:bg-slate-800 rounded-xl"
           to="/analytics"
         >
           Analytics
         </Link>
         <Link
-          className="p-4 transition-all duration-500 ease-in-out font-bold hover:text-[#46ff65]"
+          className="p-4 transition-all duration-300 ease-in-out font-bold hover:text-[#46ff65] hover:bg-slate-800 rounded-xl"
           to="/profile/wallet"
         >
           Profile

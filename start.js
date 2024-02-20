@@ -21,3 +21,6 @@ runCommand("npm start", "./db");
 
 // Third command
 runCommand("yarn start", "./frontend");
+
+// Fourth command
+runCommand("npm start", "./sqlDb");

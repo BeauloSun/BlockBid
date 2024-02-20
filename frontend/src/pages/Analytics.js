@@ -2,14 +2,11 @@ import React from "react";
 import LineChart from "../components/LineChart";
 import BarChart from "../components/BarChart";
 import bg from "../assets/analytics_bg.jpg";
-import PieChart from "../components/PieChart";
 
 export const Analytics = () => {
   const rowData = ["Dec-2023", "Jan-2024", "Feb-2024", "Mar-2024"];
   const colName = "Price";
   const colData = [12, 14, 16, 18];
-  const sections = [44, 55, 13, 43, 22];
-  const colours = ["#020617", "#ff8f00", "#00897b", "#1e88e5", "#d81b60"];
 
   return (
     <div>
@@ -46,13 +43,6 @@ export const Analytics = () => {
                 rowData={rowData}
                 colName={colName}
                 colData={colData}
-              />
-            </div>
-            <div className="">
-              <PieChart
-                className="w-full"
-                sections={sections}
-                colours={colours}
               />
             </div>
           </div>
