@@ -1,11 +1,11 @@
 # Report/Video split:
-- 1155 front + mongo'
-- 721 back
+- 1155 front + mongo' + 1155 mongo test
+- 721 back + 721 contract testing
 - analytics back
 - 721 -> 1155
 -------------------------
-- 1155 back
-- 721 front + mongo
+- 1155 back + 1155 contract testing
+- 721 front + mongo + 721 mongo test
 - analytics front + SQL'
 - 721 -> 1155
 ------------------------
@@ -15,7 +15,7 @@
 - Metamask
 - Ethereum
 - React
-- Testing & evaluation
+- Testing & Evaluation (Quantitative UX ; Qualitative UX )
 
 # Next week todo:
 
