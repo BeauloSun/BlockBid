@@ -1,19 +1,21 @@
-# This weekend todo:
-
-1. Profile page listed holdings for 1155 ✅
-2. Contract validation for selling more than you have ✅
-3. Sell1155 page handling contract error for selling more than you have (setMessage) ✅
-4. Page for all listing for one token (backend) ✅
-5. Page for particular listing (backend) ✅
-6. SQL to react (backend) 
-
----
-
-7. Page for all listing for one token (frontend) ✅
-8. Page for particular listing (frontend) ✅
-9. Sell1155 page viewing other owners ✅
-10. Improve mint selection page layout + add explanation to what is what ✅
-11. Graph frontend display
+# Report/Video split:
+- 1155 front + mongo'
+- 721 back
+- analytics back
+- 721 -> 1155
+-------------------------
+- 1155 back
+- 721 front + mongo
+- analytics front + SQL'
+- 721 -> 1155
+------------------------
+- Pinata
+- Ganache
+- Hardhat
+- Metamask
+- Ethereum
+- React
+- Testing & evaluation
 
 # Next week todo:
 
