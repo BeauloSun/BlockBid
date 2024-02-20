@@ -7,14 +7,14 @@ import {
 import Chart from "react-apexcharts";
 import { Square3Stack3DIcon } from "@heroicons/react/24/outline";
 
-export default function BarChart() {
+export default function BarChart({ rowData = [], colName = "", colData = [] }) {
   const chartConfig = {
     type: "bar",
     height: 240,
     series: [
       {
-        name: "Sales",
-        data: [50, 40, 300, 320, 500, 350, 200, 230, 500],
+        name: colName,
+        data: colData,
       },
     ],
     options: {
@@ -52,17 +52,7 @@ export default function BarChart() {
             fontWeight: 400,
           },
         },
-        categories: [
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ],
+        categories: rowData,
       },
       yaxis: {
         // y-axis labels
