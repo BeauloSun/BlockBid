@@ -7,14 +7,18 @@ import {
 import Chart from "react-apexcharts";
 import { Square3Stack3DIcon } from "@heroicons/react/24/outline";
 
-export default function LineChart() {
+export default function LineChart({
+  rowData = [],
+  colName = "",
+  colData = [],
+}) {
   const chartConfig = {
     type: "line",
     height: 240,
     series: [
       {
-        name: "Price",
-        data: [5.2, 4.1, 3.1, 3.6, 5.24, 3.16, 2.75, 2.95, 5.63],
+        name: colName,
+        data: colData,
       },
     ],
     options: {
@@ -53,17 +57,7 @@ export default function LineChart() {
             fontWeight: 400,
           },
         },
-        categories: [
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ],
+        categories: rowData,
       },
       yaxis: {
         // y-axis labels
