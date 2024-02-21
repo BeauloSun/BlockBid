@@ -3,6 +3,7 @@ import wallet_bg from "../assets/wallet_bg.jpg";
 import retrieve_fund_bg from "../assets/retrieve_fund_bg.jpg";
 import React, { useState, useEffect } from "react";
 import { getMarketContract } from "../utils/getBlockBid";
+import Web3 from "web3";
 
 export default function Wallet() {
   const [data, setData] = useState({
@@ -66,7 +67,7 @@ export default function Wallet() {
     const address = window.localStorage.getItem("currentAddr");
 
     const funds = await contract.methods.getUserFunds(address).call();
-    setUserFund(Number(funds));
+    setUserFund(Number(Web3.utils.fromWei(funds, "ether")).toFixed(2));
   };
 
   const disconnectWallet = () => {

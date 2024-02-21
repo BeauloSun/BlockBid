@@ -6,6 +6,7 @@ import "@dotlottie/react-player/dist/index.css";
 import { getMarketContract1155 } from "../utils/getBlockBid1155";
 import { getContract1155 } from "../utils/getNft1155";
 import axios from "axios";
+import Web3 from "web3";
 
 export default function CancelListing() {
   const { id } = useParams();
@@ -103,16 +104,17 @@ export default function CancelListing() {
     }
   };
 
-  const franctionalizeHandler = async (e) => {
+  const updateHandler = async (e) => {
     e.preventDefault();
     setUpdateButtonLoading(true);
     try {
       // get the market place contract
       const marketPlace = await getMarketContract1155();
       const address = window.localStorage.getItem("currentAddr");
+      const updatePriceNum = Number(Web3.utils.toWei(updatePrice, "ether"));
 
       await marketPlace.methods
-        .updateListing(listing_id, updatePrice)
+        .updateListing(listing_id, updatePriceNum)
         .send({ from: address });
 
       await axios("http://localhost:4988/api/nfts1155market/updatePrice", {
@@ -241,7 +243,7 @@ export default function CancelListing() {
                   <button
                     className="flex justify-center text-2xl items-center gap-2 w-full py-3 px-4 bg-green-400 text-gray-600 font-bold rounded-xl ease-in-out duration-300 shadow-slate-600 hover:scale-105  lg:m-0 md:px-6"
                     type="submit"
-                    onClick={franctionalizeHandler}
+                    onClick={updateHandler}
                   >
                     {updateButtonLoading ? (
                       <>

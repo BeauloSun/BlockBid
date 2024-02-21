@@ -6,6 +6,7 @@ import "@dotlottie/react-player/dist/index.css";
 import { getMarketContract } from "../utils/getBlockBid";
 import { getContract } from "../utils/getNft721";
 import axios from "axios";
+import Web3 from "web3";
 
 export default function CancelListing() {
   const { id } = useParams();
@@ -118,9 +119,10 @@ export default function CancelListing() {
       const nftContract = await getContract();
       const marketPlace = await getMarketContract();
       const address = window.localStorage.getItem("currentAddr");
+      const updatePriceNum = Number(Web3.utils.toWei(updatePrice, "ether"));
 
       await marketPlace.methods
-        .updateListing(nftContract.options.address, token_id, updatePrice)
+        .updateListing(nftContract.options.address, token_id, updatePriceNum)
         .send({ from: address });
 
       await axios.post("http://localhost:4988/api/nfts/updatePrice", {

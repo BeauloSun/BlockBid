@@ -196,7 +196,10 @@ export const Holdings = () => {
                       description={description1155[index]}
                       price={price1155[index]}
                       is1155={true}
-                      owned={(amountOwned[index] / totalAmount[index]) * 100}
+                      owned={(
+                        (amountOwned[index] / totalAmount[index]) *
+                        100
+                      ).toFixed(2)}
                     />
                   </Link>
                 </div>

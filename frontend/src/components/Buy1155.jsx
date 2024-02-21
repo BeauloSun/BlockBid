@@ -62,6 +62,7 @@ export default function Buy1155() {
           tokenId: tokenId.toString(),
         }
       );
+      console.log(responseHistory);
       let price = responseHistory.data["prices"];
       let dates = responseHistory.data["dates"];
       setRowData(dates);

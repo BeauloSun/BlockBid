@@ -63,7 +63,7 @@ router.delete("/deleteAllNfts", (req, res) => {
 
 router.post("/getTokenHistory", (req, res) => {
   const { tokenId } = req.body;
-  const sql = `SELECT price, date FROM nft1155history WHERE tokenId = ?`;
+  const sql = `SELECT Price, date FROM nft1155history WHERE tokenId = ?`;
   db.all(sql, [tokenId], (err, rows) => {
     if (err) {
       res.status(400).json({ error: err.message });
@@ -72,7 +72,7 @@ router.post("/getTokenHistory", (req, res) => {
     let prices = [];
     let dates = [];
     rows.forEach((row) => {
-      prices.push(row.price);
+      prices.push(row.Price);
       dates.push(row.date);
     });
     res.json({
@@ -85,7 +85,6 @@ router.post("/getTokenHistory", (req, res) => {
 router.post("/addTokenHistory", (req, res) => {
   const { tokenId, price, date } = req.body;
 
-  // Check if the date exists in the 721history table
   sql = `SELECT * FROM nft1155history WHERE tokenId = ? AND date = ?`;
   db.get(sql, [tokenId, date], (err, row) => {
     if (err) {

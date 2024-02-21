@@ -14,7 +14,7 @@ function runCommand(command, cwd) {
 }
 
 // First command
-runCommand("yarn hardhat deploy --network ganache", ".");
+runCommand("yarn hardhat deploy --network sepolia", ".");
 
 // Second command
 runCommand("npm start", "./db");

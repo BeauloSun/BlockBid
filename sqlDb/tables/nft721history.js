@@ -63,7 +63,7 @@ router.delete("/deleteAllNfts", (req, res) => {
 
 router.post("/getTokenHistory", (req, res) => {
   const { tokenId } = req.body;
-  const sql = `SELECT price, date FROM nft721history WHERE tokenId = ?`;
+  const sql = `SELECT Price, date FROM nft721history WHERE tokenId = ?`;
   db.all(sql, [tokenId], (err, rows) => {
     if (err) {
       res.status(400).json({ error: err.message });
@@ -72,7 +72,7 @@ router.post("/getTokenHistory", (req, res) => {
     let prices = [];
     let dates = [];
     rows.forEach((row) => {
-      prices.push(row.price);
+      prices.push(row.Price);
       dates.push(row.date);
     });
     res.json({
