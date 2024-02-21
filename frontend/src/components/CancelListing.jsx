@@ -111,7 +111,14 @@ export default function CancelListing() {
     }
   };
 
-  const franctionalizeHandler = async (e) => {};
+  const franctionalizeHandler = async (e) => {
+    setFractionalizeButtonLoading(true);
+    // functionality goes here
+    setTimeout(() => {
+      setFractionalizeButtonLoading(false);
+      navigate("/marketplace/ERC721/Sale");
+    }, 800);
+  };
 
   return (
     <div
@@ -250,7 +257,7 @@ export default function CancelListing() {
                         <span> Processing... </span>
                       </>
                     ) : (
-                      <span>Fractionalize !</span>
+                      <span>Update Price !</span>
                     )}
                   </button>
                 </form>

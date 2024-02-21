@@ -12,6 +12,9 @@ export default function CancelListing() {
   const listing_id = Number(id);
   const [loadingController, setloadingController] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
+  const [fractionalizeButtonLoading, setFractionalizeButtonLoading] =
+    useState(false);
+  const [price, setPrice] = useState(null);
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
   const [data, setData] = useState({});
@@ -101,6 +104,15 @@ export default function CancelListing() {
     }
   };
 
+  const franctionalizeHandler = async (e) => {
+    setFractionalizeButtonLoading(true);
+    // functionality goes here
+    setTimeout(() => {
+      setFractionalizeButtonLoading(false);
+      navigate("/marketplace/ERC1155/Sale");
+    }, 800);
+  };
+
   return (
     <div
       className="py-[5%]"
@@ -158,6 +170,25 @@ export default function CancelListing() {
                 </div>
 
                 <form action="" class="flex flex-col gap-4 mt-10">
+                  <label
+                    for="Price"
+                    className="block text-left text-2xl font-bold text-white"
+                  >
+                    Update your price
+                  </label>
+                  <div className="flex justify-between items-center">
+                    <input
+                      className="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
+                      type="number"
+                      name="Price"
+                      placeholder="Enter price"
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                    />
+                    <div className="font-bold text-3xl text-white pr-10 mb-4">
+                      ETH
+                    </div>
+                  </div>
                   <div className={messageClass}>{message}</div>
                   <button
                     className="flex justify-center text-2xl items-center gap-2 w-full py-3 px-4 bg-blue-400 text-white font-bold rounded-xl ease-in-out duration-300 shadow-slate-600 hover:scale-105  lg:m-0 md:px-6"
@@ -190,6 +221,39 @@ export default function CancelListing() {
                       </>
                     ) : (
                       <span>Cancel Listing !</span>
+                    )}
+                  </button>
+                  <button
+                    className="flex justify-center text-2xl items-center gap-2 w-full py-3 px-4 bg-green-400 text-gray-600 font-bold rounded-xl ease-in-out duration-300 shadow-slate-600 hover:scale-105  lg:m-0 md:px-6"
+                    type="submit"
+                    onClick={franctionalizeHandler}
+                  >
+                    {fractionalizeButtonLoading ? (
+                      <>
+                        <svg
+                          className="mr-5 h-6 w-6 animate-spin text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        <span> Processing... </span>
+                      </>
+                    ) : (
+                      <span>Update Price !</span>
                     )}
                   </button>
                 </form>
