@@ -5,6 +5,7 @@ import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
 import { getMarketContract } from "../utils/getBlockBid";
 import { getContract } from "../utils/getNft721";
+import LineChart from "../components/LineChart";
 import Web3 from "web3";
 import axios from "axios";
 
@@ -21,6 +22,9 @@ export default function Bid() {
   const [hour, setHour] = useState(10);
   const [minute, setMinute] = useState(30);
   const [second, setSecond] = useState(30);
+  const [rowData, setRowData] = useState([]);
+  const [colName, setColName] = useState("");
+  const [colData, setColData] = useState([]);
   const [auctionEndTime, setAuctionEndTime] = useState(null);
   const [data, setData] = useState({});
   const [bidHistory, setBidHistory] = useState({});
@@ -68,6 +72,17 @@ export default function Bid() {
             setHour(Math.floor(timeLeft / 3600));
             setMinute(Math.floor((timeLeft % 3600) / 60));
             setSecond(timeLeft % 60);
+            const responseHistory = await axios.post(
+              "http://localhost:3666/nft721history/getTokenHistory",
+              {
+                tokenId: token_id.toString(),
+              }
+            );
+            let price = responseHistory.data["prices"];
+            let dates = responseHistory.data["dates"];
+            setRowData(dates);
+            setColData(price);
+            setColName("Price");
           }
 
           try {
@@ -405,6 +420,17 @@ export default function Bid() {
               </button>
             </form>
           </div>
+        </div>
+      </div>
+
+      <div class="bg-slate-400 flex flex-col rounded-2xl mt-6 shadow-lg max-w-[1100px] w-[100%] items-center bg-opacity-50">
+        <div class="w-full text-center">
+          <LineChart
+            className="w-full h-full"
+            rowData={rowData}
+            colName={colName}
+            colData={colData}
+          />
         </div>
       </div>
 

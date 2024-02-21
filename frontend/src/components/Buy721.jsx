@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import bg from "../assets/bid_bg.jpg";
+import LineChart from "../components/LineChart";
 import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
 import { getMarketContract } from "../utils/getBlockBid";
@@ -15,9 +16,9 @@ export default function Buy721() {
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
-  const [hour, setHour] = useState(10);
-  const [minute, setMinute] = useState(30);
-  const [second, setSecond] = useState(30);
+  const [rowData, setRowData] = useState([]);
+  const [colName, setColName] = useState("");
+  const [colData, setColData] = useState([]);
   const [data, setData] = useState({});
   const navigate = useNavigate();
   var isValid = false;
@@ -53,15 +54,20 @@ export default function Buy721() {
               description: res.description,
               price: res.price,
             });
-
-            const now = Math.floor(Date.now() / 1000); // Current Unix timestamp
-            let timeLeft = res.auction_time - now; // Time left in seconds
-
-            if (timeLeft < 0) timeLeft = 0; // If the end time has passed, set timeLeft to 0
-
-            setHour(Math.floor(timeLeft / 3600));
-            setMinute(Math.floor((timeLeft % 3600) / 60));
-            setSecond(timeLeft % 60);
+            const responseHistory = await axios.post(
+              "http://localhost:3666/nft721history/getTokenHistory",
+              {
+                tokenId: token_id.toString(),
+              }
+            );
+            let price = responseHistory.data["prices"];
+            let dates = responseHistory.data["dates"];
+            setRowData(dates);
+            setColData(price);
+            setColName("Price");
+            // setRowData(["Dec-2023", "Jan-2024", "Feb-2024", "Mar-2024"]);
+            // setColName("Price");
+            // setColData([12, 14, 16, 18]);
           }
         } catch (err) {
           console.error(err);
@@ -208,6 +214,15 @@ export default function Buy721() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="flex justify-center mt-5 max-w-7xl bg-slate-500 m-auto bg-opacity-70 rounded-3xl">
+        <LineChart
+          className="w-full h-full"
+          rowData={rowData}
+          colName={colName}
+          colData={colData}
+        />
       </div>
     </div>
   );

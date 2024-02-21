@@ -76,11 +76,8 @@ router.post("/getTokenHistory", (req, res) => {
       dates.push(row.date);
     });
     res.json({
-      message: "success",
-      data: {
-        prices: prices,
-        dates: dates,
-      },
+      prices: prices,
+      dates: dates,
     });
   });
 });

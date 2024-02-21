@@ -5,6 +5,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getMarketContract1155 } from "../utils/getBlockBid1155";
 import { getContract1155 } from "../utils/getNft1155";
+import LineChart from "../components/LineChart";
 import Web3 from "web3";
 
 export default function Buy1155() {
@@ -14,6 +15,9 @@ export default function Buy1155() {
   const [buyData, setBuyData] = useState({});
   const [ownersData, setOnwersData] = useState([]);
   const [quantity, setQuantity] = useState([]);
+  const [rowData, setRowData] = useState([]);
+  const [colName, setColName] = useState("");
+  const [colData, setColData] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -50,6 +54,18 @@ export default function Buy1155() {
         const res = nftResponse.data.owners;
         setOnwersData(res);
       }
+
+      const responseHistory = await axios.post(
+        "http://localhost:3666/nft721history/getTokenHistory",
+        {
+          tokenId: tokenId.toString(),
+        }
+      );
+      let price = responseHistory.data["prices"];
+      let dates = responseHistory.data["dates"];
+      setRowData(dates);
+      setColData(price);
+      setColName("Price");
     } catch (err) {
       console.log(err);
     }
@@ -195,6 +211,15 @@ export default function Buy1155() {
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="flex flex-col items-center justify-center max-w-7xl bg-slate-400 m-auto mt-5 bg-opacity-50 rounded-3xl">
+          <LineChart
+            className="w-full h-full"
+            rowData={rowData}
+            colName={colName}
+            colData={colData}
+          />
         </div>
 
         <div className="flex flex-col items-center justify-center p-4 max-w-7xl bg-slate-400 m-auto mt-5 bg-opacity-50 rounded-3xl">
