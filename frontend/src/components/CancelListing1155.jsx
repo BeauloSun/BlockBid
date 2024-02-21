@@ -12,9 +12,8 @@ export default function CancelListing() {
   const listing_id = Number(id);
   const [loadingController, setloadingController] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
-  const [fractionalizeButtonLoading, setFractionalizeButtonLoading] =
-    useState(false);
-  const [price, setPrice] = useState(null);
+  const [updateButtonLoading, setUpdateButtonLoading] = useState(false);
+  const [updatePrice, setUpdatePrice] = useState(null);
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
   const [data, setData] = useState({});
@@ -105,10 +104,26 @@ export default function CancelListing() {
   };
 
   const franctionalizeHandler = async (e) => {
-    setFractionalizeButtonLoading(true);
-    // functionality goes here
+    e.preventDefault();
+    setUpdateButtonLoading(true);
+    try {
+      // get the market place contract
+      const marketPlace = await getMarketContract1155();
+      const address = window.localStorage.getItem("currentAddr");
+
+      await marketPlace.methods
+        .updateListing(listing_id, updatePrice)
+        .send({ from: address });
+
+      await axios("http://localhost:4988/api/nfts1155market/updatePrice", {
+        listingId: listing_id,
+        price: updatePrice,
+      });
+    } catch (error) {
+      console.log(error);
+    }
     setTimeout(() => {
-      setFractionalizeButtonLoading(false);
+      setUpdateButtonLoading(false);
       navigate("/marketplace/ERC1155/Sale");
     }, 800);
   };
@@ -182,8 +197,8 @@ export default function CancelListing() {
                       type="number"
                       name="Price"
                       placeholder="Enter price"
-                      value={price}
-                      onChange={(e) => setPrice(e.target.value)}
+                      value={updatePrice}
+                      onChange={(e) => setUpdatePrice(e.target.value)}
                     />
                     <div className="font-bold text-3xl text-white pr-10 mb-4">
                       ETH
@@ -228,7 +243,7 @@ export default function CancelListing() {
                     type="submit"
                     onClick={franctionalizeHandler}
                   >
-                    {fractionalizeButtonLoading ? (
+                    {updateButtonLoading ? (
                       <>
                         <svg
                           className="mr-5 h-6 w-6 animate-spin text-white"

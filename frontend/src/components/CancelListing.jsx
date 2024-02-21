@@ -12,9 +12,8 @@ export default function CancelListing() {
   const token_id = Number(id);
   const [loadingController, setloadingController] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
-  const [fractionalizeButtonLoading, setFractionalizeButtonLoading] =
-    useState(false);
-  const [price, setPrice] = useState(null);
+  const [updateButtonLoading, setUpdateButtonLoading] = useState(false);
+  const [updatePrice, setUpdatePrice] = useState(null);
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
   const [data, setData] = useState({});
@@ -111,11 +110,28 @@ export default function CancelListing() {
     }
   };
 
-  const franctionalizeHandler = async (e) => {
-    setFractionalizeButtonLoading(true);
-    // functionality goes here
+  const updatePriceHandler = async (e) => {
+    e.preventDefault();
+    setUpdateButtonLoading(true);
+    console.log(updatePrice);
+    try {
+      const nftContract = await getContract();
+      const marketPlace = await getMarketContract();
+      const address = window.localStorage.getItem("currentAddr");
+
+      await marketPlace.methods
+        .updateListing(nftContract.options.address, token_id, updatePrice)
+        .send({ from: address });
+
+      await axios.post("http://localhost:4988/api/nfts/updatePrice", {
+        tokenId: token_id,
+        price: updatePrice,
+      });
+    } catch (error) {
+      console.log(error);
+    }
     setTimeout(() => {
-      setFractionalizeButtonLoading(false);
+      setUpdateButtonLoading(false);
       navigate("/marketplace/ERC721/Sale");
     }, 800);
   };
@@ -186,8 +202,8 @@ export default function CancelListing() {
                       type="number"
                       name="Price"
                       placeholder="Enter price"
-                      value={price}
-                      onChange={(e) => setPrice(e.target.value)}
+                      value={updatePrice}
+                      onChange={(e) => setUpdatePrice(e.target.value)}
                     />
                     <div className="font-bold text-3xl text-white pr-10 mb-4">
                       ETH
@@ -230,9 +246,9 @@ export default function CancelListing() {
                   <button
                     className="flex justify-center text-2xl items-center gap-2 w-full py-3 px-4 bg-green-400 text-gray-600 font-bold rounded-xl ease-in-out duration-300 shadow-slate-600 hover:scale-105  lg:m-0 md:px-6"
                     type="submit"
-                    onClick={franctionalizeHandler}
+                    onClick={updatePriceHandler}
                   >
-                    {fractionalizeButtonLoading ? (
+                    {updateButtonLoading ? (
                       <>
                         <svg
                           className="mr-5 h-6 w-6 animate-spin text-white"

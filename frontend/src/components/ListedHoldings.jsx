@@ -101,6 +101,7 @@ export const ListedHoldings = () => {
       setTokenIds1155(listingIds1155);
       setTotalAmount(totalAmount);
       setAmountOnSale(amountOnsale);
+      console.log("amount on sale", totalAmount);
     } catch (error) {
       console.error(error);
     }
@@ -208,7 +209,10 @@ export const ListedHoldings = () => {
                       price={price1155[index]}
                       is1155={true}
                       onSale={true}
-                      owned={(amountOnSale[index] / totalAmount[index]) * 100}
+                      owned={(
+                        (amountOnSale[index] / totalAmount[index]) *
+                        100
+                      ).toFixed(2)}
                     />
                   </Link>
                 </div>
