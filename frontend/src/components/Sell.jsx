@@ -5,6 +5,7 @@ import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
 import { getMarketContract } from "../utils/getBlockBid";
 import { getContract } from "../utils/getNft721";
+import { getContract1155 } from "../utils/getNft1155";
 import Web3 from "web3";
 import axios from "axios";
 
@@ -19,6 +20,7 @@ export default function Sell() {
   const [timeSetterbox, setTimeSetterbox] = useState(true);
   const [price, setPrice] = useState(null);
   const [priceMsg, setPriceMsg] = useState("Set Your Price");
+  const [fractions, setFractions] = useState(null);
   const [days, setDays] = useState(null);
   const [hours, setHours] = useState(null);
   const [minutes, setMinutes] = useState(null);
@@ -59,6 +61,7 @@ export default function Sell() {
             setData({
               img_src: res.image_uri,
               name: res.name,
+              image_hash: res.image_hash,
               description: res.description,
             });
           }
@@ -88,6 +91,15 @@ export default function Sell() {
 
     setMessage("");
     setMessageClass("");
+    return true;
+  };
+
+  const formValidFractions = async () => {
+    if (fractions == null || Number(fractions) <= 0) {
+      setMessage("Fractions cannot be null or less than 0");
+      setMessageClass("font-bold text-xl text-red-600");
+      return false;
+    }
     return true;
   };
 
@@ -148,7 +160,62 @@ export default function Sell() {
     }
   };
 
-  const franctionalizeHandler = async (e) => {};
+  const franctionalizeHandler = async (e) => {
+    e.preventDefault();
+    if ((await formValidFractions()) == true) {
+      setloadingController(true);
+      const address = window.localStorage.getItem("currentAddr");
+      try {
+        const nftContract = await getContract();
+
+        const txn = await nftContract.methods
+          .burnToken(token_id)
+          .send({ from: address });
+
+        if (txn) {
+          await axios.delete(
+            `http://localhost:4988/api/nfts/deleteNft/${token_id}`
+          );
+        }
+      } catch (err) {
+        console.log(err);
+      }
+      try {
+        const nft1155 = await getContract1155();
+        const nftAddress = await nft1155.options.address;
+
+        const quantity = Number(fractions);
+        const imageUri = data.img_src;
+
+        const tokenId = await nft1155.methods.getTokenId().call();
+        await nft1155.methods
+          .mint(address, quantity, imageUri, [])
+          .send({ from: address });
+
+        const imageHash = data.image_hash;
+
+        const nftData = {
+          token_id: Number(tokenId),
+          nft_address: nftAddress,
+          name: data.name,
+          description: data.description,
+          total_quantity: quantity,
+          image_uri: imageUri,
+          image_hash: imageHash,
+          price: 0,
+          owners: { [address]: quantity },
+        };
+        await axios.post(
+          "http://localhost:4988/api/nfts1155/addNfts1155",
+          nftData
+        );
+        setloadingController(false);
+        navigate("/profile/holdings");
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
 
   const auctionHandler = async (e) => {
     e.preventDefault();
@@ -454,9 +521,9 @@ export default function Sell() {
                           className="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
                           type="number"
                           name="Price"
-                          placeholder="Enter price"
-                          value={price}
-                          onChange={(e) => setPrice(e.target.value)}
+                          placeholder="Enter Fractions"
+                          value={fractions}
+                          onChange={(e) => setFractions(e.target.value)}
                         />
                         <div className="font-bold text-3xl text-white pr-10 mb-4">
                           Tokens

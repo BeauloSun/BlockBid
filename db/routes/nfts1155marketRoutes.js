@@ -190,4 +190,22 @@ router.post("/checkIfHashExists", async (req, res) => {
   res.json(exists);
 });
 
+router.post("/updatePrice", async (req, res) => {
+  const { listingId, price } = req.body;
+  try {
+    const nft = await Nft1155marketplaceModel.findOne({
+      listing_id: listingId,
+    });
+    if (!nft) {
+      return res.status(404).json({ message: "NFT not found" });
+    }
+
+    nft.price = price;
+    await nft.save();
+    res.json({ message: "Price updated successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;

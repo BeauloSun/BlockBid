@@ -278,6 +278,13 @@ contract BlockBid is ReentrancyGuard{
             }
         }
         return false;
-}
+    }
+    
+    
+    function updateListing(address _nftAddress, uint256 _tokenId , uint256 price) public Owner721(_nftAddress , _tokenId , msg.sender){
+        require(price > 0 , "Price cannot be lower than 0");
+        nftListed721[_tokenId].price = price;
+    }
+
 
 }

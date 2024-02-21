@@ -97,6 +97,19 @@ contract BlockBid1155 is ReentrancyGuard{
 
     }
 
+    function getNft1155Listing(uint _listingId) public view returns(token1155 memory){
+        return nft1155Listing[_listingId];
+
+    }
+
+    function updateListing(uint256 _listingId , uint256 price) public {
+
+        token1155 memory token = nft1155Listing[_listingId];
+        require(token.seller == msg.sender , "user is not the owner");
+        require(price > 0 , "Price cannot be lower than 0");
+
+        nft1155Listing[_listingId].price = price;
+    }
 
 
 

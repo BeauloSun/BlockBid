@@ -306,4 +306,38 @@ router.post("/addNfts", async (req, res) => {
   res.json(nft);
 });
 
+router.post("/updatePrice", async (req, res) => {
+  const { tokenId, price } = req.body;
+  try {
+    const nft = await NftModel.findOne({ token_id: tokenId });
+    if (!nft) {
+      return res.status(404).json({ message: "NFT not found" });
+    }
+
+    if (nft.on_sale) {
+      nft.price = price;
+      await nft.save();
+      res.json({ message: "Price updated successfully" });
+    } else {
+      res.status(400).json({ message: "NFT is not on sale" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.delete("/deleteNft/:tokenId", async (req, res) => {
+  try {
+    const nft = await NftModel.findOne({ token_id: req.params.tokenId });
+    if (!nft) {
+      return res.status(404).json({ message: "NFT not found" });
+    }
+
+    await NftModel.deleteOne({ token_id: req.params.tokenId });
+    res.json({ message: "NFT deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
