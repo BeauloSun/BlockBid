@@ -14,7 +14,8 @@ export default function LineChart({
 }) {
   const chartConfig = {
     type: "line",
-    height: 240,
+    height: "150%",
+    width: "100%",
     series: [
       {
         name: colName,
@@ -93,7 +94,7 @@ export default function LineChart({
     },
   };
   return (
-    <Card className="bg-slate-700">
+    <Card className="bg-slate-700 w-full h-full">
       <CardHeader
         floated={false}
         shadow={false}
@@ -105,13 +106,13 @@ export default function LineChart({
         </div>
         <div>
           <Typography variant="h6" color="white" className="text-2xl">
-            Price Fluctuation
+            Price History
           </Typography>
           <Typography
             variant="small"
             className="max-w-sm font-normal text-slate-300 text-xl"
           >
-            The price history for the past year
+            The price history for the past 5 days
           </Typography>
         </div>
       </CardHeader>
