@@ -82,6 +82,63 @@ router.post("/getTokenHistory", (req, res) => {
   });
 });
 
+router.post("/addTokenHistory", (req, res) => {
+  const { tokenId, price, date } = req.body;
+
+  // Check if the date exists in the 721history table
+  sql = `SELECT * FROM nft1155history WHERE tokenId = ? AND date = ?`;
+  db.get(sql, [tokenId, date], (err, row) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+
+    // If the date exists, update the price value
+    if (row) {
+      sql = `UPDATE nft1155history SET Price = ? WHERE tokenId = ? AND date = ?`;
+      db.run(sql, [price, tokenId, date], function (err) {
+        if (err) {
+          res.status(400).json({ error: err.message });
+          return;
+        }
+        res.json({ message: "Price updated successfully" });
+      });
+    } else {
+      // If the date does not exist, insert a new row into the 721history table
+      sql = `INSERT INTO nft1155history(tokenId, Price, date) VALUES(?, ?, ?)`;
+      db.run(sql, [tokenId, price, date], function (err) {
+        if (err) {
+          res.status(400).json({ error: err.message });
+          return;
+        }
+        res.json({ message: "New history added successfully" });
+        // Sort nft721history table by tokenId and date
+        sql = `CREATE TABLE nft1155history_new AS SELECT * FROM nft1155history ORDER BY tokenId ASC, date ASC`;
+        db.run(sql, function (err) {
+          if (err) {
+            res.status(400).json({ error: err.message });
+            return;
+          }
+          sql = `DROP TABLE nft1155history`;
+          db.run(sql, function (err) {
+            if (err) {
+              res.status(400).json({ error: err.message });
+              return;
+            }
+            sql = `ALTER TABLE nft1155history_new RENAME TO nft1155history`;
+            db.run(sql, function (err) {
+              if (err) {
+                res.status(400).json({ error: err.message });
+                return;
+              }
+            });
+          });
+        });
+      });
+    }
+  });
+});
+
 // fs.createReadStream("./Project_data/1155history.csv")
 //   .pipe(csv())
 //   .on("data", (row) => {

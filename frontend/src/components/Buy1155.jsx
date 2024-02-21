@@ -18,6 +18,7 @@ export default function Buy1155() {
   const [rowData, setRowData] = useState([]);
   const [colName, setColName] = useState("");
   const [colData, setColData] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
@@ -56,7 +57,7 @@ export default function Buy1155() {
       }
 
       const responseHistory = await axios.post(
-        "http://localhost:3666/nft721history/getTokenHistory",
+        "http://localhost:3666/nft1155history/getTokenHistory",
         {
           tokenId: tokenId.toString(),
         }
@@ -72,7 +73,7 @@ export default function Buy1155() {
   };
 
   const checkUserNotOwner = (address) => {
-    if (buyData.seller == address) {
+    if (buyData.seller === address) {
       return false;
     }
     return true;
@@ -133,7 +134,24 @@ export default function Buy1155() {
           changeNft1155MarketDatabase(address);
         }
         // updating the databases
+
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
+        const day = ("0" + currentDate.getDate()).slice(-2);
+
+        const analyticsBody = {
+          tokenId: tokenId.toString(),
+          price: buyData.price,
+          date: `${year}-${month}-${day}`,
+        };
+
+        await axios.post(
+          "http://localhost:3666/nft1155history/addTokenHistory",
+          analyticsBody
+        );
       }
+      navigate("/profile/holdings");
     } catch (error) {
       console.log("This is transaction", txn);
       console.error(error);

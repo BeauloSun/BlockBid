@@ -109,6 +109,23 @@ export default function Buy721() {
         "http://localhost:4988/api/nfts/putNftInProfile",
         puttingProfileBody
       );
+
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
+      const day = ("0" + currentDate.getDate()).slice(-2);
+
+      const analyticsBody = {
+        tokenId: token_id.toString(),
+        price: data.price,
+        date: `${year}-${month}-${day}`,
+      };
+
+      await axios.post(
+        "http://localhost:3666/nft721history/addTokenHistory",
+        analyticsBody
+      );
+
       setMessage("Buy out successful!");
       setMessageClass("font-bold text-xl text-[#48f9ff]");
       setloadingController(false);

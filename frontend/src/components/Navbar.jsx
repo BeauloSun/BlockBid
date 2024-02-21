@@ -41,15 +41,15 @@ export const Navbar = () => {
       <ul className="hidden navbar:flex justify-self-end text-xl">
         <Link
           className="p-4 transition-all duration-300 ease-in-out font-bold hover:text-[#46ff65] hover:bg-slate-800 rounded-xl"
-          to="/marketplace/ERC721/Sale"
+          to="/mint"
         >
-          Marketplace
+          Mint
         </Link>
         <Link
           className="p-4 transition-all duration-300 ease-in-out font-bold hover:text-[#46ff65] hover:bg-slate-800 rounded-xl"
-          to="/analytics"
+          to="/marketplace/ERC721/Sale"
         >
-          Analytics
+          Marketplace
         </Link>
         <Link
           className="p-4 transition-all duration-300 ease-in-out font-bold hover:text-[#46ff65] hover:bg-slate-800 rounded-xl"
@@ -77,16 +77,16 @@ export const Navbar = () => {
         <Link
           onClick={handleNav}
           className="p-4 transition-all duration-500 ease-in-out font-bold hover:text-[#46ff65] border-b border-white"
-          to="/marketplace/ERC721/Sale"
+          to="/mint"
         >
-          Marketplace
+          Mint
         </Link>
         <Link
           onClick={handleNav}
           className="p-4 transition-all duration-500 ease-in-out font-bold hover:text-[#46ff65] border-b border-white"
-          to="/analytics"
+          to="/marketplace/ERC721/Sale"
         >
-          Analytics
+          Marketplace
         </Link>
         <Link
           onClick={handleNav}

@@ -189,6 +189,21 @@ export default function Bid() {
           var highest_bidder = null;
           if (highest_bid.data) {
             highest_bidder = highest_bid.data.bidder;
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
+            const day = ("0" + currentDate.getDate()).slice(-2);
+
+            const analyticsBody = {
+              tokenId: token_id.toString(),
+              price: highest_bid.data.price,
+              date: `${year}-${month}-${day}`,
+            };
+
+            await axios.post(
+              "http://localhost:3666/nft721history/addTokenHistory",
+              analyticsBody
+            );
           }
           const auctionEndBody = {
             token_id: Number(token_id),
