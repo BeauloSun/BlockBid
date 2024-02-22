@@ -396,3 +396,4 @@ FodyWeavers.xsd
 .env
 /deployments/
 /frontend/src/backend-constants/
+/sqlDb/blockbid.db

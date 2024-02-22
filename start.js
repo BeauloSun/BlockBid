@@ -14,13 +14,13 @@ function runCommand(command, cwd) {
 }
 
 // First command
-runCommand("yarn hardhat deploy --network sepolia", ".");
+// runCommand("yarn hardhat deploy --network ganache", ".");
 
-// Second command
-runCommand("npm start", "./db");
+// // Second command
+// runCommand("npm start", "./db");
 
-// Third command
-runCommand("yarn start", "./frontend");
+// // Third command
+// runCommand("yarn start", "./frontend");
 
 // Fourth command
 runCommand("npm start", "./sqlDb");

@@ -1,8 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
-const nft721history = require("./tables/nft721history");
-const nft1155history = require("./tables/nft1155history");
 const cors = require("cors");
 const fs = require("fs");
 const sqlite = require("sqlite3").verbose();
@@ -29,7 +27,7 @@ if (!fs.existsSync("./blockbid.db")) {
     );
 
     db.run(
-      "CREATE TABLE nft1155histor y(ID INTEGER PRIMARY KEY AUTOINCREMENT, tokenId INTEGER, Price FLOAT, date DATE)",
+      "CREATE TABLE nft1155history(ID INTEGER PRIMARY KEY AUTOINCREMENT, tokenId INTEGER, Price FLOAT, date DATE)",
       (err) => {
         if (err) {
           console.error(err);
@@ -52,6 +50,9 @@ if (!fs.existsSync("./blockbid.db")) {
     }
   );
 }
+
+const nft721history = require("./tables/nft721history");
+const nft1155history = require("./tables/nft1155history");
 
 app.use(bodyParser.json());
 app.use(cors());
