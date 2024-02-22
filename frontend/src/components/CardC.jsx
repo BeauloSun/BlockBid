@@ -67,11 +67,11 @@ const CardC = ({
                 style={{ height: percentage }}
               ></div>
               <div
-                className={`absolute top-1/2 left-1/2 transition-opacity duration-300 transform -translate-x-1/2 -translate-y-1/2 z-30 text-yellow-300 text-5xl font-semibold ${
+                className={`absolute top-1/2 left-1/2 transition-opacity duration-300 transform -translate-x-1/2 -translate-y-1/2 z-30 text-white text-4xl font-semibold ${
                   isHovered ? "opacity-100" : "opacity-0"
                 }`}
               >
-                {owned} %
+                {owned}%
               </div>
             </>
           ) : (

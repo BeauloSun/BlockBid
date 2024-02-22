@@ -47,7 +47,7 @@ export default function TokenSellerList() {
   return (
     <div>
       <div
-        className="bg-yellow-300 py-10"
+        className="py-10"
         style={{
           backgroundImage: `url(${bg})`,
           backgroundSize: "cover",
