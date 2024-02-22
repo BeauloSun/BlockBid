@@ -117,7 +117,7 @@ export default function CancelListing() {
         .updateListing(listing_id, updatePriceNum)
         .send({ from: address });
 
-      await axios("http://localhost:4988/api/nfts1155market/updatePrice", {
+      await axios.post("http://localhost:4988/api/nfts1155market/updatePrice", {
         listingId: listing_id,
         price: updatePrice,
       });
