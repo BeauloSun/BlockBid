@@ -11,16 +11,17 @@ router.delete("/deleteAllNfts", async (req, res) => {
   }
 });
 
-router.delete("/burnNft", async (req, res) => {
-  const { token_id } = req.body;
+router.delete("/burnNft/:tokenId", async (req, res) => {
   try {
-    const result = await Nft1155Model.deleteOne({ token_id: token_id });
-    if (result.deletedCount === 0) {
-      return res.status(404).json({ message: "NFT not found." });
+    const result = await Nft1155Model.findOne({ token_id: req.params.tokenId });
+    if (!result) {
+      return res.status(404).json({ message: "NFT not found" });
     }
-    res.json({ message: "NFT has been deleted from the database." });
+
+    await Nft1155Model.deleteOne({ token_id: req.params.tokenId });
+    res.json({ message: "NFT deleted successfully" });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ message: err.message });
   }
 });
 

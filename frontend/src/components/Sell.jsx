@@ -162,8 +162,9 @@ export default function Sell() {
 
   const franctionalizeHandler = async (e) => {
     e.preventDefault();
-    if ((await formValidFractions()) == true) {
+    if ((await formValidFractions()) === true) {
       setloadingController(true);
+      setFractionalizeButtonLoading(true);
       const address = window.localStorage.getItem("currentAddr");
       try {
         const nftContract = await getContract();
@@ -209,8 +210,12 @@ export default function Sell() {
           "http://localhost:4988/api/nfts1155/addNfts1155",
           nftData
         );
-        setloadingController(false);
-        navigate("/profile/holdings");
+
+        setTimeout(() => {
+          setloadingController(false);
+          setFractionalizeButtonLoading(false);
+          navigate("/profile/holdings");
+        }, 800);
       } catch (err) {
         console.log(err);
       }

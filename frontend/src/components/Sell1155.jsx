@@ -5,6 +5,7 @@ import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
 import { getMarketContract1155 } from "../utils/getBlockBid1155";
 import { getContract1155 } from "../utils/getNft1155";
+import { getContract } from "../utils/getNft721";
 import Web3 from "web3";
 import axios from "axios";
 
@@ -13,6 +14,10 @@ export default function Sell1155() {
   const token_id = Number(id);
   const [loadingController, setloadingController] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
+  const [defractionBool, setDefractionBool] = useState(false);
+  const [defractionalizeButtonLoading, setDefractionalizeButtonLoading] =
+    useState(false);
+  const [fullOwnership, setFullOwnership] = useState(false);
   const [price, setPrice] = useState(null);
   const [quantity, setQuantity] = useState(null);
   const [owners, setOwners] = useState({});
@@ -50,6 +55,7 @@ export default function Sell1155() {
             res.owners[window.localStorage.getItem("currentAddr")],
           total_quantity: res.total_quantity,
         });
+
         let responseOwners = await axios.post(
           "http://localhost:4988/api/nfts1155/getOwners",
           {
@@ -64,6 +70,14 @@ export default function Sell1155() {
 
     fetchData();
   }, [navigate, token_id]);
+
+  useEffect(() => {
+    if (data.owned_quantity === data.total_quantity) {
+      setFullOwnership(true);
+    } else {
+      setFullOwnership(false);
+    }
+  }, [data]);
 
   const formValid = async () => {
     if (!price) {
@@ -162,6 +176,61 @@ export default function Sell1155() {
     }
   };
 
+  const defractionTick = () => {
+    setDefractionBool(!defractionBool);
+  };
+
+  const defranctionalizeHandler = async (e) => {
+    e.preventDefault();
+    setloadingController(true);
+    setDefractionalizeButtonLoading(true);
+    const address = window.localStorage.getItem("currentAddr");
+    try {
+      const nftContract = await getContract1155();
+
+      const txn = await nftContract.methods
+        .burn(address, token_id, data.total_quantity)
+        .send({ from: address });
+
+      if (txn) {
+        await axios.delete(
+          `http://localhost:4988/api/nfts1155/burnNft/${token_id}`
+        );
+      }
+      const nft721 = await getContract();
+      const nftAddress = await nft721.options.address;
+
+      const imageUri = data.img_src;
+      const imageHash = data.image_hash;
+      const tokenId = await nft721.methods.getTokenId().call();
+      await nft721.methods.mintNft(address, imageHash).send({ from: address });
+
+      const nftData = {
+        token_id: tokenId.toString(),
+        nft_address: nftAddress,
+        name: data.name,
+        description: data.description,
+        image_uri: imageUri,
+        image_hash: imageHash,
+        price: 0,
+        owner: address,
+        on_auction: false,
+        on_sale: false,
+        bids: {},
+      };
+
+      await axios.post("http://localhost:4988/api/nfts/addNfts", nftData);
+
+      setTimeout(() => {
+        setloadingController(false);
+        setDefractionalizeButtonLoading(false);
+        navigate("/profile/holdings");
+      }, 800);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div
       className="py-[5%]"
@@ -218,6 +287,25 @@ export default function Sell1155() {
                         tokens
                       </span>
                     </div>
+                    {fullOwnership ? (
+                      <div className="flex items-center justify-left gap-2 pt-3">
+                        <input
+                          id="enableInput"
+                          type="checkbox"
+                          value=""
+                          onClick={defractionTick}
+                          class="w-6 h-6 text-yellow-400 bg-white border-green-600 rounded focus:ring-blue-400 focus:ring-2"
+                        />
+                        <label
+                          htmlFor="enableInput"
+                          className="font-bold text-xl text-white"
+                        >
+                          Defractionalize it into 721?
+                        </label>
+                      </div>
+                    ) : (
+                      <span></span>
+                    )}
                     <label className="text-white text-xl font-semibold">
                       Set Your Quantity
                     </label>
@@ -287,6 +375,45 @@ export default function Sell1155() {
                         <span>Sell !</span>
                       )}
                     </button>
+                    {defractionBool ? (
+                      <div className="mt-5">
+                        <button
+                          className="flex justify-center text-2xl items-center gap-2 w-full py-3 px-4 bg-green-400 text-gray-600 font-bold rounded-xl ease-in-out duration-300 shadow-slate-600 hover:scale-105  lg:m-0 md:px-6"
+                          type="submit"
+                          onClick={defranctionalizeHandler}
+                        >
+                          {defractionalizeButtonLoading ? (
+                            <>
+                              <svg
+                                className="mr-5 h-6 w-6 animate-spin text-white"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                              >
+                                <circle
+                                  className="opacity-25"
+                                  cx="12"
+                                  cy="12"
+                                  r="10"
+                                  stroke="currentColor"
+                                  stroke-width="4"
+                                ></circle>
+                                <path
+                                  className="opacity-75"
+                                  fill="currentColor"
+                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                ></path>
+                              </svg>
+                              <span> Processing... </span>
+                            </>
+                          ) : (
+                            <span>Defractionalize !</span>
+                          )}
+                        </button>
+                      </div>
+                    ) : (
+                      <div></div>
+                    )}
                   </div>
                 </div>
               </div>
