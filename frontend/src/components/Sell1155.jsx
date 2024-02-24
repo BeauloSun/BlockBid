@@ -18,12 +18,19 @@ export default function Sell1155() {
   const [defractionalizeButtonLoading, setDefractionalizeButtonLoading] =
     useState(false);
   const [fullOwnership, setFullOwnership] = useState(false);
+  const [days, setDays] = useState(null);
+  const [hours, setHours] = useState(null);
+  const [minutes, setMinutes] = useState(null);
   const [price, setPrice] = useState(null);
   const [quantity, setQuantity] = useState(null);
   const [owners, setOwners] = useState({});
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
   const [data, setData] = useState({});
+  const [timeSetterboxStyle, setTimeSetterboxStyle] = useState("bg-gray-500");
+  const [auctionBool, setAuctionBool] = useState(false);
+  const [priceMsg, setPriceMsg] = useState("Set your price per token");
+  const [timeSetterbox, setTimeSetterbox] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -231,6 +238,20 @@ export default function Sell1155() {
     }
   };
 
+  const auctionTick = () => {
+    setTimeSetterbox(!timeSetterbox);
+    setAuctionBool(!auctionBool);
+    if (timeSetterboxStyle === "bg-gray-500") {
+      setTimeSetterboxStyle("");
+      setPriceMsg("Set your starting price per token:");
+    } else {
+      setTimeSetterboxStyle("bg-gray-500");
+      setPriceMsg("Set your price per token:");
+    }
+  };
+
+  const auctionHandler = () => {};
+
   return (
     <div
       className="py-[5%]"
@@ -287,6 +308,21 @@ export default function Sell1155() {
                         tokens
                       </span>
                     </div>
+                    <div className="flex items-center justify-left gap-2 pt-3">
+                      <input
+                        id="enableInput"
+                        type="checkbox"
+                        value=""
+                        onClick={auctionTick}
+                        class="w-6 h-6 text-yellow-400 bg-white border-green-600 rounded focus:ring-blue-400 focus:ring-2"
+                      />
+                      <label
+                        htmlFor="enableInput"
+                        className="font-bold text-xl text-white"
+                      >
+                        Selling for auction?
+                      </label>
+                    </div>
                     {fullOwnership ? (
                       <div className="flex items-center justify-left gap-2 pt-3">
                         <input
@@ -324,9 +360,9 @@ export default function Sell1155() {
                     </div>
                   </div>
                   <label className="text-white text-xl font-semibold">
-                    Set The Price Per Token
+                    {priceMsg}
                   </label>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between mt-2 items-center">
                     <input
                       className="p-2 rounded-xl border mb-3 pl-4 text-xl w-[60%]"
                       type="number"
@@ -339,42 +375,113 @@ export default function Sell1155() {
                       ETH / Token
                     </div>
                   </div>
+                  <label
+                    for="Time"
+                    className="block text-left font-bold text-2xl text-white"
+                  >
+                    Duration of the auction
+                  </label>
+                  <div className="flex justify-between items-center gap-2">
+                    <input
+                      className={`p-2 rounded-xl border w-1/3 pl-2 text-xl ${timeSetterboxStyle} duration-300`}
+                      type="number"
+                      name="Day"
+                      disabled={timeSetterbox}
+                      value={days}
+                      onChange={(e) => setDays(e.target.value)}
+                    />
+                    <div className="font-bold text-xl text-white">Day(s)</div>
+                    <input
+                      className={`p-2 rounded-xl border w-1/3 pl-2 text-xl ${timeSetterboxStyle} duration-300`}
+                      type="number"
+                      name="Hour"
+                      disabled={timeSetterbox}
+                      value={hours}
+                      onChange={(e) => setHours(e.target.value)}
+                    />
+                    <div className="font-bold text-xl text-white">Hour(s)</div>
+                    <input
+                      className={`p-2 rounded-xl border w-1/3 pl-2 text-xl ${timeSetterboxStyle} duration-300`}
+                      type="number"
+                      name="Minute"
+                      disabled={timeSetterbox}
+                      value={minutes}
+                      onChange={(e) => setMinutes(e.target.value)}
+                    />
+                    <div className="font-bold text-xl text-white">Min(s)</div>
+                  </div>
                   <p className={messageClass}>{message}</p>
 
                   <div className="w-full text-left my-4 mr-4">
-                    <button
-                      className="flex justify-center text-2xl items-center gap-2 w-full py-3 px-4 bg-blue-400 text-white font-bold rounded-xl ease-in-out duration-300 shadow-slate-600 hover:scale-105  lg:m-0 md:px-6"
-                      type="submit"
-                      onClick={sellHandler}
-                    >
-                      {buttonLoading ? (
-                        <>
-                          <svg
-                            className="mr-5 h-6 w-6 animate-spin text-white"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              stroke-width="4"
-                            ></circle>
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            ></path>
-                          </svg>
-                          <span> Processing... </span>
-                        </>
-                      ) : (
-                        <span>Sell !</span>
-                      )}
-                    </button>
+                    {auctionBool ? (
+                      <button
+                        className="flex justify-center text-2xl items-center gap-2 w-full py-3 px-4 bg-blue-400 text-white font-bold rounded-xl ease-in-out duration-300 shadow-slate-600 hover:scale-105  lg:m-0 md:px-6"
+                        type="submit"
+                        onClick={auctionHandler}
+                      >
+                        {buttonLoading ? (
+                          <>
+                            <svg
+                              className="mr-5 h-6 w-6 animate-spin text-white"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                stroke-width="4"
+                              ></circle>
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              ></path>
+                            </svg>
+                            <span> Processing... </span>
+                          </>
+                        ) : (
+                          <span>Auction !</span>
+                        )}
+                      </button>
+                    ) : (
+                      <button
+                        className="flex justify-center text-2xl items-center gap-2 w-full py-3 px-4 bg-blue-400 text-white font-bold rounded-xl ease-in-out duration-300 shadow-slate-600 hover:scale-105  lg:m-0 md:px-6"
+                        type="submit"
+                        onClick={sellHandler}
+                      >
+                        {buttonLoading ? (
+                          <>
+                            <svg
+                              className="mr-5 h-6 w-6 animate-spin text-white"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                stroke-width="4"
+                              ></circle>
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              ></path>
+                            </svg>
+                            <span> Processing... </span>
+                          </>
+                        ) : (
+                          <span>Sell !</span>
+                        )}
+                      </button>
+                    )}
                     {defractionBool ? (
                       <div className="mt-5">
                         <button
