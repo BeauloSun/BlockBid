@@ -1,4 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("hardhat-gas-reporter");
 require("hardhat-deploy");
 require("ethers");
 require("@nomicfoundation/hardhat-ethers");
@@ -6,6 +7,14 @@ require("dotenv").config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
+  gasReporter: {
+    enabled: true,
+    currency: "GBP", // currency to show
+    coinmarketcap: process.env.COINMARKET_API_KEY, //to fetch gas data
+    showTimeSpent: true,
+    gasPriceApi:
+      "https://api.etherscan.io/api?module=proxy&action=eth_gasPrice",
+  },
   solidity: "0.8.20",
   defaultNetwork: "hardhat",
   networks: {

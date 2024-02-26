@@ -15,7 +15,7 @@
     "fs": "^0.0.1-security",
     "hardhat": "^2.19.0",
     "hardhat-deploy": "^0.11.43",
-    "hardhat-gas-reporter": "^1.0.8",
+    "hardhat-gas-reporter": "^1.0.10",
     "path": "^0.12.7",
     "solidity-coverage": "^0.8.0",
     "typechain": "^8.1.0"
