@@ -16,7 +16,6 @@ contract BlockBid1155 is ReentrancyGuard{
     event ListedNft1155(uint256 sellingId);
 
     uint256 sellingId;
-    uint256 auctionId;
 
     mapping (uint256 => token1155) nft1155Listing;
     mapping (uint256 => auction1155) nft1155auction;
@@ -182,69 +181,69 @@ contract BlockBid1155 is ReentrancyGuard{
         if (nft.isApprovedForAll(msg.sender , address(this)) == false){
             revert DoNotHaveApprovalToSellNft();
         }
-        auctionId += 1;
+        sellingId += 1;
 
 
-        nft1155auction[auctionId] = auction1155(_tokenId , payable(msg.sender) , minPrice ,amount, endtime,  0, address(0), false, auctionId);
-        AuctionedTokens1155.push(_tokenId);
+        nft1155auction[sellingId] = auction1155(_tokenId , payable(msg.sender) , minPrice ,amount, endtime,  0, address(0), false, sellingId);
+        AuctionedTokens1155.push(sellingId);
     }
 
-    function bid( uint256 _auctionId) external payable AuctionExists(_auctionId){
+    function bid( uint256 _listingId) external payable AuctionExists(_listingId){
 
         // check owner should not bid
-        auction1155 storage auctionItem =  nft1155auction[_auctionId];
+        auction1155 storage auctionItem =  nft1155auction[_listingId];
         require(auctionItem.seller != msg.sender  , "Owner cannot bid on their own nft");
         require(block.timestamp < auctionItem.auctionEndTime, "The auction has ended");
 
         // check the new added value is greater than previous value + new value
-        uint256 newTotalBid = auctionBids[_auctionId][msg.sender] + msg.value;
+        uint256 newTotalBid = auctionBids[_listingId][msg.sender] + msg.value;
         require(newTotalBid >= auctionItem.minPrice , "The bid is lower than the minimum price");
         require(newTotalBid > auctionItem.highestBid, "There already is a higher bid.");
 
         // update the bids
-        auctionBids[_auctionId][msg.sender] = newTotalBid;
+        auctionBids[_listingId][msg.sender] = newTotalBid;
 
-        if(!checkBidderExists(_auctionId, msg.sender)){
-            auctionBidders[_auctionId].push(msg.sender);
+        if(!checkBidderExists(_listingId, msg.sender)){
+            auctionBidders[_listingId].push(msg.sender);
         }
 
         auctionItem.highestBid = newTotalBid;
         auctionItem.highestBidder = msg.sender;
     }
 
-    function auctionEnd(address _nftAddress, uint256 _auctionId) external {
+    function auctionEnd(address _nftAddress, uint256 _listingId) external {
 
-        auction1155 memory auction = nft1155auction[_auctionId];
+        auction1155 memory auction = nft1155auction[_listingId];
 
         require(block.timestamp >= auction.auctionEndTime, "Auction not yet ended.");
 
-         address[] memory bidders = auctionBidders[_auctionId];
+         address[] memory bidders = auctionBidders[_listingId];
 
 
         if (auction.highestBidder  == address(0)){
-            delete auctionBidders[_auctionId];
-            delete nft1155auction[_auctionId];
+            delete auctionBidders[_listingId];
+            delete nft1155auction[_listingId];
 
 
         }else{
                     // transfer all the money to the seller's fund
-            if(auctionBids[_auctionId][auction.highestBidder] == auction.highestBid){
-                UserFunds[auction.seller] += auctionBids[_auctionId][auction.highestBidder];
-                auctionBids[_auctionId][auction.highestBidder] = 0;
+            if(auctionBids[_listingId][auction.highestBidder] == auction.highestBid){
+                UserFunds[auction.seller] += auctionBids[_listingId][auction.highestBidder];
+                auctionBids[_listingId][auction.highestBidder] = 0;
             }
             // transfer the money to all the bidders fund
             for(uint256 j = 0 ; j < bidders.length; j++){
-                UserFunds[bidders[j]] += auctionBids[auctionId][bidders[j]];
-                delete auctionBids[_auctionId][bidders[j]];
+                UserFunds[bidders[j]] += auctionBids[_listingId][bidders[j]];
+                delete auctionBids[_listingId][bidders[j]];
             }
 
-            delete auctionBidders[_auctionId];
-            IERC1155(_nftAddress).safeTransferFrom( nft1155auction[_auctionId].seller, msg.sender, nft1155auction[_auctionId].tokenId,nft1155auction[_auctionId].amount,"");
-            delete nft1155auction[_auctionId];
+            delete auctionBidders[_listingId];
+            IERC1155(_nftAddress).safeTransferFrom( nft1155auction[_listingId].seller, msg.sender, nft1155auction[_listingId].tokenId,nft1155auction[_listingId].amount,"");
+            delete nft1155auction[_listingId];
 
         }
         uint i = 0;
-        while(AuctionedTokens1155[i] != _auctionId){
+        while(AuctionedTokens1155[i] != _listingId){
             i ++;
         } 
         if (i<AuctionedTokens1155.length){
@@ -256,8 +255,8 @@ contract BlockBid1155 is ReentrancyGuard{
 
     }
 
-    function checkBidderExists(uint256 _auctionId, address bidder) public view returns (bool) {
-        address[] storage bidders = auctionBidders[_auctionId];
+    function checkBidderExists(uint256 _listingId, address bidder) public view returns (bool) {
+        address[] storage bidders = auctionBidders[_listingId];
         for (uint i = 0; i < bidders.length; i++) {
             if (bidders[i] == bidder) {
                 return true;
@@ -267,12 +266,12 @@ contract BlockBid1155 is ReentrancyGuard{
     }
 
 
-    function getListedAuctionItem721(uint256 _auctionId) public view returns(auction1155 memory){
-        return nft1155auction[_auctionId];
+    function getListedAuctionItem721(uint256 _listingId) public view returns(auction1155 memory){
+        return nft1155auction[_listingId];
     }
 
-    function getAuctionId() public view returns(uint256 tokenId){
-        return auctionId;
+    function getListingId() public view returns(uint256 tokenId){
+        return sellingId;
     }
 
     function getUserFunds(address user) public view returns(uint256){
@@ -288,5 +287,17 @@ contract BlockBid1155 is ReentrancyGuard{
         (bool success , ) = payable(user).call{value:userfunds}("");
         require(success , "There was an error in transferring funds");
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
