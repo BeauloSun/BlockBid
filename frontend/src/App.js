@@ -13,10 +13,13 @@ import { Marketplace } from "./pages/Marketplace";
 import { Sale721 } from "./components/Sale721";
 import { Auction721 } from "./components/Auction721";
 import { Sale1155 } from "./components/Sale1155";
+import { Auction1155 } from "./components/Auction1155";
 import { Bidding } from "./pages/Bidding";
+import { BidNft1155 } from "./pages/BidNft1155";
 import { Selling } from "./pages/Selling";
 import { Selling1155 } from "./pages/Selling1155";
 import { Selling1155List } from "./pages/Selling1155List";
+import { Auction1155List } from "./pages/Auction1155List";
 import { Holdings } from "./components/Holdings";
 import Wallet from "./components/Wallet";
 import { ListedHoldings } from "./components/ListedHoldings";
@@ -74,8 +77,16 @@ function App() {
             element={<Selling1155List />}
           />
           <Route
+            path="/marketplace/ERC1155/Auction/:tokenid"
+            element={<Auction1155List />}
+          />
+          <Route
             path="/marketplace/ERC1155/Sale/:tokenid/:id"
             element={<BuyNft1155 />}
+          />
+          <Route
+            path="/marketplace/ERC1155/Auction/:tokenid/:id"
+            element={<BidNft1155 />}
           />
 
           <Route path="/profile" element={<Profile />}>
@@ -88,6 +99,7 @@ function App() {
             <Route path="ERC721/Sale" element={<Sale721 />} />
             <Route path="ERC721/Auction" element={<Auction721 />} />
             <Route path="ERC1155/Sale" element={<Sale1155 />} />
+            <Route path="ERC1155/Auction" element={<Auction1155 />} />
           </Route>
 
           <Route path="/haha" element={<Splitting />} />

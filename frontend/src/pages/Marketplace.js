@@ -13,6 +13,7 @@ export const Marketplace = () => {
     "ERC721/Sale": "ERC_721 - Sale",
     "ERC721/Auction": "ERC_721 - Auction",
     "ERC1155/Sale": "ERC_1155 - Sale",
+    "ERC1155/Auction": "ERC_1155 - Auction",
   };
 
   const [activeTab, setActiveTab] = useState(tabMapping[tabDefaultVal]);
@@ -84,6 +85,19 @@ export const Marketplace = () => {
               }`}
             >
               Sale (ERC-1155)
+            </button>
+          </Link>
+
+          <Link to="/marketplace/ERC1155/Auction">
+            <button
+              onClick={() => handleTabClick("ERC_1155 - Auction")}
+              className={`px-4 py-2 rounded-xl transition-all duration-200 transform hover:scale-110 ${
+                activeTab === "ERC_1155 - Auction"
+                  ? "bg-[#47ff9d] text-black font-bold"
+                  : "bg-gray-300 text-white bg-opacity-50 font-bold"
+              }`}
+            >
+              Auction (ERC-1155)
             </button>
           </Link>
         </div>
