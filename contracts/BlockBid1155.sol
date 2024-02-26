@@ -7,13 +7,24 @@ import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 error SenderIsNotTheOwner();
+error AuctionItemNotExists(uint256 auctionId);
+error DoNotHaveApprovalToSellNft();
+error UserHaveNoFunds();
+
 
 contract BlockBid1155 is ReentrancyGuard{
     event ListedNft1155(uint256 sellingId);
 
     uint256 sellingId;
+    uint256 auctionId;
 
     mapping (uint256 => token1155) nft1155Listing;
+    mapping (uint256 => auction1155) nft1155auction;
+    mapping(uint256 => mapping(address => uint256)) auctionBids;
+    mapping (uint256 => address[]) auctionBidders;
+    mapping (address => uint256) UserFunds;
+    uint256[] AuctionedTokens1155;
+    uint256[] ListedTokens1155;
 
 
     struct token1155{
@@ -27,10 +38,30 @@ contract BlockBid1155 is ReentrancyGuard{
         uint256 sellingId;
     }
 
+    struct auction1155{
+        uint256 tokenId;
+        address payable seller;
+        uint256 minPrice;
+        uint256 amount;
+        uint256 auctionEndTime;
+        uint256 highestBid;
+        address highestBidder;
+        bool end;
+        uint256 auctionId;
+    }
+
     modifier Owner1155(address nftAddress ,uint256 tokenId, address sender , uint256 amount){
         IERC1155 nft = IERC1155(nftAddress);
         if (nft.balanceOf(msg.sender , tokenId) < amount){
             revert SenderIsNotTheOwner();
+        }
+        _;
+    }
+
+    modifier AuctionExists (uint256 _auctionId){
+        auction1155 memory auctionItem = nft1155auction[_auctionId];
+        if(auctionItem.tokenId <= 0){
+            revert AuctionItemNotExists(_auctionId);
         }
         _;
     }
@@ -54,6 +85,7 @@ contract BlockBid1155 is ReentrancyGuard{
         address[] memory buyers;
 
         nft1155Listing[sellingId] = token1155(tokenId , payable(msg.sender) , price, amount ,buyers ,amount ,false,sellingId);
+        ListedTokens1155.push(sellingId);
         emit ListedNft1155(sellingId);
     }
 
@@ -88,14 +120,39 @@ contract BlockBid1155 is ReentrancyGuard{
     function deleteListingFromBuying(uint256 listedId) public {
         require(nft1155Listing[listedId].tokenId != 0 , "token is not listed");
         delete(nft1155Listing[listedId]);
+         
+        
+        uint i = 0;
+        while(ListedTokens1155[i] != listedId){
+            i ++;
+        } 
+        if (i<ListedTokens1155.length){
+            for (uint j = i ; j < ListedTokens1155.length-1 ; j++){
+               ListedTokens1155[j]= ListedTokens1155[j+1];
+            }
+           ListedTokens1155.pop();
         }
+    }
 
     function deleteListing(uint256 listedId) public {
         require(nft1155Listing[listedId].tokenId != 0 , "token is not listed");
         require(nft1155Listing[listedId].seller == msg.sender  , "User is not the owner");
         delete(nft1155Listing[listedId]);
 
+
+        uint i = 0;
+        while(ListedTokens1155[i] != listedId){
+            i ++;
+        } 
+        if (i<ListedTokens1155.length){
+            for (uint j = i ; j < ListedTokens1155.length-1 ; j++){
+               ListedTokens1155[j]= ListedTokens1155[j+1];
+            }
+           ListedTokens1155.pop();
+        }
+
     }
+    
 
     function getNft1155Listing(uint _listingId) public view returns(token1155 memory){
         return nft1155Listing[_listingId];
@@ -111,6 +168,125 @@ contract BlockBid1155 is ReentrancyGuard{
         nft1155Listing[_listingId].price = price;
     }
 
+    function auctionNft1155(address _nftAddress , uint256 _tokenId ,uint256 minPrice,uint256 auctionduration, uint256 amount) external Owner1155(_nftAddress , _tokenId , msg.sender , amount){
 
+        uint256 starttime = block.timestamp;
+        uint256 endtime = starttime + auctionduration;
+
+        require (block.timestamp < endtime , "Not sufficient time for auction");
+        require(minPrice >0 , "minPrice should be greater than 0");
+        require(amount > 0 , "Amount cannot be less than or equal to 0");
+
+        
+        IERC1155 nft = IERC1155(_nftAddress);
+        if (nft.isApprovedForAll(msg.sender , address(this)) == false){
+            revert DoNotHaveApprovalToSellNft();
+        }
+        auctionId += 1;
+
+
+        nft1155auction[auctionId] = auction1155(_tokenId , payable(msg.sender) , minPrice ,amount, endtime,  0, address(0), false, auctionId);
+        AuctionedTokens1155.push(_tokenId);
+    }
+
+    function bid( uint256 _auctionId) external payable AuctionExists(_auctionId){
+
+        // check owner should not bid
+        auction1155 storage auctionItem =  nft1155auction[_auctionId];
+        require(auctionItem.seller != msg.sender  , "Owner cannot bid on their own nft");
+        require(block.timestamp < auctionItem.auctionEndTime, "The auction has ended");
+
+        // check the new added value is greater than previous value + new value
+        uint256 newTotalBid = auctionBids[_auctionId][msg.sender] + msg.value;
+        require(newTotalBid >= auctionItem.minPrice , "The bid is lower than the minimum price");
+        require(newTotalBid > auctionItem.highestBid, "There already is a higher bid.");
+
+        // update the bids
+        auctionBids[_auctionId][msg.sender] = newTotalBid;
+
+        if(!checkBidderExists(_auctionId, msg.sender)){
+            auctionBidders[_auctionId].push(msg.sender);
+        }
+
+        auctionItem.highestBid = newTotalBid;
+        auctionItem.highestBidder = msg.sender;
+    }
+
+    function auctionEnd(address _nftAddress, uint256 _auctionId) external {
+
+        auction1155 memory auction = nft1155auction[_auctionId];
+
+        require(block.timestamp >= auction.auctionEndTime, "Auction not yet ended.");
+
+         address[] memory bidders = auctionBidders[_auctionId];
+
+
+        if (auction.highestBidder  == address(0)){
+            delete auctionBidders[_auctionId];
+            delete nft1155auction[_auctionId];
+
+
+        }else{
+                    // transfer all the money to the seller's fund
+            if(auctionBids[_auctionId][auction.highestBidder] == auction.highestBid){
+                UserFunds[auction.seller] += auctionBids[_auctionId][auction.highestBidder];
+                auctionBids[_auctionId][auction.highestBidder] = 0;
+            }
+            // transfer the money to all the bidders fund
+            for(uint256 j = 0 ; j < bidders.length; j++){
+                UserFunds[bidders[j]] += auctionBids[auctionId][bidders[j]];
+                delete auctionBids[_auctionId][bidders[j]];
+            }
+
+            delete auctionBidders[_auctionId];
+            IERC1155(_nftAddress).safeTransferFrom( nft1155auction[_auctionId].seller, msg.sender, nft1155auction[_auctionId].tokenId,nft1155auction[_auctionId].amount,"");
+            delete nft1155auction[_auctionId];
+
+        }
+        uint i = 0;
+        while(AuctionedTokens1155[i] != _auctionId){
+            i ++;
+        } 
+        if (i<AuctionedTokens1155.length){
+            for (uint k = i ; k < AuctionedTokens1155.length-1 ; k++){
+                AuctionedTokens1155[k]= AuctionedTokens1155[k+1];
+            }
+           AuctionedTokens1155.pop();
+        }
+
+    }
+
+    function checkBidderExists(uint256 _auctionId, address bidder) public view returns (bool) {
+        address[] storage bidders = auctionBidders[_auctionId];
+        for (uint i = 0; i < bidders.length; i++) {
+            if (bidders[i] == bidder) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    function getListedAuctionItem721(uint256 _auctionId) public view returns(auction1155 memory){
+        return nft1155auction[_auctionId];
+    }
+
+    function getAuctionId() public view returns(uint256 tokenId){
+        return auctionId;
+    }
+
+    function getUserFunds(address user) public view returns(uint256){
+        return UserFunds[user];
+    }
+
+    function getFundBack(address user) external {
+        uint256 userfunds = UserFunds[user];
+        if(userfunds <= 0){
+            revert UserHaveNoFunds();
+        }
+        UserFunds[user] = 0;
+        (bool success , ) = payable(user).call{value:userfunds}("");
+        require(success , "There was an error in transferring funds");
+    }
 
 }
