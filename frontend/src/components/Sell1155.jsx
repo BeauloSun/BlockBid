@@ -155,6 +155,7 @@ export default function Sell1155() {
           price: price,
           seller: address,
           buyers: {},
+          on_auction: false,
         };
         const res = await axios.post(
           "http://localhost:4988/api/nfts1155market/addNfts1155",

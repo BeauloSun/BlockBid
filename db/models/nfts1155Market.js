@@ -36,6 +36,18 @@ const Nf1155marketplaceSchema = new mongoose.Schema({
     of: Number,
     default: {},
   },
+  on_auction: {
+    type: Boolean,
+  },
+  auction_time: {
+    type: Number,
+    default: 0,
+  },
+  bids: {
+    type: Map,
+    of: Number,
+    default: {},
+  },
 });
 
 const Nft1155marketplaceModel = mongoose.model(

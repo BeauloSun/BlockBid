@@ -22,7 +22,7 @@ export default function TokenSellerList() {
       try {
         const response = await axios.post(
           "http://localhost:4988/api/nfts1155market/getNftsOnSaleByTokenId",
-          { tokenId: tokenId }
+          { tokenId: tokenId, auction: false }
         );
 
         if (response.data) {

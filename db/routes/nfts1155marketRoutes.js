@@ -67,8 +67,8 @@ router.get("/getNftsOnSale", (req, res) => {
 });
 
 router.post("/getNftsOnSaleByTokenId", (req, res) => {
-  const { tokenId } = req.body;
-  Nft1155marketplaceModel.find({ token_id: tokenId })
+  const { tokenId, auction } = req.body;
+  Nft1155marketplaceModel.find({ token_id: tokenId, on_auction: auction })
     .then(function (nfts) {
       res.json(nfts);
     })
@@ -122,6 +122,7 @@ router.post("/addNfts1155", async (req, res) => {
     price,
     seller,
     buyers,
+    on_auction,
   } = req.body;
 
   const newNft1155 = new Nft1155marketplaceModel({
@@ -136,15 +137,19 @@ router.post("/addNfts1155", async (req, res) => {
     price,
     seller,
     buyers,
+    on_auction,
   });
   await newNft1155.save();
   res.json("nft added successfully");
 });
 
 router.post("/getNftOwnedByUser", async (req, res) => {
-  const { user } = req.body;
+  const { user, auction } = req.body;
 
-  const Nfts = await Nft1155marketplaceModel.find({ seller: user });
+  const Nfts = await Nft1155marketplaceModel.find({
+    seller: user,
+    on_auction: auction,
+  });
   res.json(Nfts);
 });
 
