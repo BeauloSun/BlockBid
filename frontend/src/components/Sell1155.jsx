@@ -252,7 +252,7 @@ export default function Sell1155() {
     setAuctionBool(!auctionBool);
     if (timeSetterboxStyle === "bg-gray-500") {
       setTimeSetterboxStyle("");
-      setPriceMsg("Set your starting price per token:");
+      setPriceMsg("Set your starting price for the batch:");
     } else {
       setTimeSetterboxStyle("bg-gray-500");
       setPriceMsg("Set your price per token:");
@@ -459,9 +459,15 @@ export default function Sell1155() {
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
                     />
-                    <div className="font-bold text-3xl text-white pr-10 mb-4">
-                      ETH / Token
-                    </div>
+                    {auctionBool ? (
+                      <div className="font-bold text-3xl text-white pr-10 mb-4">
+                        ETH
+                      </div>
+                    ) : (
+                      <div className="font-bold text-3xl text-white pr-10 mb-4">
+                        ETH / Token
+                      </div>
+                    )}
                   </div>
                   <label
                     for="Time"

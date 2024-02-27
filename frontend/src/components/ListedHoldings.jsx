@@ -17,8 +17,10 @@ export const ListedHoldings = () => {
   const [images1155, setImages1155] = useState([]);
   const [name1155, setName1155] = useState([]);
   const [tokenIds1155, setTokenIds1155] = useState([]);
+  const [listingIds1155, setListingIds1155] = useState([]);
   const [description1155, setDescription1155] = useState([]);
   const [price1155, setPrice1155] = useState([]);
+  const [onAuction1155, setOnAuction1155] = useState([]);
   const [totalAmount, setTotalAmount] = useState([]);
   const [amountOnSale, setAmountOnSale] = useState([]);
 
@@ -80,6 +82,8 @@ export const ListedHoldings = () => {
       const price1155 = response1155.data.map((item) => item.description);
       const images1155 = response1155.data.map((item) => item.image_uri);
       const listingIds1155 = response1155.data.map((item) => item.listing_id);
+      const onAuction1155 = response1155.data.map((item) => item.on_auction);
+      console.log(onAuction1155);
       const amountOnsale = response1155.data.map(
         (item) => item.available_quantity
       );
@@ -98,8 +102,10 @@ export const ListedHoldings = () => {
       setDescription1155(description1155);
       setPrice1155(price1155);
       setImages1155(images1155);
-      setTokenIds1155(listingIds1155);
+      setTokenIds1155(tokenIds1155);
+      setListingIds1155(listingIds1155);
       setTotalAmount(totalAmount);
+      setOnAuction1155(onAuction1155);
       setAmountOnSale(amountOnsale);
       console.log("amount on sale", totalAmount);
     } catch (error) {
@@ -147,7 +153,7 @@ export const ListedHoldings = () => {
         </div>
       ) : (tokenIds.length > 0) | (tokenIds1155.length > 0) ? (
         <div>
-          <div className="flex justify-center bg-slate-400 space-x-6 py-3 mx-auto mt-15 max-w-[800px] rounded-3xl bg-opacity-50">
+          <div className="flex justify-center bg-slate-400 space-x-6 py-3 mx-auto mt-15 max-w-[1000px] rounded-3xl bg-opacity-50">
             <div className="flex items-center">
               <div className="w-10 h-6 bg-blue-300 mr-2 rounded-xl"></div>
               <span className="font-semibold text-white text-lg">
@@ -164,6 +170,12 @@ export const ListedHoldings = () => {
               <div className="w-10 h-6 bg-green-300 mr-2 rounded-xl"></div>
               <span className="font-semibold text-white text-lg">
                 On Sale ERC1155
+              </span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-10 h-6 bg-red-300 mr-2 rounded-xl"></div>
+              <span className="font-semibold text-white text-lg">
+                On Auction ERC1155
               </span>
             </div>
           </div>
@@ -199,7 +211,11 @@ export const ListedHoldings = () => {
                   className="flex flex-col items-center py-4 hover:scale-105 duration-300"
                 >
                   <Link
-                    to={`/profile/listed_holdings/1155/${tokenIds1155[index]}`}
+                    to={
+                      onAuction1155[index]
+                        ? `/marketplace/ERC1155/Auction/${tokenIds1155[index]}`
+                        : `/profile/listed_holdings/1155/${listingIds1155[index]}`
+                    }
                     key={tokenIds1155[index]}
                   >
                     <CardC
@@ -209,6 +225,7 @@ export const ListedHoldings = () => {
                       price={price1155[index]}
                       is1155={true}
                       onSale={true}
+                      onAuction={onAuction1155[index]}
                       owned={(
                         (amountOnSale[index] / totalAmount[index]) *
                         100

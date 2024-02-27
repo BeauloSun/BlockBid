@@ -473,6 +473,23 @@ export default function Bid1155() {
           </div>
         ))}
       </div>
+
+      <div className="flex flex-col items-center justify-center p-4 max-w-[1100px] w-[100%] bg-slate-400 m-auto mt-5 bg-opacity-50 rounded-3xl">
+        <h1 className="text-5xl text-white my-5 font-semibold ">Owners List</h1>
+        <div className="px-8 pb-1 border-b-2 border-white mb-4 flex justify-between w-[100%] bg-opacity-0 ">
+          <span className="text-white text-2xl font-bold">Owner Address</span>
+          <span className="text-white text-2xl font-bold">Quantity</span>
+        </div>
+        {Object.entries(ownersData).map(([address, quantity]) => (
+          <div
+            className="bg-[#a2a2a2] py-4 px-10 mb-4 flex justify-between w-[100%] bg-opacity-50 rounded-2xl"
+            key={address}
+          >
+            <span className="text-white text-2xl font-bold">{address}</span>
+            <span className="text-white text-2xl font-bold">{quantity}</span>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

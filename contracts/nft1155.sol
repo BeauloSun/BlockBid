@@ -8,7 +8,6 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 contract nft1155 is ERC1155{
     using Strings for uint256;
     
-    
     uint256 private _tokenId;
     mapping (uint256 => string) private _tokenUris;
 

@@ -48,7 +48,6 @@ export const Auction1155 = () => {
         }
       );
       const total_quantities = quantityResponse.data.quantity;
-      console.log(available_quantities, total_quantities);
       let percentage_quantities = available_quantities.map(
         (available_quantity, index) => {
           let total_quantity = total_quantities[index];
@@ -89,7 +88,7 @@ export const Auction1155 = () => {
                 className="flex flex-col items-center py-4 hover:scale-105 duration-300"
               >
                 <Link
-                  to={`/marketplace/ERC721/Auction/${tokenIDs[index]}`}
+                  to={`/marketplace/ERC1155/Auction/${tokenIDs[index]}`}
                   key={tokenIDs[index]}
                 >
                   <CardC
@@ -97,8 +96,10 @@ export const Auction1155 = () => {
                     name={name[index]}
                     description={description[index]}
                     price={price[index]}
-                    onAuction={true}
+                    is1155={true}
                     onSale={true}
+                    onAuction={true}
+                    owned={percentageQuantities[index]}
                   />
                 </Link>
               </div>

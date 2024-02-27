@@ -26,8 +26,10 @@ const CardC = ({
     cardColour = "bg-yellow-300";
   } else if (is1155 && !onSale) {
     cardColour = "bg-slate-300";
-  } else if (is1155 && onSale) {
+  } else if (is1155 && onSale && !onAuction) {
     cardColour = "bg-green-300";
+  } else if (is1155 && onSale && onAuction) {
+    cardColour = "bg-red-300";
   }
 
   useEffect(() => {

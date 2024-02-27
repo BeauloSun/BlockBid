@@ -12,7 +12,6 @@ error DoNotHaveApprovalToSellNft();
 error UserHaveNoFunds();
 
 
-
 contract BlockBid1155 is ReentrancyGuard{
     event ListedNft1155(uint256 sellingId);
     event AuctionedNft1155(uint256 sellingId);
