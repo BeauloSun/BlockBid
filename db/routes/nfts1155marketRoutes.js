@@ -67,8 +67,8 @@ router.get("/getNftsOnSale", (req, res) => {
 });
 
 router.post("/getNftsOnSaleByTokenId", (req, res) => {
-  const { tokenId } = req.body;
-  Nft1155marketplaceModel.find({ token_id: tokenId })
+  const { tokenId, auction } = req.body;
+  Nft1155marketplaceModel.find({ token_id: tokenId, on_auction: auction })
     .then(function (nfts) {
       res.json(nfts);
     })
@@ -122,6 +122,7 @@ router.post("/addNfts1155", async (req, res) => {
     price,
     seller,
     buyers,
+    on_auction,
   } = req.body;
 
   const newNft1155 = new Nft1155marketplaceModel({
@@ -136,6 +137,7 @@ router.post("/addNfts1155", async (req, res) => {
     price,
     seller,
     buyers,
+    on_auction,
   });
   await newNft1155.save();
   res.json("nft added successfully");
@@ -144,7 +146,9 @@ router.post("/addNfts1155", async (req, res) => {
 router.post("/getNftOwnedByUser", async (req, res) => {
   const { user } = req.body;
 
-  const Nfts = await Nft1155marketplaceModel.find({ seller: user });
+  const Nfts = await Nft1155marketplaceModel.find({
+    seller: user,
+  });
   res.json(Nfts);
 });
 
@@ -206,6 +210,43 @@ router.post("/updatePrice", async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+});
+
+// -------------------------------------------------------------------- Auction Api Calls -----------------------------------------------------------------
+router.post("/addAuctiondNfts1155", async (req, res) => {
+  const {
+    token_id,
+    listing_id,
+    nft_address,
+    name,
+    description,
+    available_quantity,
+    image_uri,
+    image_hash,
+    price,
+    seller,
+    buyers,
+    on_auction,
+    auction_time,
+  } = req.body;
+
+  const newNft1155 = new Nft1155marketplaceModel({
+    token_id,
+    listing_id,
+    nft_address,
+    name,
+    description,
+    available_quantity,
+    image_uri,
+    image_hash,
+    price,
+    seller,
+    buyers,
+    on_auction,
+    auction_time,
+  });
+  await newNft1155.save();
+  res.json("nft added successfully");
 });
 
 module.exports = router;

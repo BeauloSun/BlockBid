@@ -12,8 +12,10 @@ error DoNotHaveApprovalToSellNft();
 error UserHaveNoFunds();
 
 
+
 contract BlockBid1155 is ReentrancyGuard{
     event ListedNft1155(uint256 sellingId);
+    event AuctionedNft1155(uint256 sellingId);
 
     uint256 sellingId;
 
@@ -79,6 +81,9 @@ contract BlockBid1155 is ReentrancyGuard{
             }
         }
         require(TokenListed != true , "You already have a listing in the market place");
+
+        bool checkAssets = checkTotalAssestsListed(_nft, msg.sender, tokenId, amount);
+        require(checkAssets , "you can't sell the assests which are already listed");
 
         sellingId += 1;
         address[] memory buyers;
@@ -169,6 +174,18 @@ contract BlockBid1155 is ReentrancyGuard{
 
     function auctionNft1155(address _nftAddress , uint256 _tokenId ,uint256 minPrice,uint256 auctionduration, uint256 amount) external Owner1155(_nftAddress , _tokenId , msg.sender , amount){
 
+        bool TokenAuctioned = false;
+
+        for(uint256 i =1 ; i <= sellingId ; i++ ){
+            if (nft1155auction[i].seller == msg.sender && nft1155auction[i].tokenId == _tokenId){
+                TokenAuctioned = true;
+            }
+        }
+        require(TokenAuctioned != true , "You already have a auction listing in the market place");
+
+        bool checkAssets = checkTotalAssestsListed(_nftAddress, msg.sender, _tokenId, amount);
+        require(checkAssets , "you can't sell the assests which are already listed");
+
         uint256 starttime = block.timestamp;
         uint256 endtime = starttime + auctionduration;
 
@@ -186,6 +203,7 @@ contract BlockBid1155 is ReentrancyGuard{
 
         nft1155auction[sellingId] = auction1155(_tokenId , payable(msg.sender) , minPrice ,amount, endtime,  0, address(0), false, sellingId);
         AuctionedTokens1155.push(sellingId);
+        emit AuctionedNft1155(sellingId);
     }
 
     function bid( uint256 _listingId) external payable AuctionExists(_listingId){
@@ -255,6 +273,10 @@ contract BlockBid1155 is ReentrancyGuard{
 
     }
 
+    function getAuctionEndTime(uint256 _listingId) external view AuctionExists(_listingId) returns(uint256) {
+        return nft1155auction[_listingId].auctionEndTime;
+    }
+
     function checkBidderExists(uint256 _listingId, address bidder) public view returns (bool) {
         address[] storage bidders = auctionBidders[_listingId];
         for (uint i = 0; i < bidders.length; i++) {
@@ -286,6 +308,25 @@ contract BlockBid1155 is ReentrancyGuard{
         UserFunds[user] = 0;
         (bool success , ) = payable(user).call{value:userfunds}("");
         require(success , "There was an error in transferring funds");
+    }
+
+
+    function checkTotalAssestsListed(address _nftAddress, address owner , uint256 _tokenId, uint256 amount) public view returns(bool){
+
+        // total balance of user for a tokenId
+        uint256 totalBalance = IERC1155(_nftAddress).balanceOf(msg.sender , _tokenId);
+
+        for (uint256 i = 1 ; i <= sellingId ; i++){
+            if (nft1155Listing[i].seller == owner){
+                totalBalance -= nft1155Listing[i].tokensAvailable;
+            }
+            if(nft1155auction[i].seller == owner){
+                totalBalance -= nft1155auction[i].amount;
+            }
+        }
+
+        return (totalBalance >= amount);
+
     }
 
 
