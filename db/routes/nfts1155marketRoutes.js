@@ -297,49 +297,6 @@ router.get("/getNftsOnAuction", (req, res) => {
     });
 });
 
-router.get("/getNftsOnAuction", (req, res) => {
-  Nft1155marketplaceModel.aggregate([
-    {
-      $sort: {
-        token_id: 1,
-        listing_id: 1,
-      },
-    },
-    {
-      $group: {
-        _id: "$token_id",
-        doc: {
-          $first: "$$ROOT",
-        },
-        total_available_quantity: {
-          $sum: "$available_quantity",
-        },
-      },
-    },
-    {
-      $addFields: {
-        "doc.available_quantity": "$total_available_quantity",
-      },
-    },
-    {
-      $replaceRoot: {
-        newRoot: "$doc",
-      },
-    },
-    {
-      $match: {
-        on_auction: true,
-      },
-    },
-  ])
-    .then(function (nfts) {
-      res.json(nfts);
-    })
-    .catch(function (err) {
-      res.json(err);
-    });
-});
-
 router.post("/getBids", async (req, res) => {
   const { tokenId, listingId } = req.body;
   try {
