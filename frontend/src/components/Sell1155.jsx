@@ -105,6 +105,14 @@ export default function Sell1155() {
       return false;
     }
 
+    if (auctionBool) {
+      if (!minutes || minutes <= 0) {
+        setMessage("Time cannot be less than 0 or null");
+        setMessageClass("font-bold text-xl text-red-600");
+        return false;
+      }
+    }
+
     setMessage("");
     setMessageClass("");
     return true;
@@ -251,7 +259,86 @@ export default function Sell1155() {
     }
   };
 
-  const auctionHandler = () => {};
+  const auctionHandler = async (e) => {
+    e.preventDefault();
+
+    setbuttonLoading(true);
+    if (await formValid()) {
+      setloadingController(true);
+      try {
+        //get the nft contract
+        const nftContract = await getContract1155();
+        // get the market place contract
+        const marketPlace = await getMarketContract1155();
+        // sell add the nft to the market place
+        const address = window.localStorage.getItem("currentAddr");
+
+        await nftContract.methods
+          .setApprovalForAll(marketPlace.options.address, true)
+          .send({ from: address });
+
+        const weiprice = Number(Web3.utils.toWei(price, "ether"));
+        const duration = days * 24 * 3600 + hours * 3600 + minutes * 60;
+
+        const txnDetails = await marketPlace.methods
+          .auctionNft1155(
+            nftContract.options.address,
+            Number(token_id),
+            weiprice,
+            duration,
+            quantity
+          )
+          .send({ from: address });
+
+        const listingId = Number(txnDetails.events.AuctionedNft1155.data);
+
+        console.log("listing Id", listingId);
+        const time = await marketPlace.methods
+          .getAuctionEndTime(Number(listingId))
+          .call();
+
+        console.log("time", time);
+        const puttingMarketplaceBody = {
+          token_id: token_id,
+          listing_id: listingId,
+          nft_address: nftContract.options.address,
+          name: data.name,
+          description: data.description,
+          available_quantity: quantity,
+          image_uri: data.img_src,
+          image_hash: data.image_hash,
+          price: price,
+          seller: address,
+          buyers: {},
+          on_auction: true,
+          auction_time: Number(time),
+        };
+        const res = await axios.post(
+          "http://localhost:4988/api/nfts1155market/addAuctiondNfts1155",
+          puttingMarketplaceBody
+        );
+
+        setMessage("Sell successful!");
+        setMessageClass("font-bold text-xl text-[#48f9ff]");
+        setPrice("");
+        setloadingController(false);
+        setTimeout(() => {
+          setbuttonLoading(false);
+          navigate("/marketplace/ERC1155/Sale");
+        }, 1500);
+      } catch (error) {
+        console.error(error);
+        setMessage(
+          "Sell failed! You cannot sell more token than you own, or you need to cancel your current listing on this token to post a new one."
+        );
+        setMessageClass("font-bold text-lg text-red-600");
+        setloadingController(false);
+        setTimeout(() => {
+          setbuttonLoading(false);
+        }, 500);
+      }
+    }
+  };
 
   return (
     <div

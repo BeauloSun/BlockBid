@@ -72,7 +72,7 @@ export const ListedHoldings = () => {
 
       const response1155 = await axios.post(
         "http://localhost:4988/api/nfts1155market/getNftOwnedByUser",
-        { user: address, auction: false }
+        { user: address }
       );
 
       const name1155 = response1155.data.map((item) => item.name);
