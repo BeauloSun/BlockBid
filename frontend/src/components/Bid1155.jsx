@@ -3,15 +3,18 @@ import { useState, useEffect, useRef } from "react";
 import bg from "../assets/bid_bg.jpg";
 import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
-import { getMarketContract } from "../utils/getBlockBid";
-import { getContract } from "../utils/getNft721";
+import { getMarketContract1155 } from "../utils/getBlockBid1155";
+import { getContract1155 } from "../utils/getNft1155";
 import LineChart from "../components/LineChart";
 import Web3 from "web3";
 import axios from "axios";
 
 export default function Bid1155() {
-  const { id } = useParams();
-  const token_id = Number(id);
+  const { tokenid, id } = useParams();
+  const token_id = Number(tokenid);
+  const listingId = Number(id);
+  const [auctionData, setAuctionData] = useState({});
+  const [ownersData, setOnwersData] = useState([]);
   const [loadingController, setloadingController] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -34,104 +37,102 @@ export default function Bid1155() {
 
   useEffect(() => {
     const fetchData = async () => {
+      let cur_highest_bid = 0;
       try {
-        const response = await axios.post(
-          "http://localhost:4988/api/nfts/getAccessibleAuctionNft",
+        const marketResponse = await axios.post(
+          "http://localhost:4988/api/nfts1155market/getOneNftByTokenIdAndListingId",
+          {
+            tokenId: token_id,
+            listingId: listingId,
+          }
+        );
+        if (marketResponse.data) {
+          setAuctionData({
+            image: marketResponse.data.image_uri,
+            name: marketResponse.data.name,
+            description: marketResponse.data.description,
+            quantity: marketResponse.data.available_quantity,
+            price: marketResponse.data.price,
+            seller: marketResponse.data.seller,
+          });
+        } else {
+          navigate("/NotFound");
+        }
+        cur_highest_bid = marketResponse.data.price;
+        const now = Math.floor(Date.now() / 1000); // Current Unix timestamp
+        let timeLeft = marketResponse.data.auction_time - now; // Time left in seconds
+        if (timeLeft < 0) timeLeft = 0; // If the end time has passed, set timeLeft to 0
+        setAuctionEndTime(marketResponse.data.auction_time);
+        setHour(Math.floor(timeLeft / 3600));
+        setMinute(Math.floor((timeLeft % 3600) / 60));
+        setSecond(timeLeft % 60);
+        const nftResponse = await axios.post(
+          "http://localhost:4988/api/nfts1155/getOneNft",
           {
             token_id: token_id,
           }
         );
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        isValid = response.data;
+        if (nftResponse.data) {
+          const res = nftResponse.data.owners;
+          setOnwersData(res);
+        }
+        const responseHistory = await axios.post(
+          "http://localhost:3666/nft1155history/getTokenHistory",
+          {
+            tokenId: token_id.toString(),
+          }
+        );
+        let price = responseHistory.data["prices"];
+        let dates = responseHistory.data["dates"];
+        setRowData(dates);
+        setColData(price);
+        setColName("Price");
       } catch (err) {
-        console.error(err);
+        navigate("/NotFound");
+        console.log(err);
       }
 
-      if (isValid.length !== 0) {
-        try {
-          const response = await axios.post(
-            "http://localhost:4988/api/nfts/getNftById",
-            {
-              tokenId: token_id,
-            }
-          );
-          if (response.data && response.data.length > 0) {
-            const res = response.data[0];
-            setData({
-              img_src: res.image_uri,
-              name: res.name,
-              description: res.description,
-              price: res.price,
-            });
-            var cur_highest_bid = res.price;
-            const now = Math.floor(Date.now() / 1000); // Current Unix timestamp
-            let timeLeft = res.auction_time - now; // Time left in seconds
-
-            if (timeLeft < 0) timeLeft = 0; // If the end time has passed, set timeLeft to 0
-            setAuctionEndTime(res.auction_time);
-            setHour(Math.floor(timeLeft / 3600));
-            setMinute(Math.floor((timeLeft % 3600) / 60));
-            setSecond(timeLeft % 60);
-            const responseHistory = await axios.post(
-              "http://localhost:3666/nft721history/getTokenHistory",
-              {
-                tokenId: token_id.toString(),
-              }
-            );
-            let price = responseHistory.data["prices"];
-            let dates = responseHistory.data["dates"];
-            setRowData(dates);
-            setColData(price);
-            setColName("Price");
+      try {
+        const bids = await axios.post(
+          "http://localhost:4988/api/nfts1155market/getBids",
+          {
+            tokenId: token_id,
+            listingId: listingId,
           }
-
-          try {
-            const bids = await axios.post(
-              "http://localhost:4988/api/nfts/getBids",
-              {
-                token_id: token_id,
-              }
-            );
-            // sort the bids for display
-            const obj = bids.data;
-            let sortedKeys = Object.keys(obj).sort((a, b) => obj[b] - obj[a]);
-            let sortedBids = {};
-            for (let key of sortedKeys) {
-              sortedBids[key] = obj[key];
-            }
-            setBidHistory(sortedBids);
-
-            const highest_bids = await axios.post(
-              "http://localhost:4988/api/nfts/getHighestBid",
-              {
-                token_id: token_id,
-              }
-            );
-            if (highest_bids.data) {
-              cur_highest_bid = highest_bids.data.price;
-            }
-            var bidded = sortedBids[window.localStorage.getItem("currentAddr")];
-            var difference = 0;
-            if (bidded) {
-              difference = (cur_highest_bid - bidded).toFixed(5);
-              setPrevBid(bidded);
-            } else {
-              difference = cur_highest_bid;
-              setPrevBid(0);
-            }
-            const information = `Current highest bid is: ${cur_highest_bid} ETH. You need to bid more than ${difference} ETH.`;
-            setBidInformation(information);
-          } catch (err) {
-            console.error(err);
-          }
-        } catch (err) {
-          console.error(err);
+        );
+        // sort the bids for display
+        const obj = bids.data;
+        let sortedKeys = Object.keys(obj).sort((a, b) => obj[b] - obj[a]);
+        let sortedBids = {};
+        for (let key of sortedKeys) {
+          sortedBids[key] = obj[key];
         }
-      } else {
-        navigate("/NotFound");
+        setBidHistory(sortedBids);
+        const highest_bids = await axios.post(
+          "http://localhost:4988/api/nfts1155market/getHighestBid",
+          {
+            tokenId: token_id,
+            listingId: listingId,
+          }
+        );
+        if (highest_bids.data) {
+          cur_highest_bid = highest_bids.data.price;
+        }
+        var bidded = sortedBids[window.localStorage.getItem("currentAddr")];
+        var difference = 0;
+        if (bidded) {
+          difference = (cur_highest_bid - bidded).toFixed(5);
+          setPrevBid(bidded);
+        } else {
+          difference = cur_highest_bid;
+          setPrevBid(0);
+        }
+        const information = `Current highest bid is: ${cur_highest_bid} ETH. You need to bid more than ${difference} ETH.`;
+        setBidInformation(information);
+      } catch (error) {
+        console.log(error);
       }
     };
-
     fetchData();
   }, [id, token_id]);
 
@@ -170,19 +171,20 @@ export default function Bid1155() {
       const now = Math.floor(Date.now() / 1000);
       let timeLeft = auctionEndTime - now;
       if (timeLeft < 0) {
-        const nftContract = await getContract();
-        const marketPlace = await getMarketContract();
+        const nftContract = await getContract1155();
+        const marketPlace = await getMarketContract1155();
         const nft_address = nftContract.options.address;
         const address = window.localStorage.getItem("currentAddr");
         try {
           await marketPlace.methods
-            .auctionEnd(nft_address, Number(token_id))
+            .auctionEnd(nft_address, Number(listingId))
             .send({ from: address });
 
           const highest_bid = await axios.post(
-            "http://localhost:4988/api/nfts/getHighestBid",
+            "http://localhost:4988/api/nfts1155market/getHighestBid",
             {
-              token_id: Number(token_id),
+              tokenId: token_id,
+              listingId: listingId,
             }
           );
 
@@ -201,19 +203,23 @@ export default function Bid1155() {
             };
 
             await axios.post(
-              "http://localhost:3666/nft721history/addTokenHistory",
+              "http://localhost:3666/nft1155history/addTokenHistory",
               analyticsBody
             );
           }
-          const auctionEndBody = {
-            token_id: Number(token_id),
-            nft_address: nftContract.options.address,
-            owner: highest_bidder,
-          };
 
           await axios.post(
-            "http://localhost:4988/api/nfts/endAuction",
-            auctionEndBody
+            "http://localhost:4988/api/nfts1155/updateOwnerAndQuantity",
+            {
+              token_id: token_id,
+              quantity: auctionData.quantity,
+              address: address,
+              seller_address: auctionData.seller,
+            }
+          );
+
+          await axios.delete(
+            `http://localhost:4988/api/nfts1155market/endAuction/${listingId}`
           );
 
           setTimeout(() => {
@@ -263,26 +269,27 @@ export default function Bid1155() {
       setloadingController(true);
 
       //get the nft contract
-      const nftContract = await getContract();
+      const nftContract = await getContract1155();
       // get the market place contract
-      const marketPlace = await getMarketContract();
+      const marketPlace = await getMarketContract1155();
       // sell add the nft to the market place
       const address = window.localStorage.getItem("currentAddr");
       const weiprice = Number(Web3.utils.toWei(bid - prevBid, "ether"));
 
       try {
         await marketPlace.methods
-          .bid(Number(token_id))
+          .bid(Number(listingId))
           .send({ from: address, value: weiprice });
 
         const recordBidBody = {
-          token_id: Number(token_id),
+          tokenId: Number(token_id),
+          listingId: Number(listingId),
           nft_address: nftContract.options.address,
           bidder: address,
           price: Number(bid),
         };
         await axios.put(
-          "http://localhost:4988/api/nfts/recordBid",
+          "http://localhost:4988/api/nfts1155market/recordBid",
           recordBidBody
         );
 
@@ -337,17 +344,20 @@ export default function Bid1155() {
         </div>
         <div class="flex w-full">
           <div class="md:w-1/2 px-6 md:px-10">
-            <img alt="" class="rounded-2xl" src={data.img_src} />
+            <img alt="" class="rounded-2xl" src={auctionData.image} />
           </div>
           <div class="md:w-1/2 px-6 md:px-10">
             <h2 class="font-bold text-5xl text-[#ffffff] font-shadows">
-              {data.name}
+              {auctionData.name}
             </h2>
             <p class="text-3xl mt-4 pt-4 text-[#ffffff]">
-              Current Price: {data.price} ETH
+              Current Price: {auctionData.price} ETH
             </p>
             <p class="text-3xl mb-4 pt-4 text-[#ffffff]">
-              Description: {data.description}
+              Description: {auctionData.description}
+            </p>
+            <p class="text-3xl mb-4 pt-4 text-[#ffffff]">
+              Amount: {auctionData.quantity}
             </p>
             <p class="text-3xl mb-4 pt-4 text-[#ffffff]">Time remaining:</p>
             <div className="grid grid-flow-col gap-5 text-center auto-cols-max">

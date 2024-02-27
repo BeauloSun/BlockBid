@@ -22,7 +22,7 @@ export default function TokenAuctionerList() {
       try {
         const response = await axios.post(
           "http://localhost:4988/api/nfts1155market/getNftsOnSaleByTokenId",
-          { tokenId: tokenId }
+          { tokenId: tokenId, auction: true }
         );
 
         if (response.data) {
@@ -69,7 +69,7 @@ export default function TokenAuctionerList() {
               <ul className="divide-y divide-gray-100 w-full mx-[5%]">
                 {listingIds.map((item, index) => (
                   <Link
-                    to={`/marketplace/ERC1155/Sale/${tokenId}/${listingIds[index]}`}
+                    to={`/marketplace/ERC1155/Auction/${tokenId}/${listingIds[index]}`}
                     key={listingIds[index]}
                     onMouseEnter={() => setHoveredIndex(index)}
                     onMouseLeave={() => setHoveredIndex(null)}
