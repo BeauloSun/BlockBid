@@ -28,8 +28,7 @@ export const Sale1155 = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4988/api/nfts1155market/getNftsOnSale",
-        { auction: false }
+        "http://localhost:4988/api/nfts1155market/getNftsOnSale"
       );
 
       const names = response.data.map((item) => item.name);
