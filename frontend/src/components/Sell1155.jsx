@@ -324,7 +324,7 @@ export default function Sell1155() {
         setloadingController(false);
         setTimeout(() => {
           setbuttonLoading(false);
-          navigate("/marketplace/ERC1155/Sale");
+          navigate("/marketplace/ERC1155/Auction");
         }, 1500);
       } catch (error) {
         console.error(error);

@@ -3,6 +3,7 @@ import wallet_bg from "../assets/wallet_bg.jpg";
 import retrieve_fund_bg from "../assets/retrieve_fund_bg.jpg";
 import React, { useState, useEffect } from "react";
 import { getMarketContract } from "../utils/getBlockBid";
+import { getMarketContract1155 } from "../utils/getBlockBid1155";
 import Web3 from "web3";
 
 export default function Wallet() {
@@ -64,10 +65,17 @@ export default function Wallet() {
 
   const getUserFunds = async () => {
     const contract = await getMarketContract();
+    const contract1155 = await getMarketContract1155();
     const address = window.localStorage.getItem("currentAddr");
 
     const funds = await contract.methods.getUserFunds(address).call();
-    setUserFund(Number(Web3.utils.fromWei(funds, "ether")).toFixed(2));
+    const funds1155 = await contract1155.methods.getUserFunds(address).call();
+    setUserFund(
+      (
+        Number(Web3.utils.fromWei(funds, "ether")) +
+        Number(Web3.utils.fromWei(funds1155, "ether"))
+      ).toFixed(2)
+    );
   };
 
   const disconnectWallet = () => {
@@ -81,10 +89,12 @@ export default function Wallet() {
 
   const returnUserFunds = async () => {
     const contract = await getMarketContract();
+    const contract1155 = await getMarketContract1155();
     const address = window.localStorage.getItem("currentAddr");
 
     try {
       await contract.methods.getFundBack(address).send({ from: address });
+      await contract1155.methods.getFundBack(address).send({ from: address });
       setUserFund(0);
     } catch (e) {
       console.log(e);

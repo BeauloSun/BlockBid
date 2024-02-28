@@ -17,7 +17,6 @@ error AuctionItemNotExists(uint256 _tokenId);
 error UserHaveNoFunds();
 
 contract BlockBid is ReentrancyGuard{
-
     struct listing721{
         uint256 tokenId;
         address payable owner;

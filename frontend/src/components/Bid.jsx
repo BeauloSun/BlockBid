@@ -217,7 +217,7 @@ export default function Bid() {
           );
 
           setTimeout(() => {
-            navigate("/NotFound");
+            navigate("/profile/holdings");
           }, 1500);
         } catch (err) {
           console.error(err);

@@ -92,7 +92,6 @@ contract BlockBid1155 is ReentrancyGuard{
         emit ListedNft1155(sellingId);
     }
 
-
     function BuyNft1155(address _nft ,uint256 amount , uint256 listedId) public payable nonReentrant{
 
         token1155 memory listing = nft1155Listing[listedId];

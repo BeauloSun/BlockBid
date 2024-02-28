@@ -35,7 +35,6 @@ contract nft1155 is ERC1155{
         _burn(account, id, amount);
     }
 
-
      function getOwnerNFTs(address owner) public view returns (uint256[] memory) {
         uint256 count = 0;
         for (uint256 i = 1; i < _tokenId; i++) {
