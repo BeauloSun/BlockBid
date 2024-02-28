@@ -31,6 +31,11 @@ router.delete("/CancelListing/:listing_id", async (req, res) => {
 router.get("/getNftsOnSale", (req, res) => {
   Nft1155marketplaceModel.aggregate([
     {
+      $match: {
+        on_auction: false,
+      },
+    },
+    {
       $sort: {
         token_id: 1,
         listing_id: 1,
@@ -55,11 +60,6 @@ router.get("/getNftsOnSale", (req, res) => {
     {
       $replaceRoot: {
         newRoot: "$doc",
-      },
-    },
-    {
-      $match: {
-        on_auction: false,
       },
     },
   ])
@@ -257,6 +257,11 @@ router.post("/addAuctiondNfts1155", async (req, res) => {
 router.get("/getNftsOnAuction", (req, res) => {
   Nft1155marketplaceModel.aggregate([
     {
+      $match: {
+        on_auction: true,
+      },
+    },
+    {
       $sort: {
         token_id: 1,
         listing_id: 1,
@@ -281,11 +286,6 @@ router.get("/getNftsOnAuction", (req, res) => {
     {
       $replaceRoot: {
         newRoot: "$doc",
-      },
-    },
-    {
-      $match: {
-        on_auction: true,
       },
     },
   ])
