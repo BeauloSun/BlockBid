@@ -14,6 +14,8 @@ export default function Wallet() {
   });
 
   const [userFund, setUserFund] = useState(0);
+  const [userFund721, setUserFund721] = useState(0);
+  const [userFund1155, setUserFund1155] = useState(0);
 
   useEffect(() => {
     getUserFunds();
@@ -69,7 +71,9 @@ export default function Wallet() {
     const address = window.localStorage.getItem("currentAddr");
 
     const funds = await contract.methods.getUserFunds(address).call();
+    setUserFund721(funds);
     const funds1155 = await contract1155.methods.getUserFunds(address).call();
+    setUserFund1155(funds1155);
     setUserFund(
       (
         Number(Web3.utils.fromWei(funds, "ether")) +
@@ -93,8 +97,15 @@ export default function Wallet() {
     const address = window.localStorage.getItem("currentAddr");
 
     try {
-      await contract.methods.getFundBack(address).send({ from: address });
-      await contract1155.methods.getFundBack(address).send({ from: address });
+      if (userFund721 > 0) {
+        await contract.methods.getFundBack(address).send({ from: address });
+      }
+      if (userFund1155 > 0) {
+        await contract1155.methods.getFundBack(address).send({ from: address });
+      }
+
+      setUserFund1155(0);
+      setUserFund721(0);
       setUserFund(0);
     } catch (e) {
       console.log(e);
