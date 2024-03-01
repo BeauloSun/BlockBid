@@ -1,13 +1,9 @@
 # Report/Video split:
-- 1155 front + mongo' + 1155 mongo test
-- 721 back + 721 contract testing
-- analytics back
-- 721 -> 1155
+Satwik
+- 721
 -------------------------
-- 1155 back + 1155 contract testing
-- 721 front + mongo + 721 mongo test
-- analytics front + SQL'
-- 721 -> 1155
+Jiaming
+- 1155
 ------------------------
 - Pinata
 - Ganache
