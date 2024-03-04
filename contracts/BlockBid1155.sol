@@ -70,7 +70,7 @@ contract BlockBid1155 is ReentrancyGuard{
 
         require(amount >0 ,  "Amount of tokens should be greater than O");
         require(IERC1155(_nft).isApprovedForAll(msg.sender , address(this)));
-        require(amount <= IERC1155(_nft).balanceOf(msg.sender , tokenId) , "Cannot sell more than you own");
+        // require(amount <= IERC1155(_nft).balanceOf(msg.sender , tokenId) , "Cannot sell more than you own");
 
         bool TokenListed = false;
 
@@ -120,7 +120,7 @@ contract BlockBid1155 is ReentrancyGuard{
     }
 
     function deleteListingFromBuying(uint256 listedId) public {
-        require(nft1155Listing[listedId].tokenId != 0 , "token is not listed");
+        // require(nft1155Listing[listedId].tokenId != 0 , "token is not listed");
         delete(nft1155Listing[listedId]);
          
         
@@ -286,7 +286,7 @@ contract BlockBid1155 is ReentrancyGuard{
     }
 
 
-    function getListedAuctionItem721(uint256 _listingId) public view returns(auction1155 memory){
+    function getListedAuctionItem1155(uint256 _listingId) public view returns(auction1155 memory){
         return nft1155auction[_listingId];
     }
 
@@ -325,6 +325,10 @@ contract BlockBid1155 is ReentrancyGuard{
 
         return (totalBalance >= amount);
 
+    }
+
+    function getListedTokens () public view returns (uint256 [] memory){
+        return ListedTokens1155;
     }
 
 
