@@ -9,6 +9,7 @@ import tmpImage from "../assets/music/cover.png";
 
 const CardC = ({
   img_src,
+  album_src = "",
   name,
   description,
   price,
@@ -87,7 +88,7 @@ const CardC = ({
             <div
               className="pt-[80%] w-full h-full"
               style={{
-                backgroundImage: `url(${tmpImage})`,
+                backgroundImage: `url(${album_src})`,
                 backgroundSize: "cover",
                 width: "100%",
                 height: "100%",

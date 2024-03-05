@@ -8,10 +8,12 @@ import { getContract1155 } from "../utils/getNft1155";
 export const Holdings = () => {
   const [images, setImages] = useState([]);
   const [name, setName] = useState([]);
+  const [album_src, setAlbum_src] = useState([]);
   const [tokenIds, setTokenIds] = useState([]);
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
   const [images1155, setImages1155] = useState([]);
+  const [album_src1155, setAlbum_src1155] = useState([]);
   const [name1155, setName1155] = useState([]);
   const [tokenIds1155, setTokenIds1155] = useState([]);
   const [description1155, setDescription1155] = useState([]);
@@ -66,12 +68,13 @@ export const Holdings = () => {
       const descriptions = response.data.map((item) => item.description);
       const prices = response.data.map((item) => item.price);
       const images = response.data.map((item) => item.image_uri);
+      const albums = response.data.map((item) => item.album_cover_uri);
       const tokenids = response.data.map((item) => item.token_id);
-
       setName(names);
       setDescription(descriptions);
       setPrice(prices);
       setImages(images);
+      setAlbum_src(albums);
       setTokenIds(tokenids);
 
       // data for erc1155 token
@@ -88,6 +91,7 @@ export const Holdings = () => {
       const description1155 = response1155.data.map((item) => item.description);
       const price1155 = response1155.data.map((item) => item.price);
       const images1155 = response1155.data.map((item) => item.image_uri);
+      const albums1155 = response1155.data.map((item) => item.album_cover_uri);
       const tokenIds1155 = response1155.data.map((item) => item.token_id);
       const totalAmount = response1155.data.map((item) => item.total_quantity);
       const amountOwned = [];
@@ -101,6 +105,7 @@ export const Holdings = () => {
       setDescription1155(description1155);
       setPrice1155(price1155);
       setImages1155(images1155);
+      setAlbum_src1155(albums1155);
       setTokenIds1155(tokenIds1155);
       setTotalAmount(totalAmount);
       setAmountOwned(amountOwned);
@@ -172,6 +177,7 @@ export const Holdings = () => {
                   >
                     <CardC
                       img_src={img_src}
+                      album_src={album_src[index]}
                       name={name[index]}
                       description={description[index]}
                       price={""}
@@ -193,6 +199,7 @@ export const Holdings = () => {
                   >
                     <CardC
                       img_src={img_src}
+                      album_src={album_src1155[index]}
                       name={name1155[index]}
                       description={description1155[index]}
                       price={price1155[index]}

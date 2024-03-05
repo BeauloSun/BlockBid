@@ -12,6 +12,9 @@ import { getImageHash } from "../utils/imageHash";
 export default function MintForm1155() {
   // all the states
   const [imageFile, setImageFile] = useState(null);
+  const [musicFile, setMusicFile] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [imagePrompt, setImagePrompt] = useState("Image");
   const [previewImage, setPreviewImage] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -25,9 +28,14 @@ export default function MintForm1155() {
   const [descriptionError, setDescriptionError] = useState(false);
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [pageLoading, setpageLoading] = useState(false);
+  const [musicBool, setMusicBool] = useState(false);
 
   const handleImageUpload = (e) => {
-    setImageFile(e.target.files[0]);
+    if (musicBool) {
+      setMusicFile(e.target.files[0]);
+    } else {
+      setImageFile(e.target.files[0]);
+    }
     setPreviewImage(URL.createObjectURL(e.target.files[0]));
   };
 
@@ -35,6 +43,21 @@ export default function MintForm1155() {
     setImageFile(null);
     setPreviewImage(null);
     document.getElementById("file-upload").value = null;
+  };
+
+  const handleMusicUpload = (e) => {
+    if (musicBool) {
+      setImageFile(e.target.files[0]);
+    } else {
+      setMusicFile(e.target.files[0]);
+    }
+    setFileName(e.target.files[0].name);
+  };
+
+  const handleDeleteFile = () => {
+    setImageFile(null);
+    setFileName("");
+    document.getElementById("music-file-upload").value = null;
   };
 
   const formValid = async (currentImageHash) => {
@@ -129,6 +152,7 @@ export default function MintForm1155() {
     imageuri,
     walletaddr,
     imagehash,
+    album_cover_uri,
     tokenid,
     nftAddress
   ) => {
@@ -139,6 +163,7 @@ export default function MintForm1155() {
       description,
       total_quantity: quantity,
       image_uri: imageuri,
+      album_cover_uri: album_cover_uri,
       image_hash: imagehash,
       price: 0,
       owners: { [walletaddr]: Number(quantity) },
@@ -152,6 +177,7 @@ export default function MintForm1155() {
       setName("");
       setDescription("");
       setImageFile(null);
+      setMusicFile(null);
       setMessage("Submission successful!");
       setMessageClass("font-bold text-lg text-[#48f9ff]");
     } catch (error) {
@@ -179,6 +205,12 @@ export default function MintForm1155() {
           if (window.localStorage.getItem("currentAddr") !== null) {
             // get the image and json hashes
             const imageuri = await pinata_Image(imageFile, name);
+            let album_cover_uri;
+            if (musicFile !== null) {
+              album_cover_uri = await pinata_Image(musicFile, name);
+            } else {
+              album_cover_uri = "";
+            }
             const jsonhash = await pinata_Json(name, description, imageuri);
 
             const token_id = await contract.methods.getTokenId().call();
@@ -192,10 +224,12 @@ export default function MintForm1155() {
               imageuri,
               address,
               currentImageHash,
+              album_cover_uri,
               token_id.toString(),
               contract.options.address
             );
             handleDeleteImage();
+            handleDeleteFile();
             setbuttonLoading(false);
             setpageLoading(false);
           } else {
@@ -210,6 +244,15 @@ export default function MintForm1155() {
     setTimeout(() => {
       setbuttonLoading(false);
     }, 500);
+  };
+
+  const musicTick = () => {
+    setMusicBool(!musicBool);
+    if (imagePrompt === "Image") {
+      setImagePrompt("Album Cover");
+    } else {
+      setImagePrompt("Image");
+    }
   };
 
   return (
@@ -282,12 +325,28 @@ export default function MintForm1155() {
                 />
               </div>
 
+              <div className="flex items-center justify-left gap-2 pt-3">
+                <input
+                  id="enableInput"
+                  type="checkbox"
+                  value=""
+                  onClick={musicTick}
+                  class="w-6 h-6 text-yellow-400 bg-white border-green-600 rounded focus:ring-blue-400 focus:ring-2"
+                />
+                <label
+                  htmlFor="enableInput"
+                  className="font-bold text-xl text-white"
+                >
+                  Mint music token?
+                </label>
+              </div>
+
               <div className="col-span-full">
                 <label
                   htmlFor="cover-photo"
                   className="block text-xl font-medium leading-6 text-white"
                 >
-                  Upload Image
+                  Upload {imagePrompt}
                 </label>
                 <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white px-6 py-10">
                   <div className="text-center">
@@ -335,6 +394,59 @@ export default function MintForm1155() {
                   </div>
                 </div>
               </div>
+              {musicBool ? (
+                <div className="col-span-full">
+                  <label
+                    htmlFor="cover-photo"
+                    className="block text-xl font-medium leading-6 text-white"
+                  >
+                    Upload Music File
+                  </label>
+                  <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white px-6 py-10">
+                    <div className="text-center">
+                      {fileName !== "" ? (
+                        <>
+                          <div className="flex justify-center py-3">
+                            <p className="text-l leading-5 text-white font-bold">
+                              {fileName}
+                            </p>
+                          </div>
+                          <button
+                            onClick={handleDeleteFile}
+                            className="text-red-500 font-bold hover:text-red-700"
+                          >
+                            X Remove File
+                          </button>
+                        </>
+                      ) : (
+                        <div></div>
+                      )}
+
+                      <div className="mt-4 flex text-sm leading-6 text-white font-bold justify-center">
+                        <label
+                          htmlFor="music-file-upload"
+                          className="relative cursor-pointer rounded-md bg-yellow-600 px-1 font-semibold text-white focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-[#66f587]"
+                        >
+                          <span>Upload a file</span>
+                          <input
+                            id="music-file-upload"
+                            name="music-file-upload"
+                            type="file"
+                            className="sr-only"
+                            onChange={handleMusicUpload}
+                          />
+                        </label>
+                        <p className="pl-1">or drag and drop</p>
+                      </div>
+                      <p className="text-xs leading-5 text-white font-bold">
+                        MP3 up to 200MB
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div></div>
+              )}
               <p className={messageClass}>{message}</p>
               <p className={duplicateNftImageMessageClass}>
                 {duplicateNftImageMessage}

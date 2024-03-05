@@ -66,6 +66,7 @@ router.post("/addNfts1155", async (req, res) => {
       description,
       total_quantity,
       image_uri,
+      album_cover_uri,
       image_hash,
       owners,
     } = req.body;
@@ -78,6 +79,7 @@ router.post("/addNfts1155", async (req, res) => {
       description,
       total_quantity,
       image_uri,
+      album_cover_uri,
       image_hash,
       owners,
     });

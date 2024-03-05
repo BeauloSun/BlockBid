@@ -22,6 +22,9 @@ const Nf1155marketplaceSchema = new mongoose.Schema({
   image_uri: {
     type: String,
   },
+  album_cover_uri: {
+    type: String,
+  },
   image_hash: {
     type: String,
   },
