@@ -181,6 +181,7 @@ export const Holdings = () => {
                   </Link>
                 </div>
               ))}
+
               {images1155.map((img_src, index) => (
                 <div
                   key={index}

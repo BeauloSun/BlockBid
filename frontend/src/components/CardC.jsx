@@ -5,6 +5,7 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
+import tmpImage from "../assets/music/cover.png";
 
 const CardC = ({
   img_src,
@@ -18,6 +19,7 @@ const CardC = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [percentage, setPercentage] = useState("100%");
+  const [mediaType, setMediaType] = useState("");
 
   let cardColour = "bg-purple-300";
   if (!is1155 && onSale && !onAuction) {
@@ -49,6 +51,16 @@ const CardC = ({
     };
   }, [owned]);
 
+  useEffect(() => {
+    const fetchContentType = async () => {
+      let response = await fetch(img_src);
+      let contentType = response.headers.get("Content-Type");
+      setMediaType(contentType.split("/")[0]);
+    };
+
+    fetchContentType();
+  }, [img_src]);
+
   return (
     <div
       className="w-[300px] h-[500px]"
@@ -57,11 +69,36 @@ const CardC = ({
     >
       <Card className={`${cardColour} w-[300px] h-[500px]`}>
         <CardHeader shadow={true} floated={false} className="h-70">
-          <img
-            src={img_src}
-            alt=""
-            className="h-full w-full object-cover rounded-xl z-10"
-          />
+          {mediaType === "image" && (
+            <img
+              src={img_src}
+              alt=""
+              className="h-full w-full object-cover rounded-xl z-10"
+            />
+          )}
+
+          {mediaType === "video" && (
+            <video className="w-full h-full" controls>
+              <source src={img_src} type="video/mp4" />
+            </video>
+          )}
+
+          {mediaType === "audio" && (
+            <div
+              className="pt-[80%] w-full h-full"
+              style={{
+                backgroundImage: `url(${tmpImage})`,
+                backgroundSize: "cover",
+                width: "100%",
+                height: "100%",
+              }}
+            >
+              <audio className="w-[99%] pl-[1%]" controls>
+                <source src={img_src} type="audio/mpeg" />
+              </audio>
+            </div>
+          )}
+
           {is1155 ? (
             <>
               <div
