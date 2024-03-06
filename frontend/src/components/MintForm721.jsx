@@ -15,7 +15,7 @@ export default function MintForm721() {
   const [imageFile, setImageFile] = useState(null);
   const [musicFile, setMusicFile] = useState(null);
   const [fileName, setFileName] = useState("");
-  const [imagePrompt, setImagePrompt] = useState("Image");
+  const [imagePrompt, setImagePrompt] = useState("Image/Video");
   const [previewImage, setPreviewImage] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -29,16 +29,24 @@ export default function MintForm721() {
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [pageLoading, setpageLoading] = useState(false);
   const [musicBool, setMusicBool] = useState(false);
+  const [isVideo, setIsVideo] = useState(false);
   const navigate = useNavigate();
 
   const handleImageUpload = (e) => {
-    if (musicBool) {
-      setMusicFile(e.target.files[0]);
-    } else {
-      setImageFile(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file.type.startsWith("image/")) {
+      setIsVideo(false);
+      if (musicBool) {
+        setMusicFile(file);
+      } else {
+        setImageFile(file);
+      }
+      setPreviewImage(URL.createObjectURL(file));
+    } else if (file.type.startsWith("video/")) {
+      setIsVideo(true);
+      setImageFile(file);
+      setPreviewImage(URL.createObjectURL(file));
     }
-
-    setPreviewImage(URL.createObjectURL(e.target.files[0]));
   };
 
   const handleDeleteImage = () => {
@@ -224,7 +232,6 @@ export default function MintForm721() {
             handleDeleteFile();
             setbuttonLoading(false);
             setpageLoading(false);
-            navigate("/profile/holdings");
             setTimeout(() => {
               navigate("/profile/holdings");
             }, 300);
@@ -244,10 +251,10 @@ export default function MintForm721() {
 
   const musicTick = () => {
     setMusicBool(!musicBool);
-    if (imagePrompt === "Image") {
+    if (imagePrompt === "Image/Video") {
       setImagePrompt("Album Cover");
     } else {
-      setImagePrompt("Image");
+      setImagePrompt("Image/Video");
     }
   };
 
@@ -337,11 +344,20 @@ export default function MintForm721() {
                     {previewImage ? (
                       <>
                         <div className="flex justify-center py-3">
-                          <img
-                            src={previewImage}
-                            alt="Preview"
-                            className="rounded-xl max-w-[300px] max-h-[100px]"
-                          />
+                          {isVideo ? (
+                            <video
+                              className="w-full h-full rounded-xl"
+                              controls
+                            >
+                              <source src={previewImage} type="video/mp4" />
+                            </video>
+                          ) : (
+                            <img
+                              src={previewImage}
+                              alt="Preview"
+                              className="rounded-xl max-w-[300px] max-h-[100px]"
+                            />
+                          )}
                         </div>
                         <button
                           onClick={handleDeleteImage}
@@ -356,7 +372,7 @@ export default function MintForm721() {
                         aria-hidden="true"
                       />
                     )}
-                    <div className="mt-4 flex text-sm leading-6 text-white font-bold">
+                    <div className="mt-4 flex text-sm justify-center leading-6 text-white font-bold">
                       <label
                         htmlFor="file-upload"
                         className="relative cursor-pointer rounded-md bg-yellow-600 px-1 font-semibold text-white focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-[#66f587]"

@@ -361,7 +361,7 @@ export default function Sell() {
                 )}
 
                 {mediaType === "video" && (
-                  <video className="w-full h-full" controls>
+                  <video className="w-full h-full rounded-xl" controls>
                     <source src={data.img_src} type="video/mp4" />
                   </video>
                 )}
