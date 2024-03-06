@@ -7,6 +7,7 @@ import { getMarketContract } from "../utils/getBlockBid";
 
 export const Auction721 = () => {
   const [images, setImages] = useState([]);
+  const [album_src, setAlbum_src] = useState([]);
   const [name, setName] = useState([]);
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
@@ -45,12 +46,14 @@ export const Auction721 = () => {
       const descriptions721 = response.data.map((item) => item.description);
       const prices721 = response.data.map((item) => item.price);
       const images721 = response.data.map((item) => item.image_uri);
+      const albums721 = response.data.map((item) => item.album_cover_uri);
       const tokenIDs721 = response.data.map((item) => item.token_id);
       setName(names721);
       setDescription(descriptions721);
       setPrice(prices721);
       setTokenIDs_721(tokenIDs721);
       setImages(images721);
+      setAlbum_src(albums721);
     } catch (error) {
       console.error(error);
     }
@@ -76,6 +79,7 @@ export const Auction721 = () => {
                 >
                   <CardC
                     img_src={img_src}
+                    album_src={album_src[index]}
                     name={name[index]}
                     description={description[index]}
                     price={price[index]}

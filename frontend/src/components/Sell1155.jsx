@@ -31,6 +31,7 @@ export default function Sell1155() {
   const [auctionBool, setAuctionBool] = useState(false);
   const [priceMsg, setPriceMsg] = useState("Set your price per token");
   const [timeSetterbox, setTimeSetterbox] = useState(true);
+  const [mediaType, setMediaType] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,6 +59,7 @@ export default function Sell1155() {
           name: res.name,
           description: res.description,
           image_hash: res.image_hash,
+          album_src: res.album_cover_uri,
           owned_quantity:
             res.owners[window.localStorage.getItem("currentAddr")],
           total_quantity: res.total_quantity,
@@ -85,6 +87,16 @@ export default function Sell1155() {
       setFullOwnership(false);
     }
   }, [data]);
+
+  useEffect(() => {
+    const fetchContentType = async () => {
+      let response = await fetch(data.img_src);
+      let contentType = response.headers.get("Content-Type");
+      setMediaType(contentType.split("/")[0]);
+    };
+
+    fetchContentType();
+  }, [data.img_src]);
 
   const formValid = async () => {
     if (!price) {
@@ -159,6 +171,7 @@ export default function Sell1155() {
           description: data.description,
           available_quantity: quantity,
           image_uri: data.img_src,
+          album_cover_uri: data.album_src,
           image_hash: data.image_hash,
           price: price,
           seller: address,
@@ -218,6 +231,7 @@ export default function Sell1155() {
 
       const imageUri = data.img_src;
       const imageHash = data.image_hash;
+      const albumUri = data.album_src;
       const tokenId = await nft721.methods.getTokenId().call();
       await nft721.methods.mintNft(address, imageHash).send({ from: address });
 
@@ -227,6 +241,7 @@ export default function Sell1155() {
         name: data.name,
         description: data.description,
         image_uri: imageUri,
+        album_cover_uri: albumUri,
         image_hash: imageHash,
         price: 0,
         owner: address,
@@ -306,6 +321,7 @@ export default function Sell1155() {
           description: data.description,
           available_quantity: quantity,
           image_uri: data.img_src,
+          album_cover_uri: data.album_src,
           image_hash: data.image_hash,
           price: price,
           seller: address,
@@ -376,7 +392,31 @@ export default function Sell1155() {
           <div>
             <div className="grid gird-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-6 h-max">
               <div className="overflow-hidden rounded-xl">
-                <img src={data.img_src} alt="" className="w-full" />
+                {mediaType === "image" && (
+                  <img src={data.img_src} alt="" className="w-full" />
+                )}
+
+                {mediaType === "video" && (
+                  <video className="w-full h-full" controls>
+                    <source src={data.img_src} type="video/mp4" />
+                  </video>
+                )}
+
+                {mediaType === "audio" && (
+                  <div
+                    className="pt-[80%] w-full h-full"
+                    style={{
+                      backgroundImage: `url(${data.album_src})`,
+                      backgroundSize: "cover",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    <audio className="w-[99%] pl-[1%]" controls>
+                      <source src={data.img_src} type="audio/mpeg" />
+                    </audio>
+                  </div>
+                )}
                 <div className="bg-yellow-300"></div>
               </div>
               <div className="flex flex-col justify-between pl-5">

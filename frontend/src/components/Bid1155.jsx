@@ -31,6 +31,7 @@ export default function Bid1155() {
   const [auctionEndTime, setAuctionEndTime] = useState(null);
   const [data, setData] = useState({});
   const [bidHistory, setBidHistory] = useState({});
+  const [mediaType, setMediaType] = useState("");
   const navigate = useNavigate();
   var isValid = false;
   const firstUpdate = useRef(true);
@@ -49,6 +50,7 @@ export default function Bid1155() {
         if (marketResponse.data) {
           setAuctionData({
             image: marketResponse.data.image_uri,
+            album_src: marketResponse.data.album_cover_uri,
             name: marketResponse.data.name,
             description: marketResponse.data.description,
             quantity: marketResponse.data.available_quantity,
@@ -158,6 +160,16 @@ export default function Bid1155() {
     }, 1000);
     return () => clearInterval(countdown);
   }, [hour, minute, second]);
+
+  useEffect(() => {
+    const fetchContentType = async () => {
+      let response = await fetch(auctionData.image);
+      let contentType = response.headers.get("Content-Type");
+      setMediaType(contentType.split("/")[0]);
+    };
+
+    fetchContentType();
+  }, [auctionData]);
 
   const formatTime = (time) => String(time).padStart(2, "0");
 
@@ -344,7 +356,31 @@ export default function Bid1155() {
         </div>
         <div class="flex w-full">
           <div class="md:w-1/2 px-6 md:px-10">
-            <img alt="" class="rounded-2xl" src={auctionData.image} />
+            {mediaType === "image" && (
+              <img src={auctionData.image} alt="" className="w-full" />
+            )}
+
+            {mediaType === "video" && (
+              <video className="w-full h-full" controls>
+                <source src={auctionData.image} type="video/mp4" />
+              </video>
+            )}
+
+            {mediaType === "audio" && (
+              <div
+                className="pt-[80%] w-full h-full rounded-xl"
+                style={{
+                  backgroundImage: `url(${auctionData.album_src})`,
+                  backgroundSize: "cover",
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
+                <audio className="w-[99%] pl-[1%]" controls>
+                  <source src={auctionData.image} type="audio/mpeg" />
+                </audio>
+              </div>
+            )}
           </div>
           <div class="md:w-1/2 px-6 md:px-10">
             <h2 class="font-bold text-5xl text-[#ffffff] font-shadows">

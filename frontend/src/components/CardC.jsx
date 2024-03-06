@@ -94,7 +94,7 @@ const CardC = ({
                 height: "100%",
               }}
             >
-              <audio className="w-[99%] pl-[1%]" controls>
+              <audio className="w-[99%] pl-[1%] pb-[5%]" controls>
                 <source src={img_src} type="audio/mpeg" />
               </audio>
             </div>

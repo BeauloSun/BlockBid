@@ -8,6 +8,7 @@ import axios from "axios";
 import { DotLottiePlayer } from "@dotlottie/react-player";
 import "@dotlottie/react-player/dist/index.css";
 import { getImageHash } from "../utils/imageHash";
+import { useNavigate } from "react-router-dom";
 
 export default function MintForm721() {
   // all the states
@@ -28,6 +29,7 @@ export default function MintForm721() {
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [pageLoading, setpageLoading] = useState(false);
   const [musicBool, setMusicBool] = useState(false);
+  const navigate = useNavigate();
 
   const handleImageUpload = (e) => {
     if (musicBool) {
@@ -222,6 +224,10 @@ export default function MintForm721() {
             handleDeleteFile();
             setbuttonLoading(false);
             setpageLoading(false);
+            navigate("/profile/holdings");
+            setTimeout(() => {
+              navigate("/profile/holdings");
+            }, 300);
           } else {
             console.error("wallet is not connected");
           }

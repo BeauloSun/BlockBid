@@ -1,6 +1,7 @@
 import nft_mint from "../assets/minting_nft_1155.jpg";
 import bg from "../assets/mint_bg_1155.jpg";
 import { PhotoIcon } from "@heroicons/react/24/solid";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { pinFileToIPFS, pinJsonToIPFS } from "../utils/pinata";
 import { getContract1155 } from "../utils/getNft1155";
@@ -29,6 +30,7 @@ export default function MintForm1155() {
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [pageLoading, setpageLoading] = useState(false);
   const [musicBool, setMusicBool] = useState(false);
+  const navigate = useNavigate();
 
   const handleImageUpload = (e) => {
     if (musicBool) {
@@ -232,6 +234,9 @@ export default function MintForm1155() {
             handleDeleteFile();
             setbuttonLoading(false);
             setpageLoading(false);
+            setTimeout(() => {
+              navigate("/profile/holdings");
+            }, 300);
           } else {
             console.error("wallet is not connected");
           }

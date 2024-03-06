@@ -6,6 +6,7 @@ import { getContract } from "../utils/getNft721";
 
 export const ListedHoldings = () => {
   const [images, setImages] = useState([]);
+  const [album_src, setAlbum_src] = useState([]);
   const [name, setName] = useState([]);
   const [tokenIds, setTokenIds] = useState([]);
   const [description, setDescription] = useState([]);
@@ -15,6 +16,7 @@ export const ListedHoldings = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [images1155, setImages1155] = useState([]);
+  const [album_src1155, setAlbum_src1155] = useState([]);
   const [name1155, setName1155] = useState([]);
   const [tokenIds1155, setTokenIds1155] = useState([]);
   const [listingIds1155, setListingIds1155] = useState([]);
@@ -58,6 +60,7 @@ export const ListedHoldings = () => {
       const descriptions = response.data.map((item) => item.description);
       const prices = response.data.map((item) => item.price);
       const images = response.data.map((item) => item.image_uri);
+      const albums = response.data.map((item) => item.album_cover_uri);
       const tokenids = response.data.map((item) => item.token_id);
       const onSales = response.data.map((item) => item.on_sale);
       const onAuctions = response.data.map((item) => item.on_auction);
@@ -66,6 +69,7 @@ export const ListedHoldings = () => {
       setDescription(descriptions);
       setPrice(prices);
       setImages(images);
+      setAlbum_src(albums);
       setTokenIds(tokenids);
       setOnSale(onSales);
       setOnAuction(onAuctions);
@@ -81,6 +85,7 @@ export const ListedHoldings = () => {
       const description1155 = response1155.data.map((item) => item.description);
       const price1155 = response1155.data.map((item) => item.description);
       const images1155 = response1155.data.map((item) => item.image_uri);
+      const albums1155 = response.data.map((item) => item.album_cover_uri);
       const listingIds1155 = response1155.data.map((item) => item.listing_id);
       const onAuction1155 = response1155.data.map((item) => item.on_auction);
       console.log(onAuction1155);
@@ -102,6 +107,7 @@ export const ListedHoldings = () => {
       setDescription1155(description1155);
       setPrice1155(price1155);
       setImages1155(images1155);
+      setAlbum_src1155(albums1155);
       setTokenIds1155(tokenIds1155);
       setListingIds1155(listingIds1155);
       setTotalAmount(totalAmount);
@@ -196,6 +202,7 @@ export const ListedHoldings = () => {
                   >
                     <CardC
                       img_src={img_src}
+                      album_src={album_src[index]}
                       name={name[index]}
                       description={description[index]}
                       price={price[index]}
@@ -220,6 +227,7 @@ export const ListedHoldings = () => {
                   >
                     <CardC
                       img_src={img_src}
+                      album_src={album_src1155[index]}
                       name={name1155[index]}
                       description={description1155[index]}
                       price={price1155[index]}

@@ -5,6 +5,7 @@ import axios from "axios";
 
 export const Sale1155 = () => {
   const [images, setImages] = useState([]);
+  const [album_src, setAlbum_src] = useState([]);
   const [name, setName] = useState([]);
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
@@ -35,6 +36,7 @@ export const Sale1155 = () => {
       const descriptions = response.data.map((item) => item.description);
       const prices = response.data.map((item) => item.price);
       const images = response.data.map((item) => item.image_uri);
+      const albums = response.data.map((item) => item.album_cover_uri);
       const tokenIDs = response.data.map((item) => item.token_id);
       const available_quantities = response.data.map(
         (item) => item.available_quantity
@@ -65,6 +67,7 @@ export const Sale1155 = () => {
       setPrice(prices);
       setTokenIDs(tokenIDs);
       setImages(images);
+      setAlbum_src(albums);
       setListingIds(listingIds);
       setPercentageQuantities(percentage_quantities);
     } catch (error) {
@@ -92,6 +95,7 @@ export const Sale1155 = () => {
                 >
                   <CardC
                     img_src={img_src}
+                    album_src={album_src[index]}
                     name={name[index]}
                     description={description[index]}
                     price={price[index]}

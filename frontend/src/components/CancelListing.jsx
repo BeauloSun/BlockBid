@@ -18,6 +18,7 @@ export default function CancelListing() {
   const [message, setMessage] = useState("");
   const [messageClass, setMessageClass] = useState("");
   const [data, setData] = useState({});
+  const [mediaType, setMediaType] = useState("");
   const navigate = useNavigate();
   var isValid = false;
 
@@ -49,6 +50,7 @@ export default function CancelListing() {
             const res = response.data[0];
             setData({
               img_src: res.image_uri,
+              albumUri: res.album_cover_uri,
               name: res.name,
               price: res.price,
               description: res.description,
@@ -64,6 +66,16 @@ export default function CancelListing() {
 
     fetchData();
   }, [id, token_id]);
+
+  useEffect(() => {
+    const fetchContentType = async () => {
+      let response = await fetch(data.img_src);
+      let contentType = response.headers.get("Content-Type");
+      setMediaType(contentType.split("/")[0]);
+    };
+
+    fetchContentType();
+  }, [data.img_src]);
 
   const buttonHandler = async (e) => {
     e.preventDefault();
@@ -176,7 +188,31 @@ export default function CancelListing() {
           <div>
             <div className="grid gird-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-6 h-max">
               <div className="overflow-hidden rounded-xl">
-                <img src={data.img_src} alt="" className="w-full" />
+                {mediaType === "image" && (
+                  <img src={data.img_src} alt="" className="w-full" />
+                )}
+
+                {mediaType === "video" && (
+                  <video className="w-full h-full" controls>
+                    <source src={data.img_src} type="video/mp4" />
+                  </video>
+                )}
+
+                {mediaType === "audio" && (
+                  <div
+                    className="pt-[80%] w-full h-full"
+                    style={{
+                      backgroundImage: `url(${data.albumUri})`,
+                      backgroundSize: "cover",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    <audio className="w-[99%] pl-[1%]" controls>
+                      <source src={data.img_src} type="audio/mpeg" />
+                    </audio>
+                  </div>
+                )}
               </div>
               <div className="flex flex-col justify-between pl-5">
                 <div>

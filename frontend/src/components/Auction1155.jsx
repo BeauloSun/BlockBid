@@ -7,6 +7,7 @@ import { getMarketContract } from "../utils/getBlockBid";
 
 export const Auction1155 = () => {
   const [images, setImages] = useState([]);
+  const [albums, setAlbums] = useState([]);
   const [name, setName] = useState([]);
   const [description, setDescription] = useState([]);
   const [price, setPrice] = useState([]);
@@ -14,6 +15,7 @@ export const Auction1155 = () => {
   const [listingIds, setListingIds] = useState([]);
   const [percentageQuantities, setPercentageQuantities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [mediaType, setMediaType] = useState("");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -37,6 +39,7 @@ export const Auction1155 = () => {
       const descriptions = response.data.map((item) => item.description);
       const prices = response.data.map((item) => item.price);
       const images = response.data.map((item) => item.image_uri);
+      const albums = response.data.map((item) => item.album_cover_uri);
       const tokenIDs = response.data.map((item) => item.token_id);
       const available_quantities = response.data.map(
         (item) => item.available_quantity
@@ -66,6 +69,7 @@ export const Auction1155 = () => {
       setPrice(prices);
       setTokenIDs(tokenIDs);
       setImages(images);
+      setAlbums(albums);
       setListingIds(listingIds);
       setPercentageQuantities(percentage_quantities);
     } catch (error) {
@@ -93,6 +97,7 @@ export const Auction1155 = () => {
                 >
                   <CardC
                     img_src={img_src}
+                    album_src={albums[index]}
                     name={name[index]}
                     description={description[index]}
                     price={price[index]}

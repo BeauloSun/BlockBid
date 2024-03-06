@@ -19,60 +19,62 @@ export default function Buy1155() {
   const [rowData, setRowData] = useState([]);
   const [colName, setColName] = useState("");
   const [colData, setColData] = useState([]);
+  const [mediaType, setMediaType] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const marketResponse = await axios.post(
+          "http://localhost:4988/api/nfts1155market/getOneNftByTokenIdAndListingId",
+          {
+            tokenId: tokenId,
+            listingId: listingId,
+          }
+        );
+        if (marketResponse.data) {
+          setBuyData({
+            image: marketResponse.data.image_uri,
+            album_src: marketResponse.data.album_cover_uri,
+            name: marketResponse.data.name,
+            description: marketResponse.data.description,
+            quantity: marketResponse.data.available_quantity,
+            price: marketResponse.data.price,
+            seller: marketResponse.data.seller,
+          });
+        }
+
+        const nftResponse = await axios.post(
+          "http://localhost:4988/api/nfts1155/getOneNft",
+          {
+            token_id: tokenId,
+          }
+        );
+
+        if (nftResponse.data) {
+          const res = nftResponse.data.owners;
+          setOnwersData(res);
+        }
+
+        const responseHistory = await axios.post(
+          "http://localhost:3666/nft1155history/getTokenHistory",
+          {
+            tokenId: tokenId.toString(),
+          }
+        );
+        console.log(responseHistory);
+        let price = responseHistory.data["prices"];
+        let dates = responseHistory.data["dates"];
+        setRowData(dates);
+        setColData(price);
+        setColName("Price");
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     fetchData();
   }, [listingId, tokenId]);
-
-  const fetchData = async () => {
-    try {
-      const marketResponse = await axios.post(
-        "http://localhost:4988/api/nfts1155market/getOneNftByTokenIdAndListingId",
-        {
-          tokenId: tokenId,
-          listingId: listingId,
-        }
-      );
-      if (marketResponse.data) {
-        setBuyData({
-          image: marketResponse.data.image_uri,
-          name: marketResponse.data.name,
-          description: marketResponse.data.description,
-          quantity: marketResponse.data.available_quantity,
-          price: marketResponse.data.price,
-          seller: marketResponse.data.seller,
-        });
-      }
-
-      const nftResponse = await axios.post(
-        "http://localhost:4988/api/nfts1155/getOneNft",
-        {
-          token_id: tokenId,
-        }
-      );
-
-      if (nftResponse.data) {
-        const res = nftResponse.data.owners;
-        setOnwersData(res);
-      }
-
-      const responseHistory = await axios.post(
-        "http://localhost:3666/nft1155history/getTokenHistory",
-        {
-          tokenId: tokenId.toString(),
-        }
-      );
-      console.log(responseHistory);
-      let price = responseHistory.data["prices"];
-      let dates = responseHistory.data["dates"];
-      setRowData(dates);
-      setColData(price);
-      setColName("Price");
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const checkUserNotOwner = (address) => {
     if (buyData.seller === address) {
@@ -162,6 +164,15 @@ export default function Buy1155() {
     }
   };
 
+  useEffect(() => {
+    const fetchContentType = async () => {
+      let response = await fetch(buyData.image);
+      let contentType = response.headers.get("Content-Type");
+      setMediaType(contentType.split("/")[0]);
+    };
+    fetchContentType();
+  }, [buyData, mediaType]);
+
   return (
     <div>
       <div
@@ -183,11 +194,31 @@ export default function Buy1155() {
             <div>
               <div className="grid gird-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-6 h-max">
                 <div className="overflow-hidden rounded-xl">
-                  <img
-                    src={buyData.image} //IMAGE PLACEHOLDER
-                    alt=""
-                    className="w-full"
-                  />
+                  {mediaType === "image" && (
+                    <img src={buyData.image} alt="" className="w-full" />
+                  )}
+
+                  {mediaType === "video" && (
+                    <video className="w-full h-full" controls>
+                      <source src={buyData.image} type="video/mp4" />
+                    </video>
+                  )}
+
+                  {mediaType === "audio" && (
+                    <div
+                      className="pt-[80%] w-full h-full"
+                      style={{
+                        backgroundImage: `url(${buyData.album_src})`,
+                        backgroundSize: "cover",
+                        width: "100%",
+                        height: "100%",
+                      }}
+                    >
+                      <audio className="w-[99%] pl-[1%]" controls>
+                        <source src={buyData.image} type="audio/mpeg" />
+                      </audio>
+                    </div>
+                  )}
                   <div className="bg-yellow-300"></div>
                 </div>
                 <div className="flex flex-col justify-between pl-10">
