@@ -15,10 +15,12 @@ mongoose
   )
   .then(() => console.log("MongoDB connected."));
 
-app.listen(4988, () => {
+const server = app.listen(4988, () => {
   console.log("server is running");
 });
 
 app.use("/api/nfts", nftRoutes);
 app.use("/api/nfts1155", nfts1155Routes);
 app.use("/api/nfts1155market", nfts1155MarketRoutes);
+
+module.exports = server;

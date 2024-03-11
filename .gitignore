@@ -397,3 +397,4 @@ FodyWeavers.xsd
 /deployments/
 /frontend/src/backend-constants/
 /sqlDb/blockbid.db
+/db/.nyc_output

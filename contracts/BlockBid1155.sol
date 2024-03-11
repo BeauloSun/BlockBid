@@ -11,13 +11,11 @@ error AuctionItemNotExists(uint256 auctionId);
 error DoNotHaveApprovalToSellNft();
 error UserHaveNoFunds();
 
-
 contract BlockBid1155 is ReentrancyGuard{
     event ListedNft1155(uint256 sellingId);
     event AuctionedNft1155(uint256 sellingId);
 
     uint256 sellingId;
-
     mapping (uint256 => token1155) nft1155Listing;
     mapping (uint256 => auction1155) nft1155auction;
     mapping(uint256 => mapping(address => uint256)) auctionBids;

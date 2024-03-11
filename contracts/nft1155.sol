@@ -53,7 +53,6 @@ contract nft1155 is ERC1155{
         return ownerNFTs;
     }
 
-
     function getTokenId() public view returns(uint256){
         return _tokenId;
     }

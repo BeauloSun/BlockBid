@@ -1,3 +1,3 @@
-yarn add --dev mocha chai mongodb-memory-server supertest
+coverage: npm run converage
 
-./node_modules/.bin/mocha --exit
+run test: npm test

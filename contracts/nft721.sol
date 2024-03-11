@@ -22,7 +22,7 @@ contract nft721 is ERC721URIStorage {
         return _tokenId;
     }
 
-    // get the token id
+    // get the tokenid
     function getTokenId() public view returns(uint256){
         return _tokenId;
     }

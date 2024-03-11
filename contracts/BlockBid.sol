@@ -41,7 +41,6 @@ contract BlockBid is ReentrancyGuard{
     uint256[] ListedTokens721;
     uint256[] ListedAuctionTokens721;
 
-
 // check if the message sender is the owner
     modifier Owner721(address nftAddress ,uint256 tokenId, address sender){
         IERC721 nft = IERC721(nftAddress);
