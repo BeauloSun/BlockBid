@@ -4,7 +4,7 @@ const Nft1155Model = require("../models/nfts1155");
 
 router.delete("/deleteAllNfts", async (req, res) => {
   try {
-    awaitNft1155Model.deleteMany({});
+    await Nft1155Model.deleteMany({});
     res.json({ message: "All NFTs have been deleted." });
   } catch (err) {
     res.json(err);
