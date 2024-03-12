@@ -136,11 +136,43 @@ describe("Nft721 routes test", () => {
     res.should.have.status(200);
   });
 
+  it("getAccessibleProfileNftNotFound", async () => {
+    const res = await chai
+      .request(server)
+      .post("/api/nfts/getAccessibleProfileNft")
+      .send({ tokenId: [5], marketplace: false, walletaddress: "0x1" });
+    res.should.have.status(200);
+  });
+
+  it("getAccessibleProfileNftOnSale", async () => {
+    const res = await chai
+      .request(server)
+      .post("/api/nfts/getAccessibleProfileNft")
+      .send({ tokenId: [1], marketplace: true, walletaddress: "0x1" });
+    res.should.have.status(200);
+  });
+
   it("getAccessibleMarketNft", async () => {
     const res = await chai
       .request(server)
       .post("/api/nfts/getAccessibleMarketNft")
       .send({ tokenId: "2", marketplace: true });
+    res.should.have.status(200);
+  });
+
+  it("getAccessibleMarketNftNotFound", async () => {
+    const res = await chai
+      .request(server)
+      .post("/api/nfts/getAccessibleMarketNft")
+      .send({ tokenId: "5", marketplace: true });
+    res.should.have.status(200);
+  });
+
+  it("getAccessibleMarketNftNotOnSale", async () => {
+    const res = await chai
+      .request(server)
+      .post("/api/nfts/getAccessibleMarketNft")
+      .send({ tokenId: "2", marketplace: false });
     res.should.have.status(200);
   });
 

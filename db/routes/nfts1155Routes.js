@@ -142,12 +142,6 @@ router.post("/updateOwnerAndQuantity", async (req, res) => {
 
     let sellerNewQuantity = nft1155.owners.get(seller_address) - quantity;
 
-    if (isNaN(sellerNewQuantity)) {
-      return res
-        .status(400)
-        .json({ message: "Invalid seller quantity calculation." });
-    }
-
     nft1155.owners.set(seller_address, sellerNewQuantity);
     nft1155.markModified("owners");
     await nft1155.save();

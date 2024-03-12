@@ -179,6 +179,7 @@ describe("Update An Nft", () => {
       .send(body);
     res.should.have.status(200);
   });
+
   it("it updates quantity of an NFT", async () => {
     body = {
       token_id: 1,
@@ -191,6 +192,20 @@ describe("Update An Nft", () => {
       .post("/api/nfts1155/updateOwnerAndQuantity")
       .send(body);
     res.should.have.status(200);
+  });
+
+  it("it rejects the update for insufficient seller quantity", async () => {
+    body = {
+      token_id: 1,
+      quantity: 50,
+      address: "Asdfasfdas",
+      seller_address: "asdlfkajdfkljsh",
+    };
+    const res = await chai
+      .request(db)
+      .post("/api/nfts1155/updateOwnerAndQuantity")
+      .send(body);
+    res.should.have.status(400);
   });
 
   it("it rejects the update for a non-existent nft", async () => {
