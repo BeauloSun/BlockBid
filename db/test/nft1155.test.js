@@ -2,10 +2,12 @@ process.env.NODE_ENV = "test";
 
 const chai = require("chai");
 const expect = chai.expect;
-const should = chai.should(); // Invoke the function here
+const should = chai.should();
 const chaiHttp = require("chai-http");
 const db = require("../index");
 const { describe, afterEach, afterAll } = require("jest-circus");
+
+chai.use(chaiHttp);
 
 describe("Post and Delete Requests", () => {
   it("posts an nft", async () => {

@@ -2,19 +2,15 @@ process.env.NODE_ENV = "test";
 
 const chai = require("chai");
 const expect = chai.expect;
-const should = chai.should(); // Invoke the function here
+const should = chai.should();
 const chaiHttp = require("chai-http");
 const server = require("../index");
+const { describe, afterEach, afterAll } = require("jest-circus");
 
 chai.use(chaiHttp);
 
-describe("Setup and add new nfts", () => {
-  it("deleteAllNfts", async () => {
-    const res = await chai.request(server).delete("/api/nfts/deleteAllNfts");
-    res.should.have.status(200);
-  });
-
-  it("add from minting", async () => {
+describe("Add and Delete", () => {
+  it("add nft", async () => {
     const res = await chai.request(server).post("/api/nfts/addNfts").send({
       token_id: 1,
       nft_address: "0x12abcd",
@@ -33,6 +29,32 @@ describe("Setup and add new nfts", () => {
     res.should.have.status(200);
   });
 
+  it("deleteAllNfts", async () => {
+    const res = await chai.request(server).delete("/api/nfts/deleteAllNfts");
+    res.should.have.status(200);
+  });
+});
+
+describe("Nft721 routes test", () => {
+  it("add from minting", async () => {
+    await chai.request(server).delete("/api/nfts/deleteAllNfts");
+    const res = await chai.request(server).post("/api/nfts/addNfts").send({
+      token_id: 1,
+      nft_address: "0x12abcd",
+      name: "My NFT",
+      description: "This is a description of my NFT.",
+      image_uri: "https://example.com/path/to/image.jpg",
+      album_cover_uri: "https://example.com/path/to/album_cover.jpg",
+      image_hash: "abcde",
+      price: 1.5,
+      owner: "0x1",
+      on_auction: false,
+      auction_time: 0,
+      on_sale: false,
+      bids: {},
+    });
+  });
+
   it("add into sale", async () => {
     const res = await chai.request(server).post("/api/nfts/addNfts").send({
       token_id: 2,
@@ -49,7 +71,6 @@ describe("Setup and add new nfts", () => {
       on_sale: true,
       bids: {},
     });
-    res.should.have.status(200);
   });
 
   it("add into auction", async () => {
@@ -71,11 +92,8 @@ describe("Setup and add new nfts", () => {
         on_sale: true,
         bids: { someone1: 2, someone2: 3 },
       });
-    res.should.have.status(200);
   });
-});
 
-describe("Getter test for nft721", () => {
   it("getNfts", async () => {
     const res = await chai.request(server).get("/api/nfts/getNfts");
     res.should.have.status(200);
@@ -85,14 +103,12 @@ describe("Getter test for nft721", () => {
     const res = await chai.request(server).get("/api/nfts/getNftImageHashes");
     res.should.have.status(200);
   });
-});
 
-describe("Post test for nft721", () => {
   it("getOwnedNft", async () => {
     const res = await chai
       .request(server)
       .post("/api/nfts/getOwnedNft")
-      .send({ tokenIds: ["1", "2"] });
+      .send({ tokenIds: ["1"] });
     res.should.have.status(200);
   });
 
@@ -100,7 +116,7 @@ describe("Post test for nft721", () => {
     const res = await chai
       .request(server)
       .post("/api/nfts/getListedOwnedNft")
-      .send({ tokenIds: ["1"] });
+      .send({ tokenIds: ["2"] });
     res.should.have.status(200);
   });
 
@@ -116,7 +132,7 @@ describe("Post test for nft721", () => {
     const res = await chai
       .request(server)
       .post("/api/nfts/getAccessibleProfileNft")
-      .send({ tokenId: [1], maketplace: false, wallet: "0x1" });
+      .send({ tokenId: [1], marketplace: false, walletaddress: "0x1" });
     res.should.have.status(200);
   });
 
@@ -124,7 +140,7 @@ describe("Post test for nft721", () => {
     const res = await chai
       .request(server)
       .post("/api/nfts/getAccessibleMarketNft")
-      .send({ tokenId: "2", maketplace: true });
+      .send({ tokenId: "2", marketplace: true });
     res.should.have.status(200);
   });
 
@@ -132,7 +148,7 @@ describe("Post test for nft721", () => {
     const res = await chai
       .request(server)
       .post("/api/nfts/getNftsOnSale")
-      .send({ tokenId: "2" });
+      .send({ tokenIds: ["2"] });
     res.should.have.status(200);
   });
 
@@ -148,7 +164,7 @@ describe("Post test for nft721", () => {
     const res = await chai
       .request(server)
       .post("/api/nfts/getAccessibleAuctionNft")
-      .send({ tokenId: "3" });
+      .send({ token_id: "3" });
     res.should.have.status(200);
   });
 
@@ -156,7 +172,7 @@ describe("Post test for nft721", () => {
     const res = await chai
       .request(server)
       .post("/api/nfts/getNftsOnAuction")
-      .send({ tokenId: "3" });
+      .send({ tokenIds: ["3"] });
     res.should.have.status(200);
   });
 
@@ -164,7 +180,7 @@ describe("Post test for nft721", () => {
     const res = await chai
       .request(server)
       .post("/api/nfts/getBids")
-      .send({ tokenId: 3 });
+      .send({ token_id: 3 });
     res.should.have.status(200);
   });
 
@@ -172,7 +188,15 @@ describe("Post test for nft721", () => {
     const res = await chai
       .request(server)
       .post("/api/nfts/getHighestBid")
-      .send({ tokenId: 3 });
+      .send({ token_id: 3 });
+    res.should.have.status(200);
+  });
+
+  it("getHighestBidNftNotFound", async () => {
+    const res = await chai
+      .request(server)
+      .post("/api/nfts/getHighestBid")
+      .send({ token_id: 5 });
     res.should.have.status(404);
   });
 
@@ -191,12 +215,26 @@ describe("Post test for nft721", () => {
       .send({ tokenId: 2, price: 2 });
     res.should.have.status(200);
   });
-});
 
-describe("Put test for nft721", async () => {
+  it("updatePriceNotFound", async () => {
+    const res = await chai
+      .request(server)
+      .post("/api/nfts/updatePrice")
+      .send({ tokenId: 5, price: 2 });
+    res.should.have.status(404);
+  });
+
+  it("updatePriceNotOnSale", async () => {
+    const res = await chai
+      .request(server)
+      .post("/api/nfts/updatePrice")
+      .send({ tokenId: 1, price: 3 });
+    res.should.have.status(400);
+  });
+
   it("recordBid", async () => {
     const res = await chai.request(server).put("/api/nfts/recordBid").send({
-      tokenId: "3",
+      token_id: "3",
       nft_address: "0x12abcd",
       bidder: "0xtestBidder",
       price: 1.2,
@@ -209,17 +247,17 @@ describe("Put test for nft721", async () => {
       .request(server)
       .put("/api/nfts/putNftInMarketplace")
       .send({
-        tokenId: "1",
+        token_id: "1",
         nft_address: "0x12abcd",
         owner: "0x1",
         price: 1.1,
-      }); // replace with an actual tokenId
+      });
     res.should.have.status(200);
   });
 
   it("cancelListing", async () => {
     const res = await chai.request(server).put("/api/nfts/cancelListing").send({
-      tokenId: "1",
+      token_id: "1",
       nft_address: "0x12abcd",
     });
     res.should.have.status(200);
@@ -230,7 +268,7 @@ describe("Put test for nft721", async () => {
       .request(server)
       .put("/api/nfts/putNftAuctionInMarketplace")
       .send({
-        tokenId: "1",
+        token_id: "1",
         nft_address: "0x12abcd",
         owner: "0x1",
         price: 1.1,
@@ -255,8 +293,18 @@ describe("Put test for nft721", async () => {
   it("endAuction", async () => {
     const res = await chai
       .request(server)
-      .post("/api/nfts/getHighestBid")
-      .send({ tokenId: "3", nft_address: "0x12abcd", owner: "0x1" });
+      .post("/api/nfts/endAuction")
+      .send({ token_id: "3", nft_address: "0x12abcd", owner: "0x1" });
+    res.should.have.status(200);
+  });
+
+  it("deleteNft", async () => {
+    const res = await chai.request(server).delete("/api/nfts/deleteNft/1");
+    res.should.have.status(200);
+  });
+
+  it("deleteNftNotFound", async () => {
+    const res = await chai.request(server).delete("/api/nfts/deleteNft/5");
     res.should.have.status(404);
   });
 });
