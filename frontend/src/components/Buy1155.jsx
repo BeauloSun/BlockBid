@@ -24,6 +24,7 @@ export default function Buy1155() {
 
   useEffect(() => {
     const fetchData = async () => {
+      let uri = null;
       try {
         const marketResponse = await axios.post(
           "http://localhost:4988/api/nfts1155market/getOneNftByTokenIdAndListingId",
@@ -33,6 +34,7 @@ export default function Buy1155() {
           }
         );
         if (marketResponse.data) {
+          uri = marketResponse.data.image_uri;
           setBuyData({
             image: marketResponse.data.image_uri,
             album_src: marketResponse.data.album_cover_uri,
@@ -62,7 +64,9 @@ export default function Buy1155() {
             tokenId: tokenId.toString(),
           }
         );
-        console.log(responseHistory);
+        let response = await fetch(uri);
+        let contentType = response.headers.get("Content-Type");
+        setMediaType(contentType.split("/")[0]);
         let price = responseHistory.data["prices"];
         let dates = responseHistory.data["dates"];
         setRowData(dates);
@@ -163,15 +167,6 @@ export default function Buy1155() {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    const fetchContentType = async () => {
-      let response = await fetch(buyData.image);
-      let contentType = response.headers.get("Content-Type");
-      setMediaType(contentType.split("/")[0]);
-    };
-    fetchContentType();
-  }, [buyData, mediaType]);
 
   return (
     <div>

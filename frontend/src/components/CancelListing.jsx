@@ -21,6 +21,7 @@ export default function CancelListing() {
   const [mediaType, setMediaType] = useState("");
   const navigate = useNavigate();
   var isValid = false;
+  let uri = null;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +49,7 @@ export default function CancelListing() {
           );
           if (response.data && response.data.length > 0) {
             const res = response.data[0];
+            uri = res.image_uri;
             setData({
               img_src: res.image_uri,
               albumUri: res.album_cover_uri,
@@ -55,6 +57,9 @@ export default function CancelListing() {
               price: res.price,
               description: res.description,
             });
+            response = await fetch(uri);
+            let contentType = response.headers.get("Content-Type");
+            setMediaType(contentType.split("/")[0]);
           }
         } catch (err) {
           console.error(err);
@@ -66,16 +71,6 @@ export default function CancelListing() {
 
     fetchData();
   }, [id, token_id]);
-
-  useEffect(() => {
-    const fetchContentType = async () => {
-      let response = await fetch(data.img_src);
-      let contentType = response.headers.get("Content-Type");
-      setMediaType(contentType.split("/")[0]);
-    };
-
-    fetchContentType();
-  }, [data.img_src]);
 
   const buttonHandler = async (e) => {
     e.preventDefault();

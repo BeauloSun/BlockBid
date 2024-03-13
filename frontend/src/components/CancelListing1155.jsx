@@ -26,6 +26,7 @@ export default function CancelListing() {
     const fetchData = async () => {
       let isValid = false;
       let response = null;
+      let uri = null;
       try {
         response = await axios.post(
           "http://localhost:4988/api/nfts1155market/getOneNft",
@@ -42,6 +43,7 @@ export default function CancelListing() {
       }
       if (isValid) {
         const res = response.data;
+        uri = res.image_uri;
         let responseTotalQuantity = await axios.post(
           "http://localhost:4988/api/nfts1155/getTotalQuantity",
           {
@@ -57,6 +59,9 @@ export default function CancelListing() {
           available: res.available_quantity,
           total: responseTotalQuantity.data.quantity[0],
         });
+        response = await fetch(uri);
+        let contentType = response.headers.get("Content-Type");
+        setMediaType(contentType.split("/")[0]);
       } else {
         navigate("/NotFound");
       }
@@ -64,16 +69,6 @@ export default function CancelListing() {
 
     fetchData();
   }, [listing_id, navigate]);
-
-  useEffect(() => {
-    const fetchContentType = async () => {
-      let response = await fetch(data.img_src);
-      let contentType = response.headers.get("Content-Type");
-      setMediaType(contentType.split("/")[0]);
-    };
-
-    fetchContentType();
-  }, [data.img_src]);
 
   const buttonHandler = async (e) => {
     e.preventDefault();

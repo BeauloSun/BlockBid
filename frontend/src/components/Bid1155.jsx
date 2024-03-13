@@ -39,6 +39,7 @@ export default function Bid1155() {
   useEffect(() => {
     const fetchData = async () => {
       let cur_highest_bid = 0;
+      let uri = null;
       try {
         const marketResponse = await axios.post(
           "http://localhost:4988/api/nfts1155market/getOneNftByTokenIdAndListingId",
@@ -48,6 +49,7 @@ export default function Bid1155() {
           }
         );
         if (marketResponse.data) {
+          uri = marketResponse.data.image_uri;
           setAuctionData({
             image: marketResponse.data.image_uri,
             album_src: marketResponse.data.album_cover_uri,
@@ -131,6 +133,10 @@ export default function Bid1155() {
         }
         const information = `Current highest bid is: ${cur_highest_bid} ETH. You need to bid more than ${difference} ETH.`;
         setBidInformation(information);
+
+        let response = await fetch(uri);
+        let contentType = response.headers.get("Content-Type");
+        setMediaType(contentType.split("/")[0]);
       } catch (error) {
         console.log(error);
       }
@@ -160,16 +166,6 @@ export default function Bid1155() {
     }, 1000);
     return () => clearInterval(countdown);
   }, [hour, minute, second]);
-
-  useEffect(() => {
-    const fetchContentType = async () => {
-      let response = await fetch(auctionData.image);
-      let contentType = response.headers.get("Content-Type");
-      setMediaType(contentType.split("/")[0]);
-    };
-
-    fetchContentType();
-  }, [auctionData]);
 
   const formatTime = (time) => String(time).padStart(2, "0");
 

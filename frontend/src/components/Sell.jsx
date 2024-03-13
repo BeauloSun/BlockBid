@@ -35,6 +35,8 @@ export default function Sell() {
 
   useEffect(() => {
     const fetchData = async () => {
+      let response_type = null;
+      let uri = null;
       try {
         const response = await axios.post(
           "http://localhost:4988/api/nfts/getAccessibleProfileNft",
@@ -59,6 +61,7 @@ export default function Sell() {
           );
           if (response.data && response.data.length > 0) {
             const res = response.data[0];
+            uri = res.image_uri;
             setData({
               img_src: res.image_uri,
               name: res.name,
@@ -66,6 +69,9 @@ export default function Sell() {
               album_src: res.album_cover_uri,
               description: res.description,
             });
+            response_type = await fetch(uri);
+            let contentType = response_type.headers.get("Content-Type");
+            setMediaType(contentType.split("/")[0]);
           }
         } catch (err) {
           console.error(err);
@@ -77,16 +83,6 @@ export default function Sell() {
 
     fetchData();
   }, [id, token_id]);
-
-  useEffect(() => {
-    const fetchContentType = async () => {
-      let response = await fetch(data.img_src);
-      let contentType = response.headers.get("Content-Type");
-      setMediaType(contentType.split("/")[0]);
-    };
-
-    fetchContentType();
-  }, [data.img_src]);
 
   const formValid = async () => {
     if (!price) {

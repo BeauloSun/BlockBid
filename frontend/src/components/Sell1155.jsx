@@ -34,10 +34,21 @@ export default function Sell1155() {
   const [mediaType, setMediaType] = useState("");
   const navigate = useNavigate();
 
+  // useEffect(() => {
+  //   const fetchContentType = async () => {
+  //     let response = await fetch(data.img_src);
+  //     let contentType = response.headers.get("Content-Type");
+  //     setMediaType(contentType.split("/")[0]);
+  //   };
+
+  //   fetchContentType();
+  // }, [data]);
+
   useEffect(() => {
     const fetchData = async () => {
       let isValid = false;
       let response = null;
+      let uri = null;
       try {
         response = await axios.post(
           "http://localhost:4988/api/nfts1155/getANft",
@@ -54,6 +65,7 @@ export default function Sell1155() {
       }
       if (isValid) {
         const res = response.data;
+        uri = res.image_uri;
         setData({
           img_src: res.image_uri,
           name: res.name,
@@ -72,6 +84,9 @@ export default function Sell1155() {
           }
         );
         setOwners(responseOwners.data);
+        response = await fetch(uri);
+        let contentType = response.headers.get("Content-Type");
+        setMediaType(contentType.split("/")[0]);
       } else {
         navigate("/NotFound");
       }
@@ -87,16 +102,6 @@ export default function Sell1155() {
       setFullOwnership(false);
     }
   }, [data]);
-
-  useEffect(() => {
-    const fetchContentType = async () => {
-      let response = await fetch(data.img_src);
-      let contentType = response.headers.get("Content-Type");
-      setMediaType(contentType.split("/")[0]);
-    };
-
-    fetchContentType();
-  }, [data.img_src]);
 
   const formValid = async () => {
     if (!price) {

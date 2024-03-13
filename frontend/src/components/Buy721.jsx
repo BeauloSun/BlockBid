@@ -26,6 +26,7 @@ export default function Buy721() {
 
   useEffect(() => {
     const fetchData = async () => {
+      let uri = null;
       try {
         const response = await axios.post(
           "http://localhost:4988/api/nfts/getAccessibleSaleNft",
@@ -49,6 +50,7 @@ export default function Buy721() {
           );
           if (response.data && response.data.length > 0) {
             const res = response.data[0];
+            uri = res.image_uri;
             setData({
               img_src: res.image_uri,
               album_src: res.album_cover_uri,
@@ -67,9 +69,9 @@ export default function Buy721() {
             setRowData(dates);
             setColData(price);
             setColName("Price");
-            // setRowData(["Dec-2023", "Jan-2024", "Feb-2024", "Mar-2024"]);
-            // setColName("Price");
-            // setColData([12, 14, 16, 18]);
+            response = await fetch(uri);
+            let contentType = response.headers.get("Content-Type");
+            setMediaType(contentType.split("/")[0]);
           }
         } catch (err) {
           console.error(err);
@@ -81,16 +83,6 @@ export default function Buy721() {
 
     fetchData();
   }, [id, token_id]);
-
-  useEffect(() => {
-    const fetchContentType = async () => {
-      let response = await fetch(data.img_src);
-      let contentType = response.headers.get("Content-Type");
-      setMediaType(contentType.split("/")[0]);
-    };
-
-    fetchContentType();
-  }, [data.img_src]);
 
   const buyNft = async (e) => {
     e.preventDefault();
