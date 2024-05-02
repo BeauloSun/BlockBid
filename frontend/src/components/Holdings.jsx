@@ -79,6 +79,7 @@ export const Holdings = () => {
 
       // data for erc1155 token
       const tokens1155 = await getOwnerNfts1155();
+      console.log(tokens1155);
       const response1155 = await axios.post(
         "http://localhost:4988/api/nfts1155/getOwnedNft",
         {

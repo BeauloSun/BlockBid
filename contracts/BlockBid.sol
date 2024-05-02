@@ -16,6 +16,8 @@ error BidNotHighest();
 error AuctionItemNotExists(uint256 _tokenId);
 error UserHaveNoFunds();
 
+
+
 contract BlockBid is ReentrancyGuard{
     struct listing721{
         uint256 tokenId;
@@ -58,7 +60,8 @@ contract BlockBid is ReentrancyGuard{
         }
         _;
     }
-// check if token is on auction
+    
+// check if token is on auctio
     modifier AuctionExists (uint256 _tokenId){
         auctionListing721 memory auctionItem = auctionNftListed721[_tokenId];
         if(auctionItem.tokenId <= 0){

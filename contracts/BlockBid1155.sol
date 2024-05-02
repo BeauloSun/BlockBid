@@ -24,7 +24,6 @@ contract BlockBid1155 is ReentrancyGuard{
     uint256[] AuctionedTokens1155;
     uint256[] ListedTokens1155;
 
-
     struct token1155{
         uint256 tokenId;
         address payable seller;
@@ -238,7 +237,6 @@ contract BlockBid1155 is ReentrancyGuard{
             delete auctionBidders[_listingId];
             delete nft1155auction[_listingId];
 
-
         }else{
                     // transfer all the money to the seller's fund
             if(auctionBids[_listingId][auction.highestBidder] == auction.highestBid){
@@ -250,9 +248,8 @@ contract BlockBid1155 is ReentrancyGuard{
                 UserFunds[bidders[j]] += auctionBids[_listingId][bidders[j]];
                 delete auctionBids[_listingId][bidders[j]];
             }
-
             delete auctionBidders[_listingId];
-            IERC1155(_nftAddress).safeTransferFrom( nft1155auction[_listingId].seller, msg.sender, nft1155auction[_listingId].tokenId,nft1155auction[_listingId].amount,"");
+            IERC1155(_nftAddress).safeTransferFrom( nft1155auction[_listingId].seller, nft1155auction[_listingId].highestBidder, nft1155auction[_listingId].tokenId,nft1155auction[_listingId].amount,"");
             delete nft1155auction[_listingId];
 
         }
@@ -282,7 +279,6 @@ contract BlockBid1155 is ReentrancyGuard{
         }
         return false;
     }
-
 
     function getListedAuctionItem1155(uint256 _listingId) public view returns(auction1155 memory){
         return nft1155auction[_listingId];

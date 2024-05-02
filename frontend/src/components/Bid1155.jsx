@@ -221,7 +221,7 @@ export default function Bid1155() {
             {
               token_id: token_id,
               quantity: auctionData.quantity,
-              address: address,
+              address: highest_bidder,
               seller_address: auctionData.seller,
             }
           );

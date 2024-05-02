@@ -7,8 +7,8 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract nft1155 is ERC1155{
     using Strings for uint256;
-    
     uint256 private _tokenId;
+    
     mapping (uint256 => string) private _tokenUris;
 
     constructor() ERC1155("") {
@@ -35,6 +35,7 @@ contract nft1155 is ERC1155{
         _burn(account, id, amount);
     }
 
+
      function getOwnerNFTs(address owner) public view returns (uint256[] memory) {
         uint256 count = 0;
         for (uint256 i = 1; i < _tokenId; i++) {
@@ -56,4 +57,5 @@ contract nft1155 is ERC1155{
     function getTokenId() public view returns(uint256){
         return _tokenId;
     }
+    
 }

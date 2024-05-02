@@ -240,7 +240,9 @@ export default function MintForm1155() {
               contract.options.address
             );
             handleDeleteImage();
-            handleDeleteFile();
+            if (musicBool) {
+              handleDeleteFile();
+            }
             setbuttonLoading(false);
             setpageLoading(false);
             setTimeout(() => {
